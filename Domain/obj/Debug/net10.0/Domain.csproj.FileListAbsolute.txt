@@ -1,0 +1,12 @@
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\Domain\bin\Debug\net10.0\Domain.deps.json
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\Domain\bin\Debug\net10.0\Domain.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\Domain\bin\Debug\net10.0\Domain.pdb
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\Domain\obj\Debug\net10.0\Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\Domain\obj\Debug\net10.0\Domain.AssemblyInfoInputs.cache
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\Domain\obj\Debug\net10.0\Domain.AssemblyInfo.cs
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\Domain\obj\Debug\net10.0\Domain.csproj.CoreCompileInputs.cache
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\Domain\obj\Debug\net10.0\Domain.sourcelink.json
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\Domain\obj\Debug\net10.0\Domain.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\Domain\obj\Debug\net10.0\refint\Domain.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\Domain\obj\Debug\net10.0\Domain.pdb
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\Domain\obj\Debug\net10.0\ref\Domain.dll

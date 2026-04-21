@@ -1,57 +1,42 @@
 {
   "version": 2,
   "dgSpecHash": "bnIhixzc6W8=",
-  "success": false,
+  "success": true,
   "projectFilePath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
-  "expectedPackageFiles": [],
-  "logs": [
-    {
-      "code": "Undefined",
-      "level": "Error",
-      "message": "No se pudo descargar el paquete \"Microsoft.AspNetCore.Metadata.10.0.5\" de \"https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.metadata/10.0.5/microsoft.aspnetcore.metadata.10.0.5.nupkg\".\r\nEspacio en disco insuficiente.",
-      "projectPath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
-      "filePath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
-      "targetGraphs": []
-    },
-    {
-      "code": "Undefined",
-      "level": "Error",
-      "message": "No se pudo descargar el paquete \"Microsoft.Extensions.Diagnostics.10.0.5\" de \"https://api.nuget.org/v3-flatcontainer/microsoft.extensions.diagnostics/10.0.5/microsoft.extensions.diagnostics.10.0.5.nupkg\".\r\nEspacio en disco insuficiente.",
-      "projectPath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
-      "filePath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
-      "targetGraphs": []
-    },
-    {
-      "code": "Undefined",
-      "level": "Error",
-      "message": "No se pudo descargar el paquete \"Microsoft.Extensions.FileProviders.Physical.10.0.5\" de \"https://api.nuget.org/v3-flatcontainer/microsoft.extensions.fileproviders.physical/10.0.5/microsoft.extensions.fileproviders.physical.10.0.5.nupkg\".\r\nEspacio en disco insuficiente.",
-      "projectPath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
-      "filePath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
-      "targetGraphs": []
-    },
-    {
-      "code": "NU1301",
-      "level": "Error",
-      "message": "No se pudo recuperar información sobre \"Microsoft.Extensions.Diagnostics\" del origen remoto \"https://api.nuget.org/v3-flatcontainer/microsoft.extensions.diagnostics/index.json\".\r\n  Espacio en disco insuficiente.",
-      "projectPath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
-      "filePath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
-      "targetGraphs": []
-    },
-    {
-      "code": "NU1301",
-      "level": "Error",
-      "message": "No se pudo recuperar información sobre \"Microsoft.AspNetCore.Metadata\" del origen remoto \"https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.metadata/index.json\".\r\n  Espacio en disco insuficiente.",
-      "projectPath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
-      "filePath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
-      "targetGraphs": []
-    },
-    {
-      "code": "NU1301",
-      "level": "Error",
-      "message": "No se pudo recuperar información sobre \"Microsoft.Extensions.FileProviders.Physical\" del origen remoto \"https://api.nuget.org/v3-flatcontainer/microsoft.extensions.fileproviders.physical/index.json\".\r\n  Espacio en disco insuficiente.",
-      "projectPath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
-      "filePath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
-      "targetGraphs": []
-    }
-  ]
+  "expectedPackageFiles": [
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.aspnetcore.app.internal.assets\\10.0.5\\microsoft.aspnetcore.app.internal.assets.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.aspnetcore.authorization\\10.0.5\\microsoft.aspnetcore.authorization.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.aspnetcore.components\\10.0.5\\microsoft.aspnetcore.components.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.aspnetcore.components.analyzers\\10.0.5\\microsoft.aspnetcore.components.analyzers.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.aspnetcore.components.forms\\10.0.5\\microsoft.aspnetcore.components.forms.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.aspnetcore.components.web\\10.0.5\\microsoft.aspnetcore.components.web.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.aspnetcore.components.webassembly\\10.0.5\\microsoft.aspnetcore.components.webassembly.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.aspnetcore.components.webassembly.devserver\\10.0.5\\microsoft.aspnetcore.components.webassembly.devserver.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.aspnetcore.metadata\\10.0.5\\microsoft.aspnetcore.metadata.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.dotnet.hotreload.webassembly.browser\\10.0.201\\microsoft.dotnet.hotreload.webassembly.browser.10.0.201.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.extensions.configuration\\10.0.5\\microsoft.extensions.configuration.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\10.0.5\\microsoft.extensions.configuration.abstractions.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.extensions.configuration.binder\\10.0.5\\microsoft.extensions.configuration.binder.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.extensions.configuration.fileextensions\\10.0.5\\microsoft.extensions.configuration.fileextensions.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.extensions.configuration.json\\10.0.5\\microsoft.extensions.configuration.json.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\10.0.5\\microsoft.extensions.dependencyinjection.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\10.0.5\\microsoft.extensions.dependencyinjection.abstractions.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.extensions.diagnostics\\10.0.5\\microsoft.extensions.diagnostics.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.extensions.diagnostics.abstractions\\10.0.5\\microsoft.extensions.diagnostics.abstractions.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.extensions.fileproviders.abstractions\\10.0.5\\microsoft.extensions.fileproviders.abstractions.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.extensions.fileproviders.physical\\10.0.5\\microsoft.extensions.fileproviders.physical.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.extensions.filesystemglobbing\\10.0.5\\microsoft.extensions.filesystemglobbing.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.extensions.logging\\10.0.5\\microsoft.extensions.logging.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\10.0.5\\microsoft.extensions.logging.abstractions.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.extensions.options\\10.0.5\\microsoft.extensions.options.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.extensions.options.configurationextensions\\10.0.5\\microsoft.extensions.options.configurationextensions.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.extensions.primitives\\10.0.5\\microsoft.extensions.primitives.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.extensions.validation\\10.0.5\\microsoft.extensions.validation.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.jsinterop\\10.0.5\\microsoft.jsinterop.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.jsinterop.webassembly\\10.0.5\\microsoft.jsinterop.webassembly.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.net.illink.tasks\\10.0.5\\microsoft.net.illink.tasks.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.net.sdk.webassembly.pack\\10.0.5\\microsoft.net.sdk.webassembly.pack.10.0.5.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\microsoft.netcore.app.runtime.mono.browser-wasm\\10.0.5\\microsoft.netcore.app.runtime.mono.browser-wasm.10.0.5.nupkg.sha512"
+  ],
+  "logs": []
 }
