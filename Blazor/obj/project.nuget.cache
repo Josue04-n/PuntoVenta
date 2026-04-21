@@ -1,0 +1,57 @@
+{
+  "version": 2,
+  "dgSpecHash": "bnIhixzc6W8=",
+  "success": false,
+  "projectFilePath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
+  "expectedPackageFiles": [],
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Error",
+      "message": "No se pudo descargar el paquete \"Microsoft.AspNetCore.Metadata.10.0.5\" de \"https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.metadata/10.0.5/microsoft.aspnetcore.metadata.10.0.5.nupkg\".\r\nEspacio en disco insuficiente.",
+      "projectPath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
+      "filePath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
+      "targetGraphs": []
+    },
+    {
+      "code": "Undefined",
+      "level": "Error",
+      "message": "No se pudo descargar el paquete \"Microsoft.Extensions.Diagnostics.10.0.5\" de \"https://api.nuget.org/v3-flatcontainer/microsoft.extensions.diagnostics/10.0.5/microsoft.extensions.diagnostics.10.0.5.nupkg\".\r\nEspacio en disco insuficiente.",
+      "projectPath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
+      "filePath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
+      "targetGraphs": []
+    },
+    {
+      "code": "Undefined",
+      "level": "Error",
+      "message": "No se pudo descargar el paquete \"Microsoft.Extensions.FileProviders.Physical.10.0.5\" de \"https://api.nuget.org/v3-flatcontainer/microsoft.extensions.fileproviders.physical/10.0.5/microsoft.extensions.fileproviders.physical.10.0.5.nupkg\".\r\nEspacio en disco insuficiente.",
+      "projectPath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
+      "filePath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
+      "targetGraphs": []
+    },
+    {
+      "code": "NU1301",
+      "level": "Error",
+      "message": "No se pudo recuperar información sobre \"Microsoft.Extensions.Diagnostics\" del origen remoto \"https://api.nuget.org/v3-flatcontainer/microsoft.extensions.diagnostics/index.json\".\r\n  Espacio en disco insuficiente.",
+      "projectPath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
+      "filePath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
+      "targetGraphs": []
+    },
+    {
+      "code": "NU1301",
+      "level": "Error",
+      "message": "No se pudo recuperar información sobre \"Microsoft.AspNetCore.Metadata\" del origen remoto \"https://api.nuget.org/v3-flatcontainer/microsoft.aspnetcore.metadata/index.json\".\r\n  Espacio en disco insuficiente.",
+      "projectPath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
+      "filePath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
+      "targetGraphs": []
+    },
+    {
+      "code": "NU1301",
+      "level": "Error",
+      "message": "No se pudo recuperar información sobre \"Microsoft.Extensions.FileProviders.Physical\" del origen remoto \"https://api.nuget.org/v3-flatcontainer/microsoft.extensions.fileproviders.physical/index.json\".\r\n  Espacio en disco insuficiente.",
+      "projectPath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
+      "filePath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
+      "targetGraphs": []
+    }
+  ]
+}
