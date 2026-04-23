@@ -12,9 +12,10 @@
 
   <ItemGroup>
     <Folder Include="Interfaces\Services\" />
-    <Folder Include="Interfaces\Repositories\" />
-    <Folder Include="DTOs\" />
-    <Folder Include="UseCases\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.7" />
   </ItemGroup>
 
 </Project>

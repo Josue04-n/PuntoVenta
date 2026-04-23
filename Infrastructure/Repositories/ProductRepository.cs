@@ -1,0 +1,57 @@
+﻿using Application.Interfaces.Repositories;
+using Domain.Entities;
+using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+
+namespace Infrastructure.Repositories;
+
+public class ProductRepository : IProductRepository
+{
+    private readonly AppDbContext _context;
+
+    public ProductRepository(AppDbContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<Product?> GetByIdAsync(int id) 
+    { 
+        return await _context.Products.FindAsync(id);
+    }
+
+    public Task UpdateRangeAsync(IEnumerable<Product> products)
+    {
+        return Task.CompletedTask;
+    }
+
+    public async Task<IEnumerable<Product>> SearchAsync(string term, string searchBy)
+    {
+        if (string.IsNullOrWhiteSpace(term))
+        { 
+            return Enumerable.Empty<Product>();
+        }
+
+        term = term.Trim().ToLower();
+
+        if (searchBy.ToLower() == "id")
+        {
+            if (int.TryParse(term, out int idSearch))
+            {
+                return await _context.Products
+                    .AsNoTracking()
+                    .Where(p => p.Id == idSearch)
+                    .Take(1)
+                    .ToListAsync();
+            }
+            return Enumerable.Empty<Product>();
+        }
+
+        return await _context.Products
+            .AsNoTracking()
+            .Where(p => p.Name.ToLower().Contains(term))
+            .Take(20)
+            .ToListAsync();
+    }
+
+
+}

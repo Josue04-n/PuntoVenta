@@ -1,0 +1,31 @@
+﻿using Application.Interfaces.Repositories;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Mvc;
+using RouteAttribute = Microsoft.AspNetCore.Components.RouteAttribute;
+
+namespace API.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+
+public class ProductsController : ControllerBase
+{
+    private readonly IProductoRepository _productoRepository;
+    public ProductsController(IProductoRepository productoRepository)
+    {
+        _productoRepository = productoRepository;
+        
+    }
+
+    [HttpGet("buscar")]
+    public async Task<IActionResult> Search([FromQuery]string term)
+    {
+        if (string.IsNullOrWhiteSpace(term))
+            return BadRequest(new { mensaje = "El término de búsqueda es obligatorio." });
+
+        var results = await _productoRepository.SearchAsync(term);
+        return Ok(results);
+
+    }
+
+}

@@ -8,6 +8,14 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.7">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.7" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="10.1.7" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.1.7" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.7" />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,7 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Configurations\" />
     <Folder Include="Middlewares\" />
   </ItemGroup>
 

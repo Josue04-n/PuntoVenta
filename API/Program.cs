@@ -1,23 +1,33 @@
+using API.Configurations;
+using Microsoft.OpenApi;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// 1. Agregar servicios al contenedor (Dependency Injection)
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
 
+// Inyectar tus dependencias personalizadas
+builder.Services.AddProyectDependencies(builder.Configuration);
+
+// Configuración de Swagger / OpenAPI
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Punto de Venta API", Version = "v1" });
+});
+
+// 2. Construir la aplicación (Solo usamos 'builder')
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// 3. Configurar el pipeline de solicitudes HTTP
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
