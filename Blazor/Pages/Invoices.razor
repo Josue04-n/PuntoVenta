@@ -37,7 +37,7 @@
         </div>
         <div class="uta-card__body">
             <div class="uta-search-bar" style="max-width: 800px; margin: 0 auto 1.5rem auto;">
-                <select class="uta-search-bar__select" @bind="_criterioBusqueda">
+                <select class="uta-search-bar__select" value="@_criterioBusqueda" @onchange="CambioCriterioFacturas">
                     <option value="numero">N° de Factura</option>
                     <option value="cliente">Nombre del Cliente</option>
                 </select>
@@ -84,9 +84,14 @@
                                 <td style="text-align:right; color:#666">$ @f.VatAmount.ToString("N2")</td>
                                 <td style="text-align:right; font-weight:700; color:#1a1a1a">$ @f.Total.ToString("N2")</td>
                                 <td style="text-align:center;">
-                                    <button class="uta-btn uta-btn--sm uta-btn--outline" @onclick="() => VerDetalle(f)">
-                                        👁 Ver Detalles
-                                    </button>
+                                    <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                                        <button class="uta-btn uta-btn--sm uta-btn--outline" title="Ver Detalles en pantalla" @onclick="() => VerDetalle(f)">
+                                            👁 Visualizar
+                                        </button>
+                                        <button class="uta-btn uta-btn--sm uta-btn--success" title="Descargar archivo PDF" @onclick="() => DescargarDirecto(f)">
+                                            ⬇ Descargar
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         }
@@ -99,14 +104,26 @@
 
 @if (_facturaSeleccionada != null)
 {
-    <div class="uta-overlay d-print-none" @onclick="CerrarModal">
+    @if (_esDescargaDirecta)
+    {
+        <div style="position: fixed; inset: 0; background: rgba(107, 26, 51, 0.95); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white;">
+            <div style="font-size: 3rem; animation: spin 1.5s linear infinite; margin-bottom: 1rem;">⚙️</div>
+            <h2 style="margin: 0; font-family: 'Inter', sans-serif;">Generando Factura...</h2>
+            <p style="font-family: 'Inter', sans-serif; opacity: 0.8;">La descarga comenzará en breve</p>
+        </div>
+        <style>
+            @@keyframes spin { 100% { transform: rotate(360deg); } }
+        </style>
+    }
+
+    <div class="uta-overlay" style="@(_esDescargaDirecta ? "z-index: 100; opacity: 0.01;" : "z-index: 1000;")" @onclick="CerrarModal">
         <div class="uta-modal uta-modal--lg" @onclick:stopPropagation="true">
-            <div class="uta-modal__header">
+            <div class="uta-modal__header d-print-none">
                 <div>
                     <h3 class="uta-modal__title">🧾 &nbsp;Detalle de Comprobante</h3>
                     <p class="uta-modal__subtitle">Revisión de artículos facturados</p>
                 </div>
-                <button class="uta-modal__close" @onclick="CerrarModal">✕</button>
+                <button id="btn-cerrar-modal" class="uta-modal__close" @onclick="CerrarModal">✕</button>
             </div>
             
             <div class="uta-modal__body bg-white printable-area" id="area-impresion" style="padding: 2rem;">
@@ -204,40 +221,17 @@
             </div>
 
             <div class="uta-modal__footer d-print-none">
-                <button class="uta-btn uta-btn--outline" @onclick="CerrarModal">Cerrar</button>
-                <button class="uta-btn uta-btn--success" @onclick="ImprimirFactura">
-                    ⊟ &nbsp;Imprimir Copia
-                </button>
+                <button class="uta-btn uta-btn--outline" style="width: 100%" @onclick="CerrarModal">Cerrar Visualización</button>
             </div>
         </div>
     </div>
 }
 
 <style>
-    /* ====================================================
-       UTA DESIGN SYSTEM — Reutilizando las bases de Ventas
-       ==================================================== */
     *, *::before, *::after { box-sizing: border-box; }
     .uta-page { font-family: 'Inter', sans-serif; background: #f4f6f9; min-height: 100vh; padding: 1.8rem 2rem; color: #2c3e50; }
     .text-custom-primary { color: #6B1A33 !important; }
-
-    /* Estilos de impresión precisos para factura SRI */
-    @@media print { 
-        body * { visibility: hidden; }
-        #area-impresion, #area-impresion * { visibility: visible; }
-        #area-impresion { 
-            position: absolute; left: 0; top: 0; 
-            width: 210mm; /* Tamaño A4 */
-            padding: 10mm !important; 
-            margin: 0;
-            box-sizing: border-box;
-        }
-        .d-print-none { display: none !important; }
-        /* Forzar a Chrome a imprimir colores y bordes */
-        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-    }
     
-    /* Headers & Buttons */
     .uta-page-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem; }
     .uta-breadcrumb { font-size: 0.75rem; color: #888; margin-bottom: 0.35rem; font-weight: 500; }
     .uta-breadcrumb__sep { margin: 0 0.35rem; }
@@ -253,7 +247,6 @@
     .uta-btn--outline:hover { background: #fdf5f7; }
     .uta-btn--sm { padding: 0.4rem 0.85rem; font-size: 0.78rem; }
 
-    /* Cards & Search */
     .uta-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #e9ecef; overflow: hidden; }
     .uta-card__header { background: #6B1A33; color: #fff; padding: 1rem 1.5rem; display: flex; align-items: center; font-size: 0.9rem; font-weight: 600; }
     .uta-card__header-icon { margin-right: 0.5rem; font-size: 1.1rem; }
@@ -264,7 +257,6 @@
     .uta-search-bar__input  { flex:1; border:none; padding:0.6rem 1rem; outline:none; font-size:0.9rem; }
     .uta-search-bar__btn { border-radius: 0 !important; margin: 0 !important; padding: 0.6rem 1.5rem !important; height: 100%; }
 
-    /* Tables */
     .uta-table-wrap { overflow-x: auto; }
     .uta-table-wrap--bordered { border: 1px solid #e9ecef; border-radius: 8px; }
     .uta-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
@@ -274,14 +266,12 @@
     .uta-table__bold { font-weight: 600; color: #212529 !important; }
     .uta-code-badge { font-family: monospace; font-size: 0.85rem; background: #f1f3f5; padding: 0.2rem 0.5rem; border-radius: 6px; font-weight: 600; }
 
-    /* Empty State */
     .uta-table__empty { text-align: center; padding: 3rem !important; }
     .uta-empty-state { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
     .uta-empty-state__icon { font-size: 2.5rem; color: #ced4da; margin-bottom: 0.5rem; }
     .uta-empty-state__text { font-size: 0.95rem; font-weight: 600; color: #6c757d; }
     .uta-empty-state__sub  { font-size: 0.8rem; color: #adb5bd; }
 
-    /* Modals */
     .uta-overlay { position:fixed; inset:0; z-index:1000; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; padding:1.5rem; backdrop-filter: blur(3px); }
     .uta-modal { background:#fff; border-radius:14px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25); width:100%; max-height:90vh; display:flex; flex-direction:column; overflow:hidden; }
     .uta-modal--lg { max-width: 750px; }
@@ -292,14 +282,6 @@
     .uta-modal__body   { padding:1.5rem; overflow-y:auto; flex:1; }
     .uta-modal__footer { display:flex; align-items:center; justify-content:space-between; padding:1rem 1.5rem; background:#f8f9fa; border-top:1px solid #e9ecef; }
 
-    /* PRINT STYLES */
-    @@media print { 
-        body * { visibility: hidden; }
-        #area-impresion, #area-impresion * { visibility: visible; }
-        #area-impresion { position: absolute; left: 0; top: 0; width: 100%; padding: 0 !important; }
-        .d-print-none { display: none !important; }
-    }
-    /* RESPONSIVE PARA MÓVILES */
     @@media (max-width: 768px)  { 
         .uta-search-bar { flex-direction: column; border: none; background: transparent; box-shadow: none; gap: 0.5rem; }
         .uta-search-bar__select, .uta-search-bar__input, .uta-search-bar__btn { width: 100%; border: 1px solid #ced4da; border-radius: 8px !important; }
@@ -312,9 +294,16 @@
     private string _terminoBusqueda = "";
     private string _criterioBusqueda = "numero";
     private SaleResponseDto? _facturaSeleccionada;
+    
+    private bool _esDescargaDirecta = false;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync() {}
+
+    private void CambioCriterioFacturas(ChangeEventArgs e)
     {
+        _criterioBusqueda = e.Value?.ToString() ?? "numero";
+        _terminoBusqueda = ""; 
+        _facturas.Clear(); 
     }
 
     private async Task PresionoEnter(KeyboardEventArgs e)
@@ -328,18 +317,48 @@
         _facturas = await ApiService.SearchSalesAsync(_terminoBusqueda, _criterioBusqueda);
     }
 
+    // 1. Abre el modal para solo leer
     private void VerDetalle(SaleResponseDto factura)
     {
+        _esDescargaDirecta = false;
         _facturaSeleccionada = factura;
+    }
+
+    // 2. Invoca la librería JS para descargar sin preguntar
+    private async Task DescargarDirecto(SaleResponseDto factura)
+    {
+        _esDescargaDirecta = true;
+        _facturaSeleccionada = factura;
+        
+        // Renderizamos los datos de la factura en el DOM
+        StateHasChanged();
+        await Task.Delay(200); // Esperamos un milisegundo a que el HTML esté listo
+
+        string fechaSegura = _facturaSeleccionada.IssueDate.Replace(" ", "_").Replace(":", "-").Replace("/", "-");
+        string nombreDocumento = $"{_facturaSeleccionada.InvoiceNumber}_{fechaSegura}.pdf";
+
+        // Aquí usamos la librería html2pdf que pusimos en index.html
+        await JS.InvokeVoidAsync("eval", $@"
+            var element = document.getElementById('area-impresion');
+            var opt = {{
+              margin:       [10, 10, 10, 10],
+              filename:     '{nombreDocumento}',
+              image:        {{ type: 'jpeg', quality: 0.98 }},
+              html2canvas:  {{ scale: 2, useCORS: true }},
+              jsPDF:        {{ unit: 'mm', format: 'a4', orientation: 'portrait' }}
+            }};
+            
+            // Crea el PDF, lo descarga y luego hace clic automático en 'Cerrar'
+            html2pdf().set(opt).from(element).save().then(function() {{
+                var btnCerrar = document.getElementById('btn-cerrar-modal');
+                if (btnCerrar) btnCerrar.click();
+            }});
+        ");
     }
 
     private void CerrarModal()
     {
         _facturaSeleccionada = null;
-    }
-
-    private async Task ImprimirFactura()
-    {
-        await JS.InvokeVoidAsync("window.print");
+        _esDescargaDirecta = false;
     }
 }
