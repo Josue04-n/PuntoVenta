@@ -41,8 +41,9 @@ public class SaleRepository : ISaleRepository
 
         //ñvar query = _context.Sales
         IQueryable<Sale> query = _context.Sales
-            .Include(s => s.Details)
             .Include(s => s.Customer)
+            .Include(s => s.Details)
+                .ThenInclude(d => d.Product)
             .AsNoTracking();
 
         if (searchBy == "numero")
@@ -50,6 +51,7 @@ public class SaleRepository : ISaleRepository
             return await query
                 .Where(s => s.InvoiceNumber.ToLower().Contains(term))
                 .OrderByDescending(s => s.IssueDate)
+                .Take(30)
                 .ToListAsync();
         }
         if (searchBy == "cliente")
@@ -62,6 +64,7 @@ public class SaleRepository : ISaleRepository
             return await query
                 .Where(s => customerIds.Contains(s.CustomerId))
                 .OrderByDescending(s => s.IssueDate)
+                .Take(30)   
                 .ToListAsync();
         }
         return Enumerable.Empty<Sale>();

@@ -43,9 +43,10 @@ public class AppDbContext : DbContext
             .OnDelete(DeleteBehavior.Cascade); 
 
         modelBuilder.Entity<SaleDetail>()
-            .HasOne<Product>()
+            .HasOne(sd => sd.Product)
             .WithMany()
-            .HasForeignKey(vd => vd.ProductId)
+            .HasForeignKey(sd => sd.ProductId)
+            .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
 
     }

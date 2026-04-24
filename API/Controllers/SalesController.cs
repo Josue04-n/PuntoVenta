@@ -1,6 +1,7 @@
 ﻿using Application.DTOs;
 using Application.UseCases;
 using Microsoft.AspNetCore.Mvc;
+using static Application.DTOs.SaleResponseDto;
 
 namespace API.Controllers;
 
@@ -42,9 +43,21 @@ public class SalesController : ControllerBase
             InvoiceNumber = s.InvoiceNumber,
             IssueDate = s.IssueDate.ToString("yyyy-MM-dd HH:mm:ss"),
             CustomerName = s.Customer != null ? $"{s.Customer.Name} {s.Customer.LastName}" : "Consumidor Final",
+            CustomerIDCard = s.Customer != null ? s.Customer.IDCard : string.Empty,
+            CustomerPhone = s.Customer != null ? s.Customer.Phone : string.Empty,
+            CustomerAddress = s.Customer != null ? s.Customer.Address : string.Empty,
+            CustomerEmail = s.Customer != null ? s.Customer.Email : string.Empty,
             SubTotal = s.SubTotal,
             VatAmount = s.VatAmount,
-            Total = s.Total
+            Total = s.Total,
+            Details = s.Details.Select(d => new SaleDetailResponseDto
+            {
+                ProductId = d.ProductId,
+                ProductName = d.Product.Name,
+                Amount = d.Amount,
+                UnitPrice = d.UnitPrice.Worth, 
+                SubTotal = d.SubTotal
+            }).ToList()
         });
 
         return Ok(response);

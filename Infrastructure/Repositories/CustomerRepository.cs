@@ -34,7 +34,7 @@ public class CustomerRepository : ICustomerRepository
                 return await _context.Customers
                  .AsNoTracking()
                  .Where(c => c.Id == idSearch)
-                 .Take(1)
+                 .Take(1) 
                  .ToListAsync();
             }
             return Enumerable.Empty<Customer>();
@@ -44,8 +44,8 @@ public class CustomerRepository : ICustomerRepository
         {
             return await _context.Customers
              .AsNoTracking()
-             .Where(c => c.IDCard == term)
-             .Take(1)
+             .Where(c => c.IDCard.Contains(term))
+             .Take(30) 
              .ToListAsync();
         }
 
@@ -54,7 +54,8 @@ public class CustomerRepository : ICustomerRepository
             .Where(c =>
                 c.Name.ToLower().Contains(term) ||
                 c.LastName.ToLower().Contains(term))
-            .Take(15)
+            .OrderBy(c => c.LastName)
+            .Take(30) 
             .ToListAsync();
     }
 }

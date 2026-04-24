@@ -9,7 +9,8 @@ public class SaleDetail
     public int ProductId { get; private set; }
     public int Amount { get; private set; }
     public Price UnitPrice { get; private set; }
-
+    public virtual Product Product { get; set; }
+    [ForeignKey("ProductId")]
     public Price SubTotal => UnitPrice * Amount;
 
     private SaleDetail(){}
@@ -40,16 +41,6 @@ public class Sale
     public decimal SubTotal => _details.Sum(d => d.SubTotal.Worth);
     public decimal VatAmount => SubTotal * Vat;
     public decimal Total => SubTotal + VatAmount;
-
-    public Sale()
-    {
-        
-    }
-
-    public Sale(int customerId)
-    {
-        CustomerId = customerId;
-    }
 
     public Sale(string invoiceNumber, int customerId)
     {
