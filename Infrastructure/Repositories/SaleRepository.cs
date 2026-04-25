@@ -46,6 +46,14 @@ public class SaleRepository : ISaleRepository
                 .ThenInclude(d => d.Product)
             .AsNoTracking();
 
+        if (searchBy == "recientes")
+        {
+            return await query
+                .OrderByDescending(s => s.IssueDate)
+                .Take(50)
+                .ToListAsync();
+        }
+
         if (searchBy == "numero")
         {
             return await query

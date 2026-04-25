@@ -42,7 +42,8 @@
                     <option value="cliente">Nombre del Cliente</option>
                 </select>
                 <input class="uta-search-bar__input" type="text" @bind="_terminoBusqueda" @bind:event="oninput"
-                       @onkeyup="PresionoEnter" placeholder="Ej: FAC-0000009..." autofocus />
+                       @onkeyup="PresionoEnter" autofocus 
+                       onkeypress="@(GetOnKeyPressHandler(_criterioBusqueda))" />
                 <button class="uta-btn uta-btn--primary uta-search-bar__btn" @onclick="BuscarFacturas">
                     Buscar
                 </button>
@@ -74,7 +75,7 @@
                                 </td>
                             </tr>
                         }
-                        @foreach (var f in _facturas)
+                        @foreach (var f in FacturasPaginadas)
                         {
                             <tr>
                                 <td><span class="uta-code-badge text-custom-primary">@f.InvoiceNumber</span></td>
@@ -98,6 +99,15 @@
                     </tbody>
                 </table>
             </div>
+
+            @if (TotalPaginas > 1)
+            {
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding: 0 0.5rem;">
+                    <button class="uta-btn uta-btn--outline uta-btn--sm" @onclick="PaginaAnterior" disabled="@(_paginaActual == 1)">‹ Anterior</button>
+                    <span style="font-size: 0.85rem; font-weight: 600; color: #6B1A33;">Página @_paginaActual de @TotalPaginas</span>
+                    <button class="uta-btn uta-btn--outline uta-btn--sm" @onclick="PaginaSiguiente" disabled="@(_paginaActual == TotalPaginas)">Siguiente ›</button>
+                </div>
+            }
         </div>
     </div>
 </div>
@@ -165,8 +175,8 @@
 
                 <div style="border: 1px solid #e0e0e0; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.85rem;">
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                        <div><strong>Razón Social:</strong> @_facturaSeleccionada.CustomerName</div>
-                        <div><strong>Identificación (C.I/RUC):</strong> @_facturaSeleccionada.CustomerIDCard</div>
+                        <div><strong>Cliente:</strong> @_facturaSeleccionada.CustomerName</div>
+                        <div><strong>Identificación:</strong> @_facturaSeleccionada.CustomerIDCard</div>
                         <div><strong>Fecha Emisión:</strong> @_facturaSeleccionada.IssueDate</div>
                         <div><strong>Teléfono:</strong> @_facturaSeleccionada.CustomerPhone</div>
                         <div style="grid-column: span 2;"><strong>Dirección:</strong> @_facturaSeleccionada.CustomerAddress</div>
@@ -213,7 +223,7 @@
                                 <tr style="background: #f8f9fa;">
                                     <td style="border: 1px solid #333; padding: 0.6rem; font-weight: 800; color: #6B1A33; font-size: 1rem;">VALOR TOTAL</td>
                                     <td style="border: 1px solid #333; padding: 0.6rem; text-align: right; font-weight: 800; font-size: 1.1rem; color: #6B1A33;">$ @_facturaSeleccionada.Total.ToString("N2")</td>
-                                </tr>
+                                </tr>>
                             </tbody>
                         </table>
                     </div>
@@ -297,13 +307,45 @@
     
     private bool _esDescargaDirecta = false;
 
+    [SupplyParameterFromQuery(Name = "numeroFactura")]
+    public string? NumeroFacturaQuery { get; set; }
+
+    private int _itemsPorPagina = 5;
+    private int _paginaActual = 1;
+    private int TotalPaginas => (int)Math.Ceiling(_facturas.Count / (double)_itemsPorPagina);
+    private IEnumerable<SaleResponseDto> FacturasPaginadas => _facturas.Skip((_paginaActual - 1) * _itemsPorPagina).Take(_itemsPorPagina);
+
+    private void PaginaAnterior() { if (_paginaActual > 1) _paginaActual--; }
+    private void PaginaSiguiente() { if (_paginaActual < TotalPaginas) _paginaActual++; }
+
     protected override async Task OnInitializedAsync() {}
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(NumeroFacturaQuery) && _terminoBusqueda != NumeroFacturaQuery)
+        {
+            _criterioBusqueda = "numero";
+            _terminoBusqueda = NumeroFacturaQuery;
+            await BuscarFacturas();
+        }
+    }
 
     private void CambioCriterioFacturas(ChangeEventArgs e)
     {
         _criterioBusqueda = e.Value?.ToString() ?? "numero";
         _terminoBusqueda = ""; 
         _facturas.Clear(); 
+        _paginaActual = 1;
+    }
+
+    private string GetOnKeyPressHandler(string criterio)
+    {
+        if (criterio == "cliente")
+        {
+            // Solo letras y espacios
+            return "return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode == 32 || event.charCode == 209 || event.charCode == 241 || event.charCode == 193 || event.charCode == 201 || event.charCode == 205 || event.charCode == 211 || event.charCode == 218 || event.charCode == 225 || event.charCode == 233 || event.charCode == 237 || event.charCode == 243 || event.charCode == 250";
+        }
+        return "";
     }
 
     private async Task PresionoEnter(KeyboardEventArgs e)
@@ -315,6 +357,7 @@
     {
         if (string.IsNullOrWhiteSpace(_terminoBusqueda)) return;
         _facturas = await ApiService.SearchSalesAsync(_terminoBusqueda, _criterioBusqueda);
+        _paginaActual = 1;
     }
 
     // 1. Abre el modal para solo leer

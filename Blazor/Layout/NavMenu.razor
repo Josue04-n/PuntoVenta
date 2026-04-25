@@ -1,41 +1,134 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿<div class="top-row ps-3 navbar navbar-dark uta-brand-header">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">Blazor</a>
+        <a class="navbar-brand uta-brand-text" href="">
+            <span class="uta-brand-icon">🛍️</span> MI NEGOCIO
+        </a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
     </div>
 </div>
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-    <nav class="nav flex-column">
+<div class="@NavMenuCssClass nav-scrollable uta-sidebar-menu" @onclick="ToggleNavMenu">
+    <nav class="nav flex-column uta-nav">
+        
+        <div class="uta-nav-section">PRINCIPAL</div>
+
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+            <NavLink class="nav-link uta-nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Panel de Control
             </NavLink>
         </div>
+
+        <div class="uta-nav-section">OPERACIONES</div>
+
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
+            <NavLink class="nav-link uta-nav-link" href="ventas">
+                <span class="bi bi-cart-fill-nav-menu" aria-hidden="true"></span> Punto de Venta
             </NavLink>
         </div>
+        
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
+            <NavLink class="nav-link uta-nav-link" href="facturas">
+                <span class="bi bi-file-earmark-text-fill-nav-menu" aria-hidden="true"></span> Facturación
             </NavLink>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="ventas">
-                <span class="bi bi-cart-fill-nav-menu" aria-hidden="true"></span> Ventas
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="facturas">
-                <span class="bi bi-file-earmark-text-fill-nav-menu" aria-hidden="true"></span> Facturas
-            </NavLink>
-        </div>
+
     </nav>
 </div>
+
+<style>
+    /* ==========================================================
+       UTA DESIGN SYSTEM - Menú Lateral Premium (Degradado)
+       ========================================================== */
+    
+    /* 1. Fondo con Degradado Dinámico y Profundidad */
+    .sidebar {
+        /* Un degradado diagonal a 145 grados, desde un vino claro hasta un rojo muy oscuro */
+        background: linear-gradient(145deg, #8b2342 0%, #6B1A33 45%, #3a0d1b 100%) !important; 
+        border-right: 1px solid rgba(0,0,0,0.3);
+        box-shadow: inset -2px 0 10px rgba(0,0,0,0.15); /* Sombra interna para dar volumen */
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* 2. Cabecera del Logo (Efecto Cristal oscuro) */
+    .uta-brand-header {
+        background: rgba(0, 0, 0, 0.2) !important;
+        backdrop-filter: blur(5px);
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .uta-brand-text {
+        font-weight: 800 !important;
+        font-size: 1.15rem !important;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3); /* Hace que el texto resalte sobre el degradado */
+    }
+    .uta-brand-icon {
+        font-size: 1.4rem;
+        filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4));
+    }
+
+    /* 3. Títulos de las Secciones */
+    .uta-nav {
+        padding-top: 1.5rem;
+    }
+    .uta-nav-section {
+        color: rgba(255,255,255,0.45);
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        padding: 1rem 2rem 0.5rem;
+        text-transform: uppercase;
+    }
+
+    /* 4. Botones Inactivos (Con Micro-interacción) */
+    .uta-nav-link {
+        color: rgba(255,255,255,0.75) !important;
+        border-radius: 10px;
+        margin: 0.3rem 1rem;
+        padding: 0.75rem 1rem !important;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Transición súper suave */
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border: 1px solid transparent;
+    }
+    
+    .uta-nav-link:hover:not(.active) {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        color: #ffffff !important;
+        transform: translateX(4px); /* Se mueve ligeramente a la derecha al pasar el mouse */
+    }
+
+    /* 5. El estado Activo (Botón Blanco que "salta" a la vista) */
+    .uta-nav-link.active {
+        background: linear-gradient(145deg, #ffffff 0%, #f4f6f9 100%) !important;
+        color: #6B1A33 !important;
+        font-weight: 700;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+        transform: translateX(6px); /* Destaca empujándose más a la derecha */
+        border: 1px solid rgba(255,255,255,0.8);
+    }
+
+    /* 6. Ajuste de los Iconos */
+    .uta-nav-link .bi {
+        font-size: 1.15rem;
+        margin: 0 !important;
+        color: inherit;
+        transition: transform 0.3s ease;
+    }
+    
+    .uta-nav-link:hover .bi {
+        transform: scale(1.1); /* El icono crece un poquito al hacer hover */
+    }
+</style>
 
 @code {
     private bool collapseNavMenu = true;
