@@ -15,6 +15,9 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<Product>()
+        .ToTable(tb => tb.HasTrigger("TR_PreventNegativeStockAndPrice"));
+
         modelBuilder.HasSequence<int>("InvoiceSequence")
                     .StartsAt(1)
                     .IncrementsBy(1);
@@ -50,4 +53,5 @@ public class AppDbContext : DbContext
             .OnDelete(DeleteBehavior.Restrict);
 
     }
+
 }

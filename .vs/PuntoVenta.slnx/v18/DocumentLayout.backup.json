@@ -3,12 +3,40 @@
   "WorkspaceRootPath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\blazor\\pages\\sales.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|solutionrelative:blazor\\pages\\sales.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5872AEB3-BAA3-FE31-B0EB-0FB6DBEDCF83}|Infrastructure\\Infrastructure.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\infrastructure\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5872AEB3-BAA3-FE31-B0EB-0FB6DBEDCF83}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\blazor\\pages\\invoices.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|solutionrelative:blazor\\pages\\invoices.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\blazor\\pages\\sales.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|solutionrelative:blazor\\pages\\sales.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\blazor\\wwwroot\\index.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|solutionrelative:blazor\\wwwroot\\index.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\blazor\\wwwroot\\icon-192.png||{177559E0-D141-11D0-92DF-00A0C9138C45}",
+      "RelativeMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|solutionrelative:blazor\\wwwroot\\icon-192.png||{177559E0-D141-11D0-92DF-00A0C9138C45}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\blazor\\wwwroot\\favicon.png||{177559E0-D141-11D0-92DF-00A0C9138C45}",
+      "RelativeMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|solutionrelative:blazor\\wwwroot\\favicon.png||{177559E0-D141-11D0-92DF-00A0C9138C45}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\blazor\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|solutionrelative:blazor\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E528BBC3-1C26-8C35-F682-23718816ADCD}|Domain\\Domain.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\domain\\entities\\sale.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E528BBC3-1C26-8C35-F682-23718816ADCD}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\sale.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\blazor\\layout\\mainlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|solutionrelative:blazor\\layout\\mainlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -31,28 +59,111 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "AppDbContext.cs",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Infrastructure\\Data\\AppDbContext.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Data\\AppDbContext.cs",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Infrastructure\\Data\\AppDbContext.cs",
+              "RelativeToolTip": "Infrastructure\\Data\\AppDbContext.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAA5wBIAAABJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-27T21:52:20.743Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
               "Title": "Sales.razor",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Sales.razor",
               "RelativeDocumentMoniker": "Blazor\\Pages\\Sales.razor",
               "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Sales.razor",
               "RelativeToolTip": "Blazor\\Pages\\Sales.razor",
-              "ViewState": "AgIAAHkBAAAAAAAAAAAcwH8BAAAgAAAAAAAAAA==",
+              "ViewState": "AgIAAKwAAAAAAAAAAAAwwMMAAAA5AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-23T04:18:29.975Z",
+              "WhenOpened": "2026-04-27T21:19:55.139Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "Invoices.razor",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Invoices.razor",
               "RelativeDocumentMoniker": "Blazor\\Pages\\Invoices.razor",
               "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Invoices.razor",
               "RelativeToolTip": "Blazor\\Pages\\Invoices.razor",
-              "ViewState": "AgIAADQAAAAAAAAAAAAcwDwAAAA1AAAAAAAAAA==",
+              "ViewState": "AgIAABIAAAAAAAAAAAAcwBgAAABjAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-24T02:04:51.145Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-27T21:06:59.551Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "index.html",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\wwwroot\\index.html",
+              "RelativeDocumentMoniker": "Blazor\\wwwroot\\index.html",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\wwwroot\\index.html",
+              "RelativeToolTip": "Blazor\\wwwroot\\index.html",
+              "ViewState": "AgIAABoAAAAAAAAAAAAwwCQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-04-27T21:01:57.853Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "icon-192.png -  [Espa\u00F1ol (Espa\u00F1a, alfabetizaci\u00F3n internacional)] - PNG [192x192, 8 bits, PNG]",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\wwwroot\\icon-192.png",
+              "RelativeDocumentMoniker": "Blazor\\wwwroot\\icon-192.png",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\wwwroot\\icon-192.png -  [Espa\u00F1ol (Espa\u00F1a, alfabetizaci\u00F3n internacional)] - PNG [192x192, 8 bits, PNG]",
+              "RelativeToolTip": "Blazor\\wwwroot\\icon-192.png -  [Espa\u00F1ol (Espa\u00F1a, alfabetizaci\u00F3n internacional)] - PNG [192x192, 8 bits, PNG]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001533|",
+              "WhenOpened": "2026-04-27T21:01:46.684Z",
+              "EditorCaption": " -  [Espa\u00F1ol (Espa\u00F1a, alfabetizaci\u00F3n internacional)] - PNG [192x192, 8 bits, PNG]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "favicon.png -  [Espa\u00F1ol (Espa\u00F1a, alfabetizaci\u00F3n internacional)] - PNG [32x32, 32 bits, PNG]",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\wwwroot\\favicon.png",
+              "RelativeDocumentMoniker": "Blazor\\wwwroot\\favicon.png",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\wwwroot\\favicon.png -  [Espa\u00F1ol (Espa\u00F1a, alfabetizaci\u00F3n internacional)] - PNG [32x32, 32 bits, PNG]",
+              "RelativeToolTip": "Blazor\\wwwroot\\favicon.png -  [Espa\u00F1ol (Espa\u00F1a, alfabetizaci\u00F3n internacional)] - PNG [32x32, 32 bits, PNG]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001533|",
+              "WhenOpened": "2026-04-27T21:01:38.647Z",
+              "EditorCaption": " -  [Espa\u00F1ol (Espa\u00F1a, alfabetizaci\u00F3n internacional)] - PNG [32x32, 32 bits, PNG]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Sale.cs",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Domain\\Entities\\Sale.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\Sale.cs",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Domain\\Entities\\Sale.cs",
+              "RelativeToolTip": "Domain\\Entities\\Sale.cs",
+              "ViewState": "AgIAACIAAAAAAAAAAAAiwDIAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-26T20:47:59.848Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "MainLayout.razor",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Layout\\MainLayout.razor",
+              "RelativeDocumentMoniker": "Blazor\\Layout\\MainLayout.razor",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Layout\\MainLayout.razor",
+              "RelativeToolTip": "Blazor\\Layout\\MainLayout.razor",
+              "ViewState": "AgIAAJwAAAAAAAAAAAAAAKIAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-04-26T20:45:26.392Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Home.razor",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Home.razor",
+              "RelativeDocumentMoniker": "Blazor\\Pages\\Home.razor",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Home.razor",
+              "RelativeToolTip": "Blazor\\Pages\\Home.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAGQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-04-26T20:44:46.988Z"
             }
           ]
         }

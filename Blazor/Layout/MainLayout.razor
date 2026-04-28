@@ -1,16 +1,177 @@
 ﻿@inherits LayoutComponentBase
-<div class="page">
-    <div class="sidebar">
+@using System.Timers
+@implements IDisposable
+
+<div class="page uta-layout">
+    <div class="sidebar uta-sidebar">
         <NavMenu />
     </div>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
+    <main class="uta-main">
+        <header class="uta-top-bar">
+            <div class="uta-top-bar__left">
+                <div class="uta-status-pill" title="Conexión estable con el servidor">
+                    <span class="uta-status-dot uta-status-dot--pulse"></span>
+                    <span class="uta-status-text">Sistema En Línea</span>
+                </div>
+            </div>
 
-        <article class="content px-4">
+            <div class="uta-top-bar__right">
+                <div class="uta-clock-pill">
+                    <i class="bi bi-clock text-primary"></i>
+                    <span class="uta-clock-time">@_currentTime</span>
+                </div>
+
+                <button class="uta-icon-btn uta-notification-btn" title="Notificaciones">
+                    <i class="bi bi-bell"></i>
+                    <span class="uta-notification-badge">3</span>
+                </button>
+
+                <div class="uta-divider-vertical"></div>
+
+                <div class="uta-user-menu">
+                    <div class="uta-user-avatar">
+                        UD
+                    </div>
+                    <div class="uta-user-info">
+                        <span class="uta-user-name">Usuario Demo</span>
+                        <span class="uta-user-role">Administrador</span>
+                    </div>
+                    <i class="bi bi-chevron-down uta-user-chevron"></i>
+                </div>
+            </div>
+        </header>
+
+        <article class="uta-content">
             @Body
         </article>
     </main>
 </div>
+
+<style>
+    /* ====================================================
+       UTA DESIGN SYSTEM — Main Layout & Top Bar
+       ==================================================== */
+    .uta-layout { display: flex; min-height: 100vh; background-color: #f4f6f9; font-family: 'Inter', sans-serif; }
+    .uta-sidebar { width: 260px; flex-shrink: 0; z-index: 100; }
+    .uta-main { flex: 1; display: flex; flex-direction: column; overflow-x: hidden; }
+    .uta-content { flex: 1; padding: 2rem !important; }
+
+    /* Barra Superior */
+    .uta-top-bar { 
+        background-color: #ffffff;
+        height: 70px;
+        padding: 0 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+    }
+
+    .uta-top-bar__left { display: flex; align-items: center; }
+    .uta-top-bar__right { display: flex; align-items: center; gap: 1.2rem; }
+
+    /* Status Pill (Latido Verde) */
+    .uta-status-pill {
+        display: flex; align-items: center; gap: 0.5rem;
+        background-color: #f0fdf4; border: 1px solid #dcfce7;
+        padding: 0.4rem 0.8rem; border-radius: 20px;
+        cursor: default;
+    }
+    .uta-status-text { font-size: 0.75rem; font-weight: 700; color: #166534; text-transform: uppercase; letter-spacing: 0.5px; }
+    
+    .uta-status-dot { width: 8px; height: 8px; background-color: #22c55e; border-radius: 50%; display: inline-block; }
+    .uta-status-dot--pulse { animation: pulse-green 2s infinite; }
+    @@keyframes pulse-green {
+        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+        70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+
+    /* Clock Pill */
+    .uta-clock-pill {
+        display: flex; align-items: center; gap: 0.5rem;
+        background-color: #f8f9fa; border: 1px solid #e9ecef;
+        padding: 0.45rem 1rem; border-radius: 8px;
+    }
+    .uta-clock-time { font-weight: 700; font-size: 0.9rem; color: #495057; font-variant-numeric: tabular-nums; letter-spacing: 0.5px; }
+    .text-primary { color: #3b82f6 !important; }
+
+    /* Notifications */
+    .uta-icon-btn {
+        background: transparent; border: none; color: #6c757d;
+        width: 40px; height: 40px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem; cursor: pointer; transition: all 0.2s ease;
+        position: relative;
+    }
+    .uta-icon-btn:hover { background-color: #f8f9fa; color: #212529; }
+    .uta-notification-badge {
+        position: absolute; top: 6px; right: 8px;
+        background-color: #ef4444; color: white;
+        font-size: 0.65rem; font-weight: 800;
+        width: 16px; height: 16px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        border: 2px solid #ffffff;
+    }
+
+    .uta-divider-vertical { width: 1px; height: 30px; background-color: #e9ecef; }
+
+    /* User Menu */
+    .uta-user-menu {
+        display: flex; align-items: center; gap: 0.8rem;
+        padding: 0.4rem 0.6rem 0.4rem 0.4rem; border-radius: 8px;
+        cursor: pointer; transition: background-color 0.2s ease;
+    }
+    .uta-user-menu:hover { background-color: #f8f9fa; }
+    
+    .uta-user-avatar {
+        width: 38px; height: 38px; border-radius: 10px;
+        background: linear-gradient(135deg, #8A1538, #6B1A33); color: #fff;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.9rem; font-weight: 700; letter-spacing: 1px;
+        box-shadow: 0 2px 4px rgba(107, 26, 51, 0.2);
+    }
+    
+    .uta-user-info { display: flex; flex-direction: column; text-align: left; }
+    .uta-user-name { font-size: 0.85rem; font-weight: 700; color: #212529; line-height: 1.2; }
+    .uta-user-role { font-size: 0.7rem; font-weight: 600; color: #6c757d; }
+    
+    .uta-user-chevron { font-size: 0.7rem; color: #adb5bd; margin-left: 0.2rem; transition: transform 0.2s ease; }
+    .uta-user-menu:hover .uta-user-chevron { color: #495057; transform: translateY(2px); }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .uta-sidebar { display: none; }
+        .uta-user-info, .uta-clock-pill { display: none; }
+        .uta-top-bar { padding: 0 1rem; }
+        .uta-content { padding: 1rem !important; }
+    }
+</style>
+
+@code {
+    private string _currentTime = DateTime.Now.ToString("HH:mm:ss");
+    private Timer? _timer;
+
+    protected override void OnInitialized()
+    {
+        _timer = new Timer(1000);
+        _timer.Elapsed += UpdateClock;
+        _timer.AutoReset = true;
+        _timer.Enabled = true;
+    }
+
+    private void UpdateClock(object? sender, ElapsedEventArgs e)
+    {
+        _currentTime = DateTime.Now.ToString("HH:mm:ss");
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
+    }
+}

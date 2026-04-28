@@ -1,0 +1,157 @@
+﻿<div class="top-row ps-3 navbar navbar-dark uta-brand-header">
+    <div class="container-fluid">
+        <a class="navbar-brand uta-brand-text" href="">
+            <span class="uta-brand-icon">🛍️</span> MI NEGOCIO
+        </a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass nav-scrollable uta-sidebar-menu" @onclick="ToggleNavMenu">
+    <nav class="nav flex-column uta-nav">
+        
+        @foreach (var grupo in _menuOptions.GroupBy(m => m.Section))
+        {
+            <div class="uta-nav-section">@grupo.Key</div>
+            
+            @foreach (var item in grupo)
+            {
+                <div class="nav-item">
+                    <NavLink class="nav-link uta-nav-link" href="@item.Url" Match="@item.Match">
+                        <div class="uta-menu-icon">
+                            <i class="@item.Icon"></i>
+                        </div>
+                        <div class="uta-menu-text">@item.Title</div>
+                    </NavLink>
+                </div>
+            }
+        }
+
+    </nav>
+</div>
+
+<style>
+    /* ==========================================================
+       UTA DESIGN SYSTEM - Menú Lateral Premium 
+       ========================================================== */
+    
+    .sidebar {
+        background: linear-gradient(145deg, #8b2342 0%, #6B1A33 45%, #3a0d1b 100%) !important; 
+        border-right: 1px solid rgba(0,0,0,0.3);
+        box-shadow: inset -2px 0 10px rgba(0,0,0,0.15);
+        font-family: 'Inter', sans-serif;
+    }
+
+    .uta-brand-header {
+        background: rgba(0, 0, 0, 0.2) !important;
+        backdrop-filter: blur(5px);
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .uta-brand-text {
+        font-weight: 800 !important;
+        font-size: 1.15rem !important;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .uta-brand-icon {
+        font-size: 1.4rem;
+        filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4));
+    }
+
+    .uta-nav {
+        padding-top: 1.5rem;
+    }
+    .uta-nav-section {
+        color: rgba(255,255,255,0.45);
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        padding: 1rem 2rem 0.5rem;
+        text-transform: uppercase;
+    }
+
+    /* ENLACES PERFECTAMENTE ALINEADOS */
+    .uta-nav-link {
+        color: rgba(255,255,255,0.75) !important;
+        border-radius: 10px;
+        margin: 0.3rem 1rem;
+        padding: 0.75rem 1rem !important;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center; /* Centrado vertical estricto */
+        justify-content: flex-start;
+        gap: 12px;
+        border: 1px solid transparent;
+        text-decoration: none;
+    }
+    
+    .uta-nav-link:hover:not(.active) {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        color: #ffffff !important;
+        transform: translateX(4px);
+    }
+
+    /* ESTADO ACTIVO (Botón blanco) */
+    .uta-nav-link.active {
+        background: linear-gradient(145deg, #ffffff 0%, #f4f6f9 100%) !important;
+        color: #6B1A33 !important;
+        font-weight: 700;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+        transform: translateX(6px);
+        border: 1px solid rgba(255,255,255,0.8);
+    }
+
+    /* ICONO FIJO PARA QUE EL TEXTO NO BAILE */
+    .uta-menu-icon {
+        font-size: 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px; /* Ancho fijo clave para la alineación */
+        transition: transform 0.3s ease;
+    }
+    
+    .uta-menu-text {
+        margin-top: 1px; /* Ajuste óptico fino */
+    }
+
+    .uta-nav-link:hover .uta-menu-icon {
+        transform: scale(1.1);
+    }
+</style>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+    private class MenuOption
+    {
+        public string Title { get; set; } = string.Empty;
+        public string Icon { get; set; } = string.Empty;
+        public string Url { get; set; } = string.Empty;
+        public string Section { get; set; } = string.Empty;
+        public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
+    }
+
+    private List<MenuOption> _menuOptions = new()
+    {
+        new MenuOption { Section = "PRINCIPAL", Title = "Panel de Control", Icon = "bi bi-house-door", Url = "", Match = NavLinkMatch.All },
+        
+        new MenuOption { Section = "OPERACIONES", Title = "Punto de Venta", Icon = "bi bi-cart3", Url = "ventas" },
+        new MenuOption { Section = "OPERACIONES", Title = "Facturación", Icon = "bi bi-receipt", Url = "facturas" }
+    };
+}

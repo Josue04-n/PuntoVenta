@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using System.Globalization
 @inject NavigationManager NavManager
 
 <PageTitle>Panel de Control - MI NEGOCIO</PageTitle>
@@ -9,15 +10,15 @@
     <div class="uta-page-header">
         <div class="uta-page-header__left">
             <h1 class="uta-page-title" style="font-size: 2rem;">
-                👋 ¡Hola de nuevo!
+                <i class="bi bi-hand-wave-fill text-warning"></i> ¡Bienvenido!
             </h1>
             <p class="uta-page-subtitle" style="font-size: 1rem; margin-top: 0.3rem;">
-                Resumen de tu jornada: <strong>@DateTime.Now.ToString("dddd, dd de MMMM de yyyy")</strong>
+                Resumen de tu jornada: <strong style="text-transform: capitalize;">@DateTime.Now.ToString("dddd, dd 'de' MMMM 'de' yyyy", new CultureInfo("es-ES"))</strong>
             </p>
         </div>
         <div class="uta-page-header__right">
             <button class="uta-btn uta-btn--primary uta-btn--lg" @onclick='() => NavManager.NavigateTo("/ventas")'>
-                🛒 &nbsp;Iniciar Nueva Venta
+                <i class="bi bi-cart-plus"></i> &nbsp;Iniciar Nueva Venta
             </button>
         </div>
     </div>
@@ -25,7 +26,7 @@
     <div class="uta-dashboard-grid">
         <div class="uta-kpi-card">
             <div class="uta-kpi-card__icon" style="background-color: #fdf5f7; color: #6B1A33;">
-                💰
+                <i class="bi bi-cash-stack"></i>
             </div>
             <div class="uta-kpi-card__info">
                 <span class="uta-kpi-card__label">Ventas del Día</span>
@@ -35,7 +36,7 @@
 
         <div class="uta-kpi-card">
             <div class="uta-kpi-card__icon" style="background-color: #f0fdf4; color: #16a34a;">
-                🧾
+                <i class="bi bi-receipt"></i>
             </div>
             <div class="uta-kpi-card__info">
                 <span class="uta-kpi-card__label">Facturas Emitidas</span>
@@ -45,7 +46,7 @@
 
         <div class="uta-kpi-card">
             <div class="uta-kpi-card__icon" style="background-color: #eff6ff; color: #2563eb;">
-                📦
+                <i class="bi bi-box-seam"></i>
             </div>
             <div class="uta-kpi-card__info">
                 <span class="uta-kpi-card__label">Productos en Stock</span>
@@ -55,7 +56,7 @@
 
         <div class="uta-kpi-card">
             <div class="uta-kpi-card__icon" style="background-color: #fdf4ff; color: #c026d3;">
-                👥
+                <i class="bi bi-people-fill"></i>
             </div>
             <div class="uta-kpi-card__info">
                 <span class="uta-kpi-card__label">Clientes Registrados</span>
@@ -66,24 +67,25 @@
 
     <div class="uta-card mt-4">
         <div class="uta-card__header">
-            <span class="uta-card__header-icon">⚡</span> Accesos Rápidos
+            <span class="uta-card__header-icon"><i class="bi bi-lightning-charge-fill text-warning"></i></span> 
+            Accesos Rápidos
         </div>
         <div class="uta-card__body">
             <div class="uta-quick-actions">
                 <button class="uta-action-box" @onclick='() => NavManager.NavigateTo("/ventas")'>
-                    <div class="uta-action-box__icon">🛒</div>
+                    <div class="uta-action-box__icon"><i class="bi bi-cart3"></i></div>
                     <div class="uta-action-box__title">Punto de Venta</div>
                     <div class="uta-action-box__desc">Facturar productos a clientes</div>
                 </button>
 
                 <button class="uta-action-box" @onclick='() => NavManager.NavigateTo("/facturas")'>
-                    <div class="uta-action-box__icon">📁</div>
+                    <div class="uta-action-box__icon"><i class="bi bi-journal-text"></i></div>
                     <div class="uta-action-box__title">Historial de Facturas</div>
                     <div class="uta-action-box__desc">Consultar e imprimir comprobantes</div>
                 </button>
 
                 <button class="uta-action-box uta-action-box--disabled" title="Módulo en construcción">
-                    <div class="uta-action-box__icon">📦</div>
+                    <div class="uta-action-box__icon"><i class="bi bi-boxes"></i></div>
                     <div class="uta-action-box__title">Inventario</div>
                     <div class="uta-action-box__desc">Gestionar catálogo (Próximamente)</div>
                 </button>
@@ -92,24 +94,26 @@
     </div>
 </div>
 
+
+
+
+
+
+
 <style>
-    /* ====================================================
-       UTA DESIGN SYSTEM — Estilos del Dashboard
-       ==================================================== */
     *, *::before, *::after { box-sizing: border-box; }
     .uta-page { font-family: 'Inter', sans-serif; background: #f4f6f9; min-height: 100vh; padding: 2rem; color: #2c3e50; }
     
-    /* Headers & Buttons */
     .uta-page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-    .uta-page-title { font-weight: 800; color: #1a1a1a; margin: 0; letter-spacing: -0.5px; }
+    .uta-page-title { font-weight: 800; color: #1a1a1a; margin: 0; letter-spacing: -0.5px; display: flex; align-items: center; gap: 0.5rem; }
     .uta-page-subtitle { color: #6c757d; margin: 0; }
+    .text-warning { color: #f59e0b !important; }
     
     .uta-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.6rem 1.5rem; border-radius: 8px; border: none; font-family: 'Inter', sans-serif; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
     .uta-btn--primary { background: #6B1A33; color: #fff; box-shadow: 0 4px 6px rgba(107, 26, 51, 0.2); }
     .uta-btn--primary:hover { background: #521528; transform: translateY(-1px); box-shadow: 0 6px 12px rgba(107, 26, 51, 0.3); }
     .uta-btn--lg { font-size: 1rem; padding: 0.8rem 2rem; border-radius: 10px; }
 
-    /* Dashboard Grid (KPIs) */
     .uta-dashboard-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -162,14 +166,12 @@
         line-height: 1;
     }
 
-    /* Cards Genéricas */
     .uta-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #e9ecef; overflow: hidden; }
     .uta-card__header { background: #6B1A33; color: #fff; padding: 1rem 1.5rem; display: flex; align-items: center; font-size: 0.95rem; font-weight: 600; letter-spacing: 0.5px;}
-    .uta-card__header-icon { margin-right: 0.5rem; font-size: 1.2rem; }
+    .uta-card__header-icon { margin-right: 0.5rem; font-size: 1.1rem; display: flex; align-items: center; }
     .uta-card__body { padding: 2rem; }
     .mt-4 { margin-top: 2rem; }
 
-    /* Quick Actions */
     .uta-quick-actions {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -198,6 +200,7 @@
     .uta-action-box__icon {
         font-size: 2rem;
         margin-bottom: 1rem;
+        color: #6B1A33; 
     }
     .uta-action-box__title {
         font-size: 1.1rem;
@@ -215,8 +218,8 @@
         opacity: 0.6;
         cursor: not-allowed;
     }
+    .uta-action-box--disabled .uta-action-box__icon { color: #adb5bd; }
 
-    /* Responsive */
     @@media (max-width: 768px) {
         .uta-page-header { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
         .uta-page-header__right { width: 100%; }
