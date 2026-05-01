@@ -1,4 +1,5 @@
-﻿using Blazor.Models;
+﻿using Application.DTOs.Common;
+using Blazor.Models;
 using System.Net.Http.Json;
 
 namespace Blazor.Services;
@@ -15,11 +16,13 @@ public class PosApiService
     // 1. OBTENER CLIENTES
     public async Task<List<CustomerModel>> SearchCustomersAsync(string term, string searchBy = "cedula")
     {
-        try {
+        try
+        {
             var response = await _http.GetFromJsonAsync<List<CustomerModel>>($"api/Customer/search?term={term}&searchBy={searchBy}");
             return response ?? new List<CustomerModel>();
         }
-        catch{
+        catch
+        {
             return new List<CustomerModel>();
         }
     }
@@ -59,5 +62,32 @@ public class PosApiService
         {
             return new List<SaleResponseDto>();
         }
+    }
+
+    public async Task<PagedResponse<ProductModel>?> GetProductosPaginadosAsync(int pageNumber, int pageSize, string? term = null)
+    {
+        try
+        {
+            var url = $"api/Products/paginado?pageNumber={pageNumber}&pageSize={pageSize}";
+
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                url += $"&term={Uri.EscapeDataString(term)}";
+            }
+
+            return await _http.GetFromJsonAsync<PagedResponse<ProductModel>>(url);
+        }
+        catch { return null; }
+    }
+
+    public async Task<PagedResponse<ProductModel>?> ObtenerPaginadosAsync(int pagina, int tamaño, string? filtro = null)
+    {
+        // Construimos la URL con los parámetros para el endpoint /paginado
+        var url = $"api/Products/paginado?pageNumber={pagina}&pageSize={tamaño}";
+
+        if (!string.IsNullOrWhiteSpace(filtro))
+            url += $"&term={Uri.EscapeDataString(filtro)}";
+
+        return await _http.GetFromJsonAsync<PagedResponse<ProductModel>>(url);
     }
 }

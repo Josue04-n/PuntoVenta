@@ -1,5 +1,7 @@
 ﻿using Application.DTOs;
+using Application.DTOs.Common;
 using Application.Interfaces.Repositories;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -35,4 +37,28 @@ public class ProductsController : ControllerBase
         // ¡CORRECCIÓN AQUÍ! Devolvemos 'response', no 'results'
         return Ok(response);
     }
-}
+
+    [HttpGet("paginado")]
+    public async Task<ActionResult<PagedResponse<ProductResponseDto>>> GetPaginado(
+    [FromQuery] int pageNumber = 1,
+    [FromQuery] int pageSize = 10,
+    [FromQuery] string? term = null)
+    {
+        var resultado = await _productsRepository.ListarPaginadoAsync(pageNumber, pageSize, term);
+
+        // Mapear los productos del dominio a DTOs planos para evitar objetos ValueObjects en la respuesta
+        var itemsDto = resultado.Items.Select(p => new ProductResponseDto
+        {
+            Id = p.Id,
+            Name = p.Name,
+            UnitPrice = p.UnitPrice.Worth,
+            Stock = p.Stock
+        }).ToList();
+
+        var pagedDto = new PagedResponse<ProductResponseDto>(itemsDto, resultado.TotalCount, resultado.PageNumber, resultado.PageSize);
+
+        return Ok(pagedDto);
+    }
+
+
+    }

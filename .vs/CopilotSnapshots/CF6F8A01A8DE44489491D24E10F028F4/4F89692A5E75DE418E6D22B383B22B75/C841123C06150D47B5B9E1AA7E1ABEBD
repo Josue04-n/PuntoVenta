@@ -1,0 +1,1211 @@
+﻿@page "/ventas"
+@using Blazor.Models
+@using Blazor.Services
+@using System.Timers
+@inject PosApiService ApiService
+@inject IJSRuntime JS
+@inject NavigationManager NavManager
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+@if (!string.IsNullOrEmpty(_mensajeAlerta))
+{
+    <div class="uta-toast @(_esError ? "uta-toast--error" : "uta-toast--success")">
+        <span class="uta-toast__icon">  
+            <i class="bi @(_esError ? "bi-x-circle-fill" : "bi-check-circle-fill")"></i>
+        </span>
+        <span>@_mensajeAlerta</span>
+    </div>
+}
+
+<div class="uta-page">
+    <div class="uta-page-header">
+        <div class="uta-page-header__left">
+            <div class="uta-breadcrumb">
+                <span>Panel Principal</span>
+                <span class="uta-breadcrumb__sep">›</span>
+                <span class="uta-breadcrumb__active">Punto de Venta</span>
+            </div>
+            <h1 class="uta-page-title">
+                <i class="bi bi-cart-check text-warning uta-page-title__icon"></i>
+                Punto de Venta
+            </h1>
+            <p class="uta-page-subtitle">Registro y procesamiento de ventas al cliente</p>
+        </div>
+        <div class="uta-page-header__right d-print-none">
+            @if (!_ventaCompletada)
+            {
+                <button class="uta-btn uta-btn--primary" @onclick="FinalizarVenta" disabled="@(!PuedeFinalizar)">
+                    <i class="bi bi-check2-all"></i> &nbsp;Procesar Venta
+                </button>
+            }
+            else
+            {
+                <button class="uta-btn uta-btn--outline" @onclick="NuevaVenta">
+                    <i class="bi bi-arrow-counterclockwise"></i> &nbsp;Nueva Venta
+                </button>
+                <button class="uta-btn uta-btn--success" @onclick="VerFactura">
+                    <i class="bi bi-receipt"></i> &nbsp;Ver Factura
+                </button>
+            }
+        </div>
+    </div>
+
+    <div class="uta-stats-row">
+        <div class="uta-stat-card uta-stat-card--light">
+            <div class="uta-stat-card__icon text-primary"><i class="bi bi-box-seam"></i></div>
+            <div class="uta-stat-card__details">
+                <div class="uta-stat-card__number">@_carrito.Count</div>
+                <div class="uta-stat-card__label">Productos en Carrito</div>
+            </div>
+        </div>
+        <div class="uta-stat-card uta-stat-card--light">
+            <div class="uta-stat-card__icon text-warning"><i class="bi bi-calculator"></i></div>
+            <div class="uta-stat-card__details">
+                <div class="uta-stat-card__number">$ @SubtotalGlobal.ToString("N2")</div>
+                <div class="uta-stat-card__label">Subtotal Venta</div>
+            </div>
+        </div>
+        <div class="uta-stat-card uta-stat-card--light">
+            <div class="uta-stat-card__icon text-info"><i class="bi bi-percent"></i></div>
+            <div class="uta-stat-card__details">
+                <div class="uta-stat-card__number">$ @IvaGlobal.ToString("N2")</div>
+                <div class="uta-stat-card__label">Impuestos (IVA 15%)</div>
+            </div>
+        </div>
+        <div class="uta-stat-card uta-stat-card--dark">
+            <div class="uta-stat-card__icon"><i class="bi bi-cash-coin"></i></div>
+            <div class="uta-stat-card__details">
+                <div class="uta-stat-card__number">$ @TotalFinal.ToString("N2")</div>
+                <div class="uta-stat-card__label">Monto Total a Pagar</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="uta-content-grid">
+        <div class="uta-main-col">
+            <div class="uta-card">
+                <div class="uta-card__header">
+                    <div class="uta-card__header-left">
+                        <i class="bi bi-person-badge uta-card__header-icon"></i>
+                        Datos del Cliente
+                    </div>
+                    @if (!_ventaCompletada)
+                    {
+                        <button class="uta-btn uta-btn--sm uta-btn--white d-print-none" @onclick="AbrirModalCliente">
+                            <i class="bi bi-person-plus"></i> &nbsp;Asignar Cliente
+                        </button>
+                    }
+                </div>
+                <div class="uta-card__body">
+                    <div class="uta-client-header">
+                        <div class="uta-client-avatar">
+                            @(_clienteSeleccionado != null ? $"{_clienteSeleccionado.Name[0]}{_clienteSeleccionado.LastName[0]}" : "CF")
+                        </div>
+                        <div class="uta-client-title">
+                            <h4 class="uta-client-name">
+                                @(_clienteSeleccionado != null ? $"{_clienteSeleccionado.Name} {_clienteSeleccionado.LastName}" : "CONSUMIDOR FINAL")
+                            </h4>
+                            <span class="uta-badge uta-badge--blue">@(_clienteSeleccionado != null ? "Cliente Registrado" : "Venta Estándar")</span>
+                        </div>
+                    </div>
+                    
+                    <div class="uta-client-data-grid">
+                        <div class="uta-data-item">
+                            <span class="uta-data-item__label">Cédula / RUC</span>
+                            <span class="uta-data-item__value">@(_clienteSeleccionado != null ? _clienteSeleccionado.IDCard : "9999999999")</span>
+                        </div>
+                        <div class="uta-data-item">
+                            <span class="uta-data-item__label">Teléfono</span>
+                            <span class="uta-data-item__value">@(_clienteSeleccionado != null && !string.IsNullOrEmpty(_clienteSeleccionado.Phone) ? _clienteSeleccionado.Phone : "—")</span>
+                        </div>
+                        <div class="uta-data-item">
+                            <span class="uta-data-item__label">Correo Electrónico</span>
+                            <span class="uta-data-item__value">@(_clienteSeleccionado != null && !string.IsNullOrEmpty(_clienteSeleccionado.Email) ? _clienteSeleccionado.Email : "—")</span>
+                        </div>
+                        <div class="uta-data-item uta-data-item--full">
+                            <span class="uta-data-item__label">Dirección Completa</span>
+                            <span class="uta-data-item__value">@(_clienteSeleccionado != null && !string.IsNullOrEmpty(_clienteSeleccionado.Address) ? _clienteSeleccionado.Address : "—")</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="uta-card">
+                <div class="uta-card__header">
+                    <div class="uta-card__header-left">
+                        <i class="bi bi-cart4 uta-card__header-icon"></i>
+                        Detalle de Productos
+                        @if (_carrito.Any())
+                        {
+                            <span class="uta-badge uta-badge--white-outline ms-2">@_carrito.Count items</span>
+                        }
+                    </div>
+                    @if (!_ventaCompletada)
+                    {
+                        <button class="uta-btn uta-btn--sm uta-btn--white d-print-none" @onclick="async () => await AbrirModalProducto()">
+
+                            <i class="bi bi-plus-lg"></i> &nbsp;Agregar Producto
+                        </button>
+                    }
+                </div>
+                <div class="uta-card__body p-0">
+
+                    <div class="uta-table-wrap">
+                        <table class="uta-table">
+                            <thead>
+                                <tr>
+                                    <th style="width:80px">Código</th>
+                                    <th style="width:60px;text-align:center">Cant.</th>
+                                    <th>Descripción</th>
+                                    <th style="text-align:right;width:120px">P. Unitario</th>
+                                    <th style="text-align:right;width:120px">P. Total</th>
+                                    @if (!_ventaCompletada) { <th style="width:44px" class="d-print-none"></th> }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (!_carrito.Any())
+                                {
+                                    <tr>
+                                        <td colspan="6" class="uta-table__empty">
+                                            <div class="uta-empty-state">
+                                                <div class="uta-empty-state__icon"><i class="bi bi-box-seam"></i></div>
+                                                <div class="uta-empty-state__text">El carrito está vacío</div>
+                                                <div class="uta-empty-state__sub">Presione "Agregar Producto" para comenzar a facturar</div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                @foreach (var item in _carrito)
+                                {
+                                    <tr>
+                                        <td><span class="uta-code-badge">@item.Producto.Id.ToString("D4")</span></td>
+                                        <td style="text-align:center">
+                                            <input class="uta-qty-input uta-qty-input--cart" type="number" 
+                                                   @bind="item.Cantidad"
+                                                   @bind:after="() => VerificarCantidadCarrito(item)"
+                                                   @bind:event="oninput"
+                                                   onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                                   min="1" max="@item.Producto.Stock" />
+                                        </td>
+                                        <td class="uta-table__bold">@item.Producto.Name</td>
+                                        <td style="text-align:right;color:#666">$ @item.Producto.UnitPrice.ToString("N2")</td>
+                                        <td style="text-align:right;font-weight:600;color:#1a1a1a">$ @item.Subtotal.ToString("N2")</td>
+                                        @if (!_ventaCompletada)
+                                        {
+                                            <td class="d-print-none" style="text-align:center">
+                                                <button class="uta-icon-btn uta-icon-btn--red" title="Quitar" @onclick="() => EliminarDelCarrito(item)">
+                                                    <i class="bi bi-trash3-fill"></i>
+                                                </button>
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uta-side-col">
+            <div class="uta-card uta-card--sticky">
+                <div class="uta-card__header">
+                    <div class="uta-card__header-left">
+                        <i class="bi bi-clipboard2-data uta-card__header-icon"></i>
+                        Resumen de Transacción
+                    </div>
+                </div>
+                <div class="uta-card__body">
+                    <div class="uta-biz-info mb-3">
+                        <div class="uta-biz-name"><i class="bi bi-shop"></i> MI NEGOCIO POS</div>
+                        <div class="uta-biz-detail"><i class="bi bi-geo-alt-fill"></i> Calle Principal y Secundaria</div>
+                        <div class="uta-biz-detail"><i class="bi bi-telephone-fill"></i> 0999 999 999</div>
+                        <div class="uta-biz-detail"><i class="bi bi-file-earmark-text-fill"></i> RUC: 9999999999001</div>
+                    </div>
+
+                    <div class="uta-divider"></div>
+
+                    <div class="uta-invoice-meta">
+                        <div class="uta-invoice-row">
+                            <span class="uta-invoice-label">Documento</span>
+                            <span class="uta-invoice-value text-danger">FACTURA</span>
+                        </div>
+                        <div class="uta-invoice-row">
+                            <span class="uta-invoice-label">Número</span>
+                            <span class="uta-invoice-value uta-invoice-value--code">@_numeroFactura</span>
+                        </div>
+                        <div class="uta-invoice-row">
+                            <span class="uta-invoice-label">Emisión</span>
+                            <span class="uta-invoice-value">@DateTime.Now.ToString("dd/MM/yyyy HH:mm")</span>
+                        </div>
+                        <div class="uta-invoice-row mt-1">
+                            <span class="uta-invoice-label">Estado</span>
+                            <span class="uta-badge @(_ventaCompletada ? "uta-badge--green" : "uta-badge--yellow")">
+                                @if (_ventaCompletada)
+                                {
+                                    <i class="bi bi-check-circle-fill me-1"></i> <span>Procesada</span>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-hourglass-split me-1"></i> <span>Borrador</span>
+                                }
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="uta-divider"></div>
+
+                    <div class="uta-totals">
+                        <div class="uta-totals__row">
+                            <span>Subtotal</span>
+                            <span>$ @SubtotalGlobal.ToString("N2")</span>
+                        </div>
+                        <div class="uta-totals__row">
+                            <span>IVA 15%</span>
+                            <span>$ @IvaGlobal.ToString("N2")</span>
+                        </div>
+                        <div class="uta-totals__grand mt-2">
+                            <span>TOTAL A PAGAR</span>
+                            <span>$ @TotalFinal.ToString("N2")</span>
+                        </div>
+                    </div>
+
+                    <div class="d-print-none" style="margin-top: 1.5rem">
+                        @if (!_ventaCompletada)
+                        {
+                            <button class="uta-btn uta-btn--primary uta-btn--block uta-btn--lg" @onclick="FinalizarVenta" disabled="@(!PuedeFinalizar)">
+                                <i class="bi bi-check2-all"></i> &nbsp; PROCESAR VENTA
+                            </button>
+                            @if (!PuedeFinalizar)
+                            {
+                                <p class="uta-hint mt-2">
+                                    <i class="bi bi-exclamation-triangle-fill"></i> 
+                                    @if (!_carrito.Any())
+                                    {
+                                        <span>El carrito requiere al menos un producto</span>
+                                    }
+                                    else if (_clienteSeleccionado == null)
+                                    {
+                                        <span>Asigne un cliente para facturar</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Ajuste las cantidades al stock disponible</span>
+                                    }
+                                </p>
+                            }
+                        }
+                        else
+                        {
+                            <button class="uta-btn uta-btn--success uta-btn--block uta-btn--lg mb-2" @onclick="VerFactura">
+                                <i class="bi bi-receipt"></i> &nbsp; VER FACTURA
+                            </button>
+                            <button class="uta-btn uta-btn--outline uta-btn--block" @onclick="NuevaVenta">
+                                <i class="bi bi-arrow-counterclockwise"></i> &nbsp; NUEVA VENTA
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-print-none">
+@if (_mostrarModalCliente)
+{
+    <div class="uta-overlay" @onclick="CerrarModalCliente">
+        <div class="uta-modal uta-modal--xl" @onclick:stopPropagation="true">
+            <div class="uta-modal__header">
+                <div>
+                    <h3 class="uta-modal__title"><i class="bi bi-people-fill"></i> &nbsp;Directorio de Clientes</h3>
+                    <p class="uta-modal__subtitle">Busque y seleccione el cliente para esta venta</p>
+                </div>
+                <button class="uta-modal__close" @onclick="CerrarModalCliente"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <div class="uta-modal__body">
+                <div class="uta-search-bar">
+                    <select class="uta-search-bar__select" value="@_criterioBusquedaCliente" @onchange="CambioCriterioCliente">
+                        <option value="id">ID Interno</option>
+                        <option value="cedula">Cédula</option>
+                        <option value="nombre">Nombre / Apellido</option>
+                    </select>
+                    <input class="uta-search-bar__input" type="text" @bind="_terminoCliente" @bind:event="oninput"
+                           @onkeyup="PresionoEnterCliente" placeholder="Escriba para buscar y presione Enter..." autofocus 
+                           onkeypress="@(GetOnKeyPressHandler(_criterioBusquedaCliente))" />
+                    <button class="uta-btn uta-btn--primary uta-search-bar__btn" @onclick="BuscarClientesEnAPI">
+                        <i class="bi bi-search"></i> &nbsp;Buscar
+                    </button>
+                </div>
+                <div class="uta-table-wrap uta-table-wrap--bordered">
+                    <table class="uta-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre Completo</th>
+                                <th style="text-align:center">Cédula</th>
+                                <th style="text-align:center">Teléfono</th>
+                                <th>Dirección</th>
+                                <th>Correo</th>
+                                <th style="text-align:center">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!ClientesPaginados.Any() && !string.IsNullOrEmpty(_terminoCliente))
+                            {
+                                <tr>
+                                    <td colspan="6" class="uta-table__empty">
+                                        <div class="uta-empty-state">
+                                            <div class="uta-empty-state__icon"><i class="bi bi-search"></i></div>
+                                            <div class="uta-empty-state__text">Sin resultados para "@_terminoCliente"</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            @foreach (var c in ClientesPaginados)
+                            {
+                                <tr>
+                                    <td class="uta-table__bold">@c.Name @c.LastName</td>
+                                    <td style="text-align:center"><span class="uta-code-badge">@c.IDCard</span></td>
+                                    <td style="text-align:center;color:#666">@(string.IsNullOrEmpty(c.Phone) ? "—" : c.Phone)</td>
+                                    <td style="color:#666">@(string.IsNullOrEmpty(c.Address) ? "—" : c.Address)</td>
+                                    <td style="color:#666">@(string.IsNullOrEmpty(c.Email) ? "—" : c.Email)</td>
+                                    <td style="text-align:center">
+                                        <button class="uta-btn uta-btn--sm uta-btn--success" @onclick="() => SeleccionarCliente(c)">
+                                            <i class="bi bi-check2"></i> Seleccionar
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            @if (TotalPaginasClientes > 1)
+            {
+                <div class="uta-modal__footer">
+                    <button class="uta-btn uta-btn--outline uta-btn--sm" @onclick="PaginaAnteriorCliente" disabled="@(_paginaActualCliente == 1)"><i class="bi bi-chevron-left"></i> Anterior</button>
+                    <span class="uta-page-info">Página @_paginaActualCliente de @TotalPaginasClientes</span>
+                    <button class="uta-btn uta-btn--outline uta-btn--sm" @onclick="PaginaSiguienteCliente" disabled="@(_paginaActualCliente == TotalPaginasClientes)">Siguiente <i class="bi bi-chevron-right"></i></button>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@* Catálogo de Productos Paginado *@
+@if (_mostrarModalProducto)
+{
+    <div class="uta-overlay" @onclick="CerrarModalProducto">
+        <div class="uta-modal uta-modal--lg" @onclick:stopPropagation="true">
+            <div class="uta-modal__header">
+                <div>
+                    <h3 class="uta-modal__title"><i class="bi bi-boxes"></i> &nbsp;Catálogo de Productos</h3>
+                    <p class="uta-modal__subtitle">Búsqueda optimizada en servidor con soporte para millones de registros</p>
+                </div>
+                <button class="uta-modal__close" @onclick="CerrarModalProducto"><i class="bi bi-x-lg"></i></button>
+            </div>
+
+            <div class="uta-modal__body">
+                @* Barra de Búsqueda Proactiva (Fase E) *@
+                <div class="uta-search-bar mb-3">
+                    <select class="uta-search-bar__select" @bind="_criterioBusquedaProducto">
+                        <option value="name">Descripción</option>
+                        <option value="id">Código ID</option>
+                    </select>
+                    <input class="uta-search-bar__input" 
+                           type="text" 
+                           value="@_searchterm" 
+                           @oninput="OnInputSearch"
+                           placeholder="Escriba para buscar..." 
+                           autofocus />
+                    <div class="uta-search-bar__icon-container px-3 d-flex align-items-center bg-light">
+                        <i class="bi bi-search text-muted"></i>
+                    </div>
+                </div>
+
+                <div class="uta-table-wrap uta-table-wrap--bordered">
+                    <table class="uta-table">
+                        <thead>
+                            <tr>
+                                <th>Descripción</th>
+                                <th style="text-align:right">Precio</th>
+                                <th style="text-align:center">Stock</th>
+                                <th style="text-align:center;width:110px">Cantidad</th>
+                                <th style="text-align:center">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!_resultadosProductos.Any())
+                            {
+                                <tr>
+                                    <td colspan="5" class="uta-table__empty">
+                                        <div class="uta-empty-state py-4">
+                                            <div class="uta-empty-state__icon"><i class="bi bi-box-seam"></i></div>
+                                            <div class="uta-empty-state__text">No hay resultados para mostrar</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            @foreach (var p in _resultadosProductos)
+                            {
+                                <tr @key="p.Id"> @* Optimización de renderizado de Blazor *@
+                                    <td class="uta-table__bold">@p.Name</td>
+                                    <td style="text-align:right;font-weight:600;color:#6B1A33">$ @p.UnitPrice.ToString("N2")</td>
+                                    <td style="text-align:center">
+                                        <span class="uta-badge @(p.Stock > 0 ? "uta-badge--green" : "uta-badge--red")">
+                                            @p.Stock @(p.Stock == 1 ? "ud." : "uds.")
+                                        </span>
+                                    </td>
+                                    <td style="text-align:center">
+                                        <input class="uta-qty-input uta-qty-input--cart" 
+                                               type="number" 
+                                               @bind="p.CantidadTemporal" 
+                                               min="1" 
+                                               max="@p.Stock" 
+                                               disabled="@(p.Stock <= 0)" />
+                                    </td>
+                                    <td style="text-align:center">
+                                        <button class="uta-btn uta-btn--sm uta-btn--primary" 
+                                                @onclick="() => AgregarProducto(p)" 
+                                                disabled="@(p.Stock <= 0)">
+                                            <i class="bi bi-plus-lg"></i> Añadir
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            @* Footer: Paginación Basada en Servidor (Fase C & E) *@
+            @if (_totalItems > 0)
+{
+    <div class="uta-pagination-footer d-flex justify-content-between align-items-center p-3 bg-dark text-white rounded-bottom">
+        
+        {{!-- Info --}}
+        <div class="uta-pagination-info">
+            <span class="small text-secondary">
+                Se muestran <strong>@Desde</strong> a <strong>@Hasta</strong> de <strong>@_totalItems</strong> resultados
+            </span>
+        </div>
+
+        {{!-- Tamaño de página --}}
+        <div class="d-flex align-items-center gap-2">
+            <span class="small text-secondary">por página</span>
+            <div class="border border-secondary rounded px-2 py-1">
+                <select class="form-select form-select-sm bg-transparent text-white border-0 shadow-none"
+                        style="width: 70px; cursor: pointer;"
+                        @onchange="OnPageSizeChanged">
+                    @foreach (var size in new[] { 5, 10, 25, 50 })
+                    {
+                        <option value="@size" selected="@(_pageSize == size)">@size</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        {{!-- Controles con ellipsis --}}
+        <div class="d-flex border border-secondary rounded overflow-hidden">
+            @{
+                var paginas = GetPaginasVisibles(_currentPage, _totalPages);
+            }
+            @foreach (var p in paginas)
+            {
+                if (p == -1)
+                {
+                    <span class="btn btn-sm btn-dark text-secondary border-end border-secondary px-2" 
+                          style="pointer-events:none;">...</span>
+                }
+                else
+                {
+                    var pNum = p;
+                    <button class="btn btn-sm border-end border-secondary rounded-0 @(pNum == _currentPage ? "btn-warning text-dark fw-bold" : "btn-dark text-white")"
+                            @onclick="() => ChangePage(pNum)">@pNum</button>
+                }
+            }
+            <button class="btn btn-sm btn-dark text-white @(!TieneSiguiente ? "disabled" : "")"
+                    @onclick="() => ChangePage(_currentPage + 1)">
+                <i class="bi bi-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+}
+        </div>
+    </div>
+}
+</div>
+
+<style>
+/* ====================================================
+   UTA DESIGN SYSTEM — Optimizado y Corporativo
+   ==================================================== */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    .uta-page {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: #f4f6f9;
+        min-height: 100vh;
+        padding: 1.8rem 2rem;
+        color: #2c3e50;
+    }
+
+    .uta-page-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap; }
+    .uta-breadcrumb { font-size: 0.75rem; color: #888; margin-bottom: 0.35rem; font-weight: 500; }
+    .uta-breadcrumb__sep { margin: 0 0.35rem; }
+    .uta-breadcrumb__active { color: #6B1A33; }
+    .uta-page-title { font-size: 1.65rem; font-weight: 700; color: #1a1a1a; margin: 0 0 0.2rem; display: flex; align-items: center; gap: 0.5rem; letter-spacing: -0.5px; }
+    .uta-page-title__icon { font-size: 1.4rem; }
+    .uta-page-subtitle { font-size: 0.85rem; color: #6c757d; margin: 0; }
+    .uta-page-header__right { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; }
+    .text-warning { color: #f59e0b !important; }
+    .text-primary { color: #3b82f6 !important; }
+    .text-info { color: #0891b2 !important; }
+
+    /* ESTADÍSTICAS REDISEÑADAS */
+    .uta-stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.2rem; margin-bottom: 1.5rem; }
+    .uta-stat-card { border-radius: 12px; padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #e9ecef; transition: transform 0.2s; }
+    .uta-stat-card:hover { transform: translateY(-2px); }
+    .uta-stat-card__icon { font-size: 2rem; display: flex; align-items: center; justify-content: center; }
+    .uta-stat-card__details { display: flex; flex-direction: column; }
+    .uta-stat-card__number { font-size: 1.5rem; font-weight: 800; line-height: 1.1; letter-spacing: -0.5px; }
+    .uta-stat-card__label  { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 0.2rem; }
+
+    .uta-stat-card--light { background: #fff; color: #1a1a1a; }
+    .uta-stat-card--light .uta-stat-card__label { color: #6c757d; }
+
+    .uta-stat-card--dark { background: #6B1A33; color: #fff; border-color: #521528; box-shadow: 0 8px 15px rgba(107,26,51,0.2); }
+    .uta-stat-card--dark .uta-stat-card__label { color: rgba(255,255,255,0.8); }
+
+    .uta-content-grid { display: grid; grid-template-columns: 1fr 340px; gap: 1.5rem; align-items: start; }
+    .uta-main-col { display: flex; flex-direction: column; gap: 1.5rem; }
+
+    .uta-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #e9ecef; overflow: hidden; }
+    .uta-card--sticky { position: sticky; top: 1.5rem; }
+    .uta-card__header {
+        background: #6B1A33;
+        color: #fff;
+        padding: 1rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.9rem;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+    }
+    .uta-card__header-left { display: flex; align-items: center; gap: 0.6rem; }
+    .uta-card__header-icon { font-size: 1.1rem; display: flex; align-items: center; }
+    .uta-card__body { padding: 1.5rem; }
+    .uta-card__body.p-0 { padding: 0; }
+
+    .uta-client-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
+    .uta-client-avatar {
+        width: 56px; height: 56px; border-radius: 12px;
+        background: #fdf5f7; color: #6B1A33;
+        font-size: 1.1rem; font-weight: 700;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0; border: 2px solid #f3e1e6;
+    }
+    .uta-client-title { display: flex; flex-direction: column; gap: 0.2rem; align-items: flex-start; }
+    .uta-client-name { font-size: 1.1rem; font-weight: 700; color: #1a1a1a; margin: 0; }
+    
+    .uta-client-data-grid { 
+        display: grid; 
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 1.25rem; 
+        background: #f8f9fa; 
+        padding: 1.25rem; 
+        border-radius: 8px; 
+        border: 1px solid #e9ecef;
+    }
+    .uta-data-item { display: flex; flex-direction: column; gap: 0.25rem; }
+    .uta-data-item--full { grid-column: 1 / -1; } 
+    .uta-data-item__label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.5px; color: #6c757d; font-weight: 700; }
+    .uta-data-item__value { font-size: 0.88rem; font-weight: 500; color: #212529; }
+
+    .uta-table-wrap { overflow-x: auto; }
+    .uta-table-wrap--bordered { border: 1px solid #e9ecef; border-radius: 8px; }
+    .uta-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .uta-table thead tr { background: #f8f9fa; border-bottom: 2px solid #dee2e6; }
+    .uta-table th { padding: 0.85rem 1rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #495057; text-align: left; }
+    .uta-table td { padding: 0.85rem 1rem; border-bottom: 1px solid #e9ecef; color: #495057; vertical-align: middle; }
+    .uta-table tbody tr:last-child td { border-bottom: none; }
+    .uta-table tbody tr:hover td { background: #fdf5f7; }
+    .uta-table__bold { font-weight: 600; color: #212529 !important; }
+    .uta-table__empty { text-align: center; padding: 3rem !important; }
+
+    .uta-empty-state { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
+    .uta-empty-state__icon { font-size: 2.5rem; color: #ced4da; margin-bottom: 0.5rem; display: flex; align-items: center; }
+    .uta-empty-state__text { font-size: 0.95rem; font-weight: 600; color: #6c757d; }
+    .uta-empty-state__sub  { font-size: 0.8rem; color: #adb5bd; }
+
+    .uta-biz-info { text-align: center; padding: 0.5rem 0; }
+    .uta-biz-name { font-size: 1rem; font-weight: 800; color: #1a1a1a; margin-bottom: 0.4rem; letter-spacing: -0.5px; }
+    .uta-biz-detail { font-size: 0.78rem; color: #6c757d; margin-bottom: 0.2rem; display: flex; align-items: center; justify-content: center; gap: 0.3rem; }
+    
+    .uta-invoice-meta { display: flex; flex-direction: column; gap: 0.6rem; padding: 0.5rem 0; }
+    .uta-invoice-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
+    .uta-invoice-label { color: #6c757d; font-weight: 600; }
+    .uta-invoice-value { color: #212529; font-weight: 700; }
+    .uta-invoice-value--code { color: #6B1A33; font-family: monospace; font-size: 0.85rem; background: #fdf5f7; padding: 0.2rem 0.5rem; border-radius: 4px; }
+    
+    .uta-divider { height: 1px; background: #e9ecef; margin: 1rem 0; border-style: dashed; border-width: 1px 0 0 0; border-color: #dee2e6; }
+
+    .uta-totals { display: flex; flex-direction: column; gap: 0.6rem; }
+    .uta-totals__row { display: flex; justify-content: space-between; font-size: 0.88rem; color: #495057; font-weight: 500; }
+    .uta-totals__grand {
+        display: flex; justify-content: space-between; align-items: center;
+        font-weight: 800; font-size: 1.05rem;
+        color: #fff; background: #6B1A33;
+        padding: 0.8rem 1rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(107, 26, 51, 0.2);
+    }
+
+    .uta-hint { font-size: 0.75rem; color: #d97706; text-align: center; margin: 0; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.3rem; }
+
+    .uta-btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+        padding: 0.55rem 1.2rem; border-radius: 8px; border: none;
+        font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600;
+        cursor: pointer; transition: all 0.2s ease; white-space: nowrap; text-decoration: none;
+    }
+    .uta-btn:disabled { opacity: 0.5; cursor: not-allowed !important; transform: none !important; }
+    .uta-btn:not(:disabled):active { transform: scale(0.98); }
+    .uta-btn--block { width: 100%; }
+    .uta-btn--sm { padding: 0.4rem 0.85rem; font-size: 0.78rem; }
+    .uta-btn--lg { padding: 0.8rem 1.5rem; font-size: 0.9rem; }
+    .uta-btn--primary { background: #6B1A33; color: #fff; box-shadow: 0 2px 4px rgba(107,26,51,0.2); }
+    .uta-btn--primary:not(:disabled):hover { background: #521528; box-shadow: 0 4px 8px rgba(107,26,51,0.3); }
+    .uta-btn--success { background: #16a34a; color: #fff; box-shadow: 0 2px 4px rgba(22,163,74,0.2); }
+    .uta-btn--success:not(:disabled):hover { background: #15803d; }
+    .uta-btn--outline { background: #fff; color: #6B1A33; border: 1px solid #6B1A33; }
+    .uta-btn--outline:hover { background: #fdf5f7; }
+    .uta-btn--white { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.4); }
+    .uta-btn--white:hover { background: rgba(255,255,255,0.3); }
+
+    .uta-icon-btn { width: 30px; height: 30px; border-radius: 6px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 0.9rem; transition: all 0.2s; }
+    .uta-icon-btn--red  { background: #fee2e2; color: #dc2626; }
+    .uta-icon-btn--red:hover  { background: #dc2626; color: #fff; transform: scale(1.05); }
+
+    .uta-badge { display: inline-flex; align-items: center; padding: 0.25rem 0.6rem; border-radius: 20px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.3px; }
+    .uta-badge--green  { background: #dcfce7; color: #16a34a; }
+    .uta-badge--red    { background: #fee2e2; color: #dc2626; }
+    .uta-badge--yellow { background: #fef9c3; color: #a16207; }
+    .uta-badge--blue   { background: #e0f2fe; color: #1d4ed8; }
+    .uta-badge--white-outline { background: rgba(255,255,255,0.2); color: #fff; }
+
+    .uta-code-badge { font-family: monospace; font-size: 0.8rem; background: #f1f3f5; padding: 0.2rem 0.5rem; border-radius: 6px; color: #495057; font-weight: 600; border: 1px solid #e9ecef; }
+    
+    .uta-qty-input { width: 70px; padding: 0.35rem; border: 1px solid #ced4da; border-radius: 6px; text-align: center; font-family: 'Inter',sans-serif; font-size: 0.85rem; font-weight: 600; outline: none; color: #212529; transition: border-color 0.2s; }
+    .uta-qty-input:focus { border-color: #6B1A33; box-shadow: 0 0 0 3px rgba(107,26,51,0.1); }
+    .uta-qty-input--cart { background-color: #f8f9fa; border: 1px solid transparent; font-weight: 700; color: #6B1A33; width: 60px; }
+    .uta-qty-input--cart:hover { border-color: #ced4da; }
+
+    .uta-toast {
+        position: fixed; top: 1.5rem; right: 1.5rem; z-index: 9999;
+        display: flex; align-items: center; gap: 0.8rem;
+        padding: 0.85rem 1.25rem; border-radius: 10px;
+        font-family: 'Inter',sans-serif; font-size: 0.85rem; font-weight: 600;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        min-width: 280px; animation: toastSlide 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @@keyframes toastSlide { from { opacity:0; transform: translateX(30px); } to { opacity:1; transform: translateX(0); } }
+    .uta-toast__icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+    .uta-toast--success { background:#fff; color:#15803d; border-left:4px solid #16a34a; }
+    .uta-toast--error   { background:#fff; color:#b91c1c; border-left:4px solid #dc2626; }
+
+    .uta-overlay { position:fixed; inset:0; z-index:1000; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; padding:1.5rem; backdrop-filter: blur(3px); animation:fadeIn .2s ease; }
+    @@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    .uta-modal { background:#fff; border-radius:14px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25); width:100%; max-height:90vh; display:flex; flex-direction:column; overflow:hidden; animation:modalUp .3s cubic-bezier(.34,1.4,.64,1); }
+    @@keyframes modalUp { from { opacity:0; transform:translateY(20px) scale(.98); } to { opacity:1; transform:none; } }
+    .uta-modal--xl { max-width: 950px; }
+    .uta-modal--lg { max-width: 750px; }
+    .uta-modal__header { background:#6B1A33; color:#fff; padding:1.25rem 1.5rem; display:flex; justify-content:space-between; align-items:center; }
+    .uta-modal__title   { font-size:1.1rem; font-weight:700; margin:0 0 0.15rem; display: flex; align-items: center; }
+    .uta-modal__subtitle{ font-size:0.8rem; color: rgba(255,255,255,0.8); margin:0; }
+    .uta-modal__close { background:rgba(255,255,255,.15); border:none; width:32px; height:32px; border-radius:8px; color:#fff; cursor:pointer; font-size:1.1rem; display:flex; align-items:center; justify-content:center; transition:background .2s; }
+    .uta-modal__close:hover { background:rgba(255,255,255,.25); }
+    .uta-modal__body   { padding:1.5rem; overflow-y:auto; flex:1; background: #f8f9fa; }
+    .uta-modal__footer { display:flex; align-items:center; justify-content:space-between; padding:1rem 1.5rem; background:#fff; border-top:1px solid #e9ecef; }
+    .uta-page-info { font-size:0.85rem; font-weight:600; color:#6B1A33; }
+
+    .uta-search-bar { display:flex; align-items:center; gap:0; margin-bottom:1.25rem; background:#fff; border:1px solid #ced4da; border-radius:8px; padding:0; overflow:hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .uta-search-bar__select { border:none; background:#f8f9fa; font-family:'Inter',sans-serif; font-size:0.85rem; font-weight:600; color:#495057; padding:0.6rem 1rem; outline:none; border-right:1px solid #ced4da; cursor: pointer; }
+    .uta-search-bar__select:focus { background: #e9ecef; }
+    .uta-search-bar__input  { flex:1; border:none; background:transparent; font-family:'Inter',sans-serif; font-size:0.9rem; color:#212529; padding:0.6rem 1rem; outline:none; min-width:0; }
+    .uta-search-bar__input::placeholder { color:#adb5bd; }
+    .uta-search-bar__btn { border-radius: 0 !important; margin: 0 !important; padding: 0.6rem 1.5rem !important; height: 100%; }
+
+    @@media (max-width: 1024px) { 
+        .uta-content-grid { grid-template-columns:1fr; } 
+        .uta-card--sticky { position:static; } 
+        .uta-client-data-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @@media (max-width: 768px)  { 
+        .uta-stats-row { grid-template-columns:repeat(2,1fr); } 
+        .uta-page { padding:1rem; } 
+        .uta-client-data-grid { grid-template-columns: 1fr; }
+        .uta-search-bar { flex-direction: column; border: none; background: transparent; box-shadow: none; gap: 0.5rem; }
+        .uta-search-bar__select, .uta-search-bar__input, .uta-search-bar__btn { width: 100%; border: 1px solid #ced4da; border-radius: 8px !important; }
+    }
+
+    @@media print { .uta-page { background:#fff; padding:0; } .uta-stat-card, .uta-card__header, .uta-totals__grand { -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
+    .ms-2 { margin-left:.5rem; }
+
+        /* Estilos para listas dentro de modales y alertas */
+    .uta-alert-list {
+        text-align: left;
+        margin-top: 1rem;
+        padding-left: 1.5rem;
+        color: #495057;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .uta-alert-list li {
+        margin-bottom: 0.5rem;
+    }
+
+    .uta-modal-text {
+        color: #1a1a1a;
+        font-weight: 500;
+        text-align: left;
+    }
+
+    .uta-modal-title {
+        font-family: 'Inter', sans-serif;
+        color: #6B1A33 !important; /* Nuestro color de marca */
+        font-weight: 700 !important;
+    }
+
+    /* Ajuste de contenedor de SweetAlert para que parezca una uta-card */
+    .uta-card--modal {
+        border-radius: 12px !important;
+        border: 1px solid #e9ecef !important;
+        padding: 2rem !important;
+    }
+
+
+
+</style>
+
+@code {
+    private bool TieneAnterior => _currentPage > 1;
+    private bool TieneSiguiente => _currentPage < _totalPages;
+    private int Desde => _totalItems == 0 ? 0 : ((_currentPage - 1) * _pageSize) + 1;
+    private int Hasta => Math.Min(_currentPage * _pageSize, _totalItems);
+
+    private string _searchterm = "";
+    private System.Timers.Timer? _debounceTimer;
+    private List<ProductoUI> _resultadosProductos = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _debounceTimer = new System.Timers.Timer(300);
+        _debounceTimer.Elapsed += async (s, e) => await InvokeAsync(BuscarProductosEnAPI);
+        _debounceTimer.AutoReset = false;
+
+        await LoadData();
+    }
+
+    private List<int> GetPaginasVisibles(int paginaActual, int totalPaginas)
+    {
+        var paginas = new List<int>();
+        
+        if (totalPaginas <= 6)
+        {
+            for (int i = 1; i <= totalPaginas; i++) paginas.Add(i);
+            return paginas;
+        }
+
+        paginas.AddRange(new[] { 1, 2 });
+
+        if (paginaActual > 4) paginas.Add(-1);
+
+        for (int i = Math.Max(3, paginaActual - 1); i <= Math.Min(totalPaginas - 2, paginaActual + 1); i++)
+            paginas.Add(i);
+
+        if (paginaActual < totalPaginas - 3) paginas.Add(-1);
+
+        paginas.AddRange(new[] { totalPaginas - 1, totalPaginas });
+
+        return paginas.Distinct().ToList();
+    }
+
+    private async Task LoadData()
+    {
+        var response = await ApiService.GetProductosPaginadosAsync(_currentPage, _pageSize, _searchterm);
+
+        if (response != null)
+        {
+            _totalItems = response.TotalCount;
+            _totalPages = response.TotalPages;
+
+            _resultadosProductos = response.Items.Select(p => new ProductoUI 
+            { 
+                Id = p.Id, 
+                Name = p.Name, 
+                UnitPrice = p.UnitPrice, 
+                Stock = p.Stock 
+            }).ToList();
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task OnPageSizeChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int nuevoTamaño))
+        {
+            _pageSize = nuevoTamaño;
+            _currentPage = 1; 
+            await LoadData();
+        }
+    }
+
+    private async Task ChangePage(int newPage)
+    {
+        if (newPage >= 1 && newPage <= _totalPages)
+        {
+            _currentPage = newPage;
+            await LoadData();
+        }
+    }
+
+    private void OnInputSearch(ChangeEventArgs e)
+    {
+        _searchterm = e.Value?.ToString() ?? "";
+        _currentPage = 1;
+        _debounceTimer?.Stop();
+        _debounceTimer?.Start();
+    }
+
+    private async Task BuscarProductosEnAPI()
+    {
+        await LoadData();
+    }
+
+    private CustomerModel? _clienteSeleccionado;
+    private List<CarritoItem> _carrito = new();
+    private string _mensajeAlerta = "";
+    private bool _esError = false;
+    private bool _ventaCompletada = false;
+    private string _numeroFactura = "BORRADOR";
+
+
+    private string _criterioBusquedaCliente = "cedula";
+    private string _criterioBusquedaProducto = "name";
+
+    private int _itemsPorPagina = 5;
+
+    private int _paginaActualCliente = 1;
+    private int TotalPaginasClientes => (int)Math.Ceiling(_resultadosClientes.Count / (double)_itemsPorPagina);
+    private IEnumerable<CustomerModel> ClientesPaginados => _resultadosClientes.Skip((_paginaActualCliente - 1) * _itemsPorPagina).Take(_itemsPorPagina);
+
+    private void PaginaAnteriorCliente() { if (_paginaActualCliente > 1) _paginaActualCliente--; }
+    private void PaginaSiguienteCliente() { if (_paginaActualCliente < TotalPaginasClientes) _paginaActualCliente++; }
+
+    private void CambioCriterioCliente(ChangeEventArgs e)
+    {
+        _criterioBusquedaCliente = e.Value?.ToString() ?? "cedula";
+        _terminoCliente = "";
+        _resultadosClientes.Clear();
+        _paginaActualCliente = 1;
+    }
+
+    private void CambioCriterioProducto(ChangeEventArgs e)
+    {
+        _criterioBusquedaProducto = e.Value?.ToString() ?? "name";
+        _searchterm = "";
+        _resultadosProductos.Clear();
+        _paginaActualProducto = 1;
+    }
+
+    private string GetOnKeyPressHandler(string criterio)
+    {
+        if (criterio == "id" || criterio == "cedula")
+        {
+            return "return event.charCode >= 48 && event.charCode <= 57"; 
+        }
+        else if (criterio == "nombre")
+        {
+            return "return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode == 32 || event.charCode == 209 || event.charCode == 241 || event.charCode == 193 || event.charCode == 201 || event.charCode == 205 || event.charCode == 211 || event.charCode == 218 || event.charCode == 225 || event.charCode == 233 || event.charCode == 237 || event.charCode == 243 || event.charCode == 250";
+        }
+        return "";
+    }
+
+    private async Task MostrarNotificacion(string mensaje, bool esError = false)
+    {
+        _mensajeAlerta = mensaje; _esError = esError;
+        StateHasChanged(); await Task.Delay(3000);
+        _mensajeAlerta = ""; StateHasChanged();
+    }
+
+    private async Task ActualizarCantidadCart(CarritoItem item, ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int nuevaCantidad))
+        {
+            if (nuevaCantidad <= 0)
+            {
+                item.Cantidad = 1;
+                await MostrarNotificacion("La cantidad mínima es 1. Use el botón de papelera para eliminar.", true);
+            }
+            else if (nuevaCantidad > item.Producto.Stock)
+            {
+                item.Cantidad = item.Producto.Stock;
+                await MostrarNotificacion($"Stock insuficiente. Solo hay {item.Producto.Stock} disponibles.", true);
+            }
+            else
+            {
+                item.Cantidad = nuevaCantidad;
+            }
+        }
+        else
+        {
+            item.Cantidad = 1; 
+        }
+    }
+
+    public class CarritoItem
+    {
+        public ProductModel Producto { get; set; } = null!;
+        public int Cantidad { get; set; }
+        public decimal Subtotal => Producto.UnitPrice * Cantidad;
+    }
+
+    public class ProductoUI : ProductModel
+    {
+        public int CantidadTemporal { get; set; } = 1;
+    }
+
+    private bool _mostrarModalCliente = false;
+    private string _terminoCliente = "";
+    private List<CustomerModel> _resultadosClientes = new();
+
+    private void AbrirModalCliente() { _mostrarModalCliente = true; _resultadosClientes.Clear(); _terminoCliente = ""; _paginaActualCliente = 1; }
+    private void CerrarModalCliente() => _mostrarModalCliente = false;
+    private async Task PresionoEnterCliente(KeyboardEventArgs e) { if (e.Key == "Enter") await BuscarClientesEnAPI(); }
+
+    private async Task BuscarClientesEnAPI()
+    {
+        if (string.IsNullOrWhiteSpace(_terminoCliente)) return;
+        _resultadosClientes = await ApiService.SearchCustomersAsync(_terminoCliente, _criterioBusquedaCliente);
+        _paginaActualCliente = 1; 
+    }
+
+    private void SeleccionarCliente(CustomerModel cliente)
+    {
+        _clienteSeleccionado = cliente;
+        CerrarModalCliente();
+    }
+
+    private bool _mostrarModalProducto = false;
+
+    private async Task  AbrirModalProducto()
+    {
+        
+        _mostrarModalProducto = true; 
+        _searchterm = ""; 
+        _currentPage = 1;
+        await LoadData();
+
+    }
+    private void CerrarModalProducto() => _mostrarModalProducto = false;
+
+    private async Task AgregarProducto(ProductoUI prod)
+    {
+        if (prod.CantidadTemporal > prod.Stock) { await MostrarNotificacion($"Solo hay {prod.Stock} en stock.", true); return; }
+        var itemExistente = _carrito.FirstOrDefault(c => c.Producto.Id == prod.Id);
+        if (itemExistente != null)
+        {
+            if (itemExistente.Cantidad + prod.CantidadTemporal > prod.Stock) { await MostrarNotificacion("Excede stock.", true); return; }
+            itemExistente.Cantidad += prod.CantidadTemporal;
+        }
+        else
+        {
+            _carrito.Add(new CarritoItem { Producto = new ProductModel { Id = prod.Id, Name = prod.Name, UnitPrice = prod.UnitPrice, Stock = prod.Stock }, Cantidad = prod.CantidadTemporal });
+        }
+        await MostrarNotificacion($"{prod.Name} añadido.");
+        prod.CantidadTemporal = 1;
+    }
+
+    private void EliminarDelCarrito(CarritoItem item) => _carrito.Remove(item);
+
+    private decimal SubtotalGlobal => _carrito.Sum(i => i.Subtotal);
+    private decimal IvaGlobal => SubtotalGlobal * 0.15m;
+    private decimal TotalFinal => SubtotalGlobal + IvaGlobal;
+    private bool PuedeFinalizar => _clienteSeleccionado != null && _carrito.Any() && _carrito.All(c => c.Cantidad > 0 && c.Cantidad <= c.Producto.Stock);
+
+    private async Task VerificarCantidadCarrito(CarritoItem item)
+    {
+        if (item.Cantidad <= 0)
+        {
+            await MostrarNotificacion("La cantidad debe ser mayor a 0.", true);
+        }
+        else if (item.Cantidad > item.Producto.Stock)
+        {
+            await MostrarNotificacion($"Sobrepasa el inventario. Solo hay {item.Producto.Stock} disponibles.", true);
+        }
+    }
+
+    private void RemoveOutOfStockProducts(List<StockValidationErrorModel> errors)
+    {
+        foreach (var error in errors)
+        {
+            var itemARemover = _carrito.FirstOrDefault(c => c.Producto.Id == error.IdProducto);
+            if (itemARemover != null)
+            {
+                _carrito.Remove(itemARemover);
+            }
+        }
+    }
+
+    private async Task FinalizarVenta()
+    {
+        if (_clienteSeleccionado == null)
+        {
+            await MostrarNotificacion("Debe seleccionar un cliente antes de procesar la venta.", true);
+            return;
+        }
+
+        foreach (var item in _carrito)
+        {
+            if (item.Cantidad > item.Producto.Stock)
+            {
+                await MostrarNotificacion($"Stock insuficiente para '{item.Producto.Name}'. Disponible: {item.Producto.Stock}.", true);
+                return; 
+            }
+        }
+
+        var solicitudVenta = new CreateSaleRequest
+        {
+            CustomerId = _clienteSeleccionado.Id,
+            Details = _carrito.Select(item => new CreateSaleDetailRequest 
+            { 
+                ProductId = item.Producto.Id, 
+                Amount = item.Cantidad 
+            }).ToList()
+        };
+
+        try 
+        {
+            var respuestaHttp = await ApiService.CreateSaleAsync(solicitudVenta);
+
+            if (respuestaHttp.IsSuccessStatusCode)
+            {
+                var contenidoJson = await respuestaHttp.Content.ReadAsStringAsync();
+                using var documentoJson = System.Text.Json.JsonDocument.Parse(contenidoJson);
+
+                if (documentoJson.RootElement.TryGetProperty("invoiceNumber", out var propiedadFactura))
+                {
+                    _numeroFactura = propiedadFactura.GetString() ?? "AUTORIZADA";
+                }
+
+                await MostrarNotificacion("¡Venta procesada y stock actualizado exitosamente!");
+                _ventaCompletada = true;
+                StateHasChanged();
+            }
+            else if (respuestaHttp.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                var contenidoJson = await respuestaHttp.Content.ReadAsStringAsync();
+                var jsonDoc = System.Text.Json.JsonDocument.Parse(contenidoJson);
+                var tipoError = jsonDoc.RootElement.TryGetProperty("type", out var t) ? t.GetString() : "BulkStock";
+
+                if (tipoError == "BulkStock")
+                {
+                    var errorResponse = System.Text.Json.JsonSerializer.Deserialize<BulkStockErrorResponse>(contenidoJson, new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    if (errorResponse != null && errorResponse.Errors.Any())
+                    {
+                        var htmlMessage = "<ul>";
+                        foreach (var error in errorResponse.Errors)
+                        {
+                            htmlMessage += $"<li><strong>{error.NombreProducto}</strong>: Solicitaste {error.CantidadSolicitada}, pero solo hay {error.StockDisponible} en inventario.</li>";
+                        }
+                        htmlMessage += "</ul>";
+
+                        await JS.InvokeVoidAsync("Swal.fire", new
+                        {
+                            title = "Ajuste Automático de Factura",
+                            html = htmlMessage,
+                            icon = "warning",
+                            confirmButtonText = "Entendido, continuar con la venta",
+                            buttonsStyling = false,
+                            customClass = new {
+                                popup = "uta-card uta-card--modal",
+                                title = "uta-modal-title",
+                                confirmButton = "uta-btn uta-btn--primary uta-btn--lg"
+                            },
+                            showClass = new {
+                                popup = "animate__animated animate__fadeInUp"
+                        }
+                        });
+
+                        RemoveOutOfStockProducts(errorResponse.Errors);
+                        StateHasChanged();
+                    }
+                }
+                else if (tipoError == "ProductDeleted")
+                {
+                    var errorResponse = System.Text.Json.JsonSerializer.Deserialize<ProductDeletedErrorResponse>(contenidoJson, new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    if (errorResponse != null && errorResponse.DeletedProducts.Any())
+                    {
+                        var htmlMessage = "<ul>";
+                        foreach (var prod in errorResponse.DeletedProducts)
+                        {
+                            htmlMessage += $"<li>Producto <strong>{prod.ProductName}</strong> (ID: {prod.ProductId}) ya no está disponible.</li>";
+                        }
+                        htmlMessage += "</ul>";
+
+                        await JS.InvokeVoidAsync("Swal.fire", new
+                        {
+                            icon = "error",
+                            title = "Productos no disponibles",
+                            html = htmlMessage,
+                            confirmButtonText = "Entendido",
+                            buttonsStyling = false,
+                            customClass = new {
+                                popup = "uta-card uta-card--modal", 
+                                title = "uta-modal-title",
+                                confirmButton = "uta-btn uta-btn--primary uta-btn--lg" 
+                            },
+                            showClass = new {
+                                popup = "animate__animated animate__fadeInUp" 
+                            }
+                        });
+
+                        foreach (var prod in errorResponse.DeletedProducts)
+                        {
+                            var item = _carrito.FirstOrDefault(c => c.Producto.Id == prod.ProductId);
+                            if (item != null) _carrito.Remove(item);
+                        }
+                        StateHasChanged();
+                    }
+                }
+                else
+                {
+                    await MostrarNotificacion($"Error: {contenidoJson}", true);
+                }
+            }
+            else
+            {
+                var errorServidor = await respuestaHttp.Content.ReadAsStringAsync();
+                await MostrarNotificacion($"Error inesperado en el servidor: {errorServidor}", true);
+            }
+        }
+        catch (Exception ex)
+        {
+            await MostrarNotificacion("Error crítico de comunicación con el servidor.", true);
+            Console.WriteLine($"Error técnico: {ex.Message}");
+        }
+    }
+    
+    private void VerFactura()
+    {
+        NavManager.NavigateTo($"/facturas?numeroFactura={_numeroFactura}");
+    }
+    
+    private void NuevaVenta()
+    {
+        _carrito.Clear(); _clienteSeleccionado = null; _ventaCompletada = false; _numeroFactura = "BORRADOR";
+    }
+}
