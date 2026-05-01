@@ -148,6 +148,7 @@
                     }
                 </div>
                 <div class="uta-card__body p-0">
+
                     <div class="uta-table-wrap">
                         <table class="uta-table">
                             <thead>
@@ -694,9 +695,46 @@
 
     @@media print { .uta-page { background:#fff; padding:0; } .uta-stat-card, .uta-card__header, .uta-totals__grand { -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
     .ms-2 { margin-left:.5rem; }
+
+        /* Estilos para listas dentro de modales y alertas */
+    .uta-alert-list {
+        text-align: left;
+        margin-top: 1rem;
+        padding-left: 1.5rem;
+        color: #495057;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .uta-alert-list li {
+        margin-bottom: 0.5rem;
+    }
+
+    .uta-modal-text {
+        color: #1a1a1a;
+        font-weight: 500;
+        text-align: left;
+    }
+
+    .uta-modal-title {
+        font-family: 'Inter', sans-serif;
+        color: #6B1A33 !important; /* Nuestro color de marca */
+        font-weight: 700 !important;
+    }
+
+    /* Ajuste de contenedor de SweetAlert para que parezca una uta-card */
+    .uta-card--modal {
+        border-radius: 12px !important;
+        border: 1px solid #e9ecef !important;
+        padding: 2rem !important;
+    }
+
+
+
 </style>
 
 @code {
+
     private CustomerModel? _clienteSeleccionado;
     private List<CarritoItem> _carrito = new();
     private string _mensajeAlerta = "";
@@ -870,54 +908,163 @@
         }
     }
 
-    private async Task FinalizarVenta()
+    private void RemoveOutOfStockProducts(List<StockValidationErrorModel> errors)
     {
-        foreach (var item in _carrito)
+        foreach (var error in errors)
+        {
+            var itemARemover = _carrito.FirstOrDefault(c => c.Producto.Id == error.IdProducto);
+            if (itemARemover != null)
+            {
+                _carrito.Remove(itemARemover);
+            }
+        }
+    }
+
+
+
+    private async Task FinalizarVenta()
+{
+    // 1. Validación de Pre-condiciones en la UI (UX Preventiva)
+    if (_clienteSeleccionado == null)
+    {
+        await MostrarNotificacion("Debe seleccionar un cliente antes de procesar la venta.", true);
+        return;
+    }
+
+    foreach (var item in _carrito)
     {
         if (item.Cantidad > item.Producto.Stock)
         {
-            await MostrarNotificacion($"Error: El producto '{item.Producto.Name}' solo tiene {item.Producto.Stock} unidades disponibles.", true);
-            return; // Detiene el proceso aquí mismo
+            await MostrarNotificacion($"Stock insuficiente para '{item.Producto.Name}'. Disponible: {item.Producto.Stock}.", true);
+            return; 
         }
     }
 
-        var request = new CreateSaleRequest
-        {
-            CustomerId = _clienteSeleccionado!.Id,
-            Details = _carrito.Select(i => new CreateSaleDetailRequest { ProductId = i.Producto.Id, Amount = i.Cantidad }).ToList()
-        };
+    // 2. Preparación del Request (Capa de Aplicación - DTO)[cite: 2]
+    var solicitudVenta = new CreateSaleRequest
+    {
+        CustomerId = _clienteSeleccionado.Id,
+        Details = _carrito.Select(item => new CreateSaleDetailRequest 
+        { 
+            ProductId = item.Producto.Id, 
+            Amount = item.Cantidad 
+        }).ToList()
+    };
 
-        var response = await ApiService.CreateSaleAsync(request);
-        if (response.IsSuccessStatusCode)
+    // 3. Ejecución Asíncrona (Prioridad Rendimiento)
+    try 
+    {
+        var respuestaHttp = await ApiService.CreateSaleAsync(solicitudVenta);
+
+        if (respuestaHttp.IsSuccessStatusCode)
         {
-            var jsonString = await response.Content.ReadAsStringAsync();
-            
-            try
+            // Procesamiento de respuesta exitosa (Deserialización segura)
+            var contenidoJson = await respuestaHttp.Content.ReadAsStringAsync();
+            using var documentoJson = System.Text.Json.JsonDocument.Parse(contenidoJson);
+
+            if (documentoJson.RootElement.TryGetProperty("invoiceNumber", out var propiedadFactura))
             {
-                using var document = System.Text.Json.JsonDocument.Parse(jsonString);
-                if (document.RootElement.TryGetProperty("invoiceNumber", out var invoiceProp))
-                {
-                    _numeroFactura = invoiceProp.GetString() ?? "DESCONOCIDO";
-                }
-                else
-                {
-                    _numeroFactura = "AUTORIZADA";
-                }
+                _numeroFactura = propiedadFactura.GetString() ?? "AUTORIZADA";
             }
-            catch
-            {
-                _numeroFactura = "AUTORIZADA";
-            }
-            
-            await MostrarNotificacion("¡Venta procesada exitosamente!");
+
+            await MostrarNotificacion("¡Venta procesada y stock actualizado exitosamente!");
             _ventaCompletada = true;
+            StateHasChanged();
+        }
+        else if (respuestaHttp.StatusCode == System.Net.HttpStatusCode.BadRequest)
+        {
+            var contenidoJson = await respuestaHttp.Content.ReadAsStringAsync();
+            var jsonDoc = System.Text.Json.JsonDocument.Parse(contenidoJson);
+            var tipoError = jsonDoc.RootElement.TryGetProperty("type", out var t) ? t.GetString() : "BulkStock";
+
+            if (tipoError == "BulkStock")
+            {
+                var errorResponse = System.Text.Json.JsonSerializer.Deserialize<BulkStockErrorResponse>(contenidoJson, new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                if (errorResponse != null && errorResponse.Errors.Any())
+                {
+                    var htmlMessage = "<ul>";
+                    foreach (var error in errorResponse.Errors)
+                    {
+                        htmlMessage += $"<li><strong>{error.NombreProducto}</strong>: Solicitaste {error.CantidadSolicitada}, pero solo hay {error.StockDisponible} en inventario.</li>";
+                    }
+                    htmlMessage += "</ul>";
+
+                    await JS.InvokeVoidAsync("Swal.fire", new
+                    {
+                        title = "Ajuste Automático de Factura",
+                        html = htmlMessage,
+                        icon = "warning",
+                        confirmButtonText = "Entendido, continuar con la venta",
+                        buttonsStyling = false, // Deshabilitamos estilos por defecto de Swal para usar los nuestros
+                        customClass = new {
+                            popup = "uta-card uta-card--modal", // Nuestra clase de tarjeta
+                            title = "uta-modal-title",
+                            confirmButton = "uta-btn uta-btn--primary uta-btn--lg" // Nuestro botón vinotinto
+                        },
+                        showClass = new {
+                            popup = "animate__animated animate__fadeInUp" // Animación fluida
+                    }
+                    });
+
+                    RemoveOutOfStockProducts(errorResponse.Errors);
+                    StateHasChanged();
+                }
+            }
+            else if (tipoError == "ProductDeleted")
+            {
+                var errorResponse = System.Text.Json.JsonSerializer.Deserialize<ProductDeletedErrorResponse>(contenidoJson, new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                if (errorResponse != null && errorResponse.DeletedProducts.Any())
+                {
+                    var htmlMessage = "<ul>";
+                    foreach (var prod in errorResponse.DeletedProducts)
+                    {
+                        htmlMessage += $"<li>Producto <strong>{prod.ProductName}</strong> (ID: {prod.ProductId}) ya no está disponible.</li>";
+                    }
+                    htmlMessage += "</ul>";
+
+                    await JS.InvokeVoidAsync("Swal.fire", new
+                    {
+                        icon = "error",
+                        title = "Productos no disponibles",
+                        html = htmlMessage,
+                        confirmButtonText = "Entendido",
+                        buttonsStyling = false,
+                        customClass = new {
+                            popup = "uta-card uta-card--modal", 
+                            title = "uta-modal-title",
+                            confirmButton = "uta-btn uta-btn--primary uta-btn--lg" 
+                        },
+                        showClass = new {
+                            popup = "animate__animated animate__fadeInUp" 
+                        }
+                    });
+
+                    foreach (var prod in errorResponse.DeletedProducts)
+                    {
+                        var item = _carrito.FirstOrDefault(c => c.Producto.Id == prod.ProductId);
+                        if (item != null) _carrito.Remove(item);
+                    }
+                    StateHasChanged();
+                }
+            }
+            else
+            {
+                await MostrarNotificacion($"Error: {contenidoJson}", true);
+            }
         }
         else
         {
-            var error = await response.Content.ReadAsStringAsync();
-            await MostrarNotificacion($"Error: {error}", true);
+            var errorServidor = await respuestaHttp.Content.ReadAsStringAsync();
+            await MostrarNotificacion($"Error inesperado en el servidor: {errorServidor}", true);
         }
     }
+    catch (Exception ex)
+    {
+        // Fallo técnico de infraestructura (DIP)[cite: 1]
+        await MostrarNotificacion("Error crítico de comunicación con el servidor.", true);
+        Console.WriteLine($"Error técnico: {ex.Message}");
+    }
+}
     
     private void VerFactura()
     {

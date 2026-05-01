@@ -1,5 +1,6 @@
 ﻿using Application.DTOs;
 using Application.UseCases;
+using Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using static Application.DTOs.SaleResponseDto;
 
@@ -26,6 +27,14 @@ public class SalesController : ControllerBase
         {
             var result = await _performSaleUseCase.ExecuteAsync(request);
             return CreatedAtAction(nameof(RegisterSale), new { id = result.Id }, result);
+        }
+        catch (BulkStockException ex)
+        {
+            return BadRequest(new { type = "BulkStock", message = ex.Message, errors = ex.Errors });
+        }
+        catch (ProductDeletedException ex)
+        {
+            return BadRequest(new { type = "ProductDeleted", message = ex.Message, deletedProducts = ex.DeletedProducts });
         }
         catch (Exception ex)
         {

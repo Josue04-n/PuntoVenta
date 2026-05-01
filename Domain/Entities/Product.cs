@@ -31,4 +31,16 @@ public class Product
 
     }
 
+    public void RemoveStock(int amount)
+    {
+        if (amount <= 0)
+            throw new ArgumentException("La cantidad a retirar debe ser mayor a cero."); 
+
+        if (Stock < amount)
+            throw new InvalidOperationException($"Stock insuficiente para {Name}."); 
+
+        // Modificamos el estado internamente (Encapsulación)
+        Stock -= amount;
+    }
+
 }

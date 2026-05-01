@@ -61,3 +61,29 @@ public class SaleDetailResponseDto
     public decimal UnitPrice { get; set; }
     public decimal SubTotal { get; set; }
 }
+
+public class BulkStockErrorResponse
+{
+    public string Message { get; set; } = string.Empty;
+    public List<StockValidationErrorModel> Errors { get; set; } = new();
+}
+
+public class ProductDeletedErrorResponse
+{
+    public string Message { get; set; } = string.Empty;
+    public List<DeletedProductInfoModel> DeletedProducts { get; set; } = new();
+}
+
+public class StockValidationErrorModel
+{
+    public int IdProducto { get; set; }
+    public string NombreProducto { get; set; } = string.Empty;
+    public int CantidadSolicitada { get; set; }
+    public int StockDisponible { get; set; }
+}
+
+public class DeletedProductInfoModel
+{
+    public int ProductId { get; set; }
+    public string ProductName { get; set; } = string.Empty;
+}

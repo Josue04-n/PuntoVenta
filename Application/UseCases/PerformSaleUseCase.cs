@@ -1,6 +1,7 @@
 ﻿using Application.DTOs;
 using Application.Interfaces.Repositories;
 using Domain.Entities;
+using Domain.Exceptions;
 
 namespace Application.UseCases;
 
@@ -22,34 +23,58 @@ public class PerformSaleUseCase
 
     public async Task<Sale> ExecuteAsync(CreateSaleRequest request)
     {
+        // 1. Validaciones iniciales
         if (!request.Details.Any())
             throw new InvalidOperationException("La venta debe contener al menos un producto.");
 
-        // Usamos el repositorio en lugar de AppDbContext
         var customer = await _customerRepository.GetByIdAsync(request.CustomerId)
             ?? throw new KeyNotFoundException("El cliente no existe.");
 
-        string invoiceNumber = await _saleRepository.GenerateInvoiceNumberAsync();
-
-        var sale = new Sale(invoiceNumber, request.CustomerId);
-
-        decimal subTotalVenta = 0;
-        var productsToUpdate = new List<Product>();
+        var errorsStock = new List<StockValidationError>();
+        var deletedProducts = new List<DeletedProductInfo>(); 
+        var validatedProducts = new List<(Product product, int amount)>();
 
         foreach (var item in request.Details)
         {
-            var product = await _productRepository.GetByIdAsync(item.ProductId)
-                ?? throw new KeyNotFoundException($"El producto con id {item.ProductId} no existe.");
+            var product = await _productRepository.GetByIdAsync(item.ProductId);
+
+            if (product == null)
+            {
+                deletedProducts.Add(new DeletedProductInfo(item.ProductId, "Producto no encontrado"));
+                continue;
+            }
 
             if (product.Stock < item.Amount)
-                throw new InvalidOperationException($"Stock insuficiente para {product.Name}. Solicitado: {item.Amount}. Disponible: {product.Stock}");
-
-            sale.AddDetail(product, item.Amount);
-            productsToUpdate.Add(product);
+            {
+                errorsStock.Add(new StockValidationError(product.Id, product.Name, item.Amount, product.Stock));
+            }
+            else
+            {
+                validatedProducts.Add((product, item.Amount));
+            }
         }
 
-        await _productRepository.UpdateRangeAsync(productsToUpdate);
-        await _saleRepository.AddAsync(sale); 
+        if (deletedProducts.Any())
+        {
+            throw new ProductDeletedException(deletedProducts);
+        }
+
+        if (errorsStock.Any())
+        {
+            throw new BulkStockException(errorsStock);
+        }
+
+        string invoiceNumber = await _saleRepository.GenerateInvoiceNumberAsync();
+        var sale = new Sale(invoiceNumber, request.CustomerId);
+
+        foreach (var (product, amount) in validatedProducts)
+        {
+            sale.AddDetail(product, amount);
+            product.RemoveStock(amount);
+        }
+
+        await _productRepository.UpdateRangeAsync(validatedProducts.Select(p => p.product).ToList());
+        await _saleRepository.AddAsync(sale);
 
         return sale;
     }
