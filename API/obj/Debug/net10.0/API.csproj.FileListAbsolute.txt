@@ -165,3 +165,4 @@ D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.pdb
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.genruntimeconfig.cache
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\ref\API.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.MvcApplicationPartsAssemblyInfo.cs

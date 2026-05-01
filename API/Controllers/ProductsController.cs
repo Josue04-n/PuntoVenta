@@ -1,6 +1,7 @@
 ﻿using Application.DTOs;
 using Application.DTOs.Common;
 using Application.Interfaces.Repositories;
+using Application.UseCases;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,10 +12,12 @@ namespace API.Controllers;
 public class ProductsController : ControllerBase
 {
     private readonly IProductRepository _productsRepository;
+    private readonly ProductoUseCases _productoUseCases;
 
-    public ProductsController(IProductRepository productsRepository)
+    public ProductsController(IProductRepository productsRepository, ProductoUseCases productoUseCases)
     {
         _productsRepository = productsRepository;
+        _productoUseCases = productoUseCases;
     }
 
     [HttpGet("search")]
@@ -25,7 +28,6 @@ public class ProductsController : ControllerBase
 
         var results = await _productsRepository.SearchAsync(term, searchBy);
 
-        // Mapeo al DTO para que Blazor lo pueda leer perfectamente
         var response = results.Select(p => new ProductResponseDto
         {
             Id = p.Id,
@@ -34,7 +36,6 @@ public class ProductsController : ControllerBase
             Stock = p.Stock
         });
 
-        // ¡CORRECCIÓN AQUÍ! Devolvemos 'response', no 'results'
         return Ok(response);
     }
 
@@ -42,9 +43,10 @@ public class ProductsController : ControllerBase
     public async Task<ActionResult<PagedResponse<ProductResponseDto>>> GetPaginado(
     [FromQuery] int pageNumber = 1,
     [FromQuery] int pageSize = 10,
-    [FromQuery] string? term = null)
+    [FromQuery] string? term = null,
+    [FromQuery] string searchBy = "name")
     {
-        var resultado = await _productsRepository.ListarPaginadoAsync(pageNumber, pageSize, term);
+        var resultado = await _productsRepository.ListarPaginadoAsync(pageNumber, pageSize, term, searchBy);
 
         // Mapear los productos del dominio a DTOs planos para evitar objetos ValueObjects en la respuesta
         var itemsDto = resultado.Items.Select(p => new ProductResponseDto
@@ -55,10 +57,15 @@ public class ProductsController : ControllerBase
             Stock = p.Stock
         }).ToList();
 
-        var pagedDto = new PagedResponse<ProductResponseDto>(itemsDto, resultado.TotalCount, resultado.PageNumber, resultado.PageSize);
+        var pagedDto = new PagedResponse<ProductResponseDto>
+            (itemsDto, 
+            resultado.TotalCount, 
+            resultado.PageNumber, 
+            resultado.PageSize);
 
         return Ok(pagedDto);
     }
 
+ 
 
-    }
+}

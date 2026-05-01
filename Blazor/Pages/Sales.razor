@@ -1,4 +1,5 @@
 @page "/ventas"
+@using Blazor.Helpers
 @using Blazor.Models
 @using Blazor.Services
 @using System.Timers
@@ -182,11 +183,12 @@
                                         <td><span class="uta-code-badge">@item.Producto.Id.ToString("D4")</span></td>
                                         <td style="text-align:center">
                                             <input class="uta-qty-input uta-qty-input--cart" type="number" 
-                                                   @bind="item.Cantidad"
-                                                   @bind:after="() => VerificarCantidadCarrito(item)"
+                                                   @bind="item.Cantidad" 
                                                    @bind:event="oninput"
-                                                   onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-                                                   min="1" max="@item.Producto.Stock" />
+                                                   max="@item.Producto.Stock" />
+                                            <div class="uta-stock-hint" @onclick="() => item.Cantidad = item.Producto.Stock" style="cursor:pointer">
+                                                Disponible: <strong>@item.Producto.Stock</strong>
+                                            </div>
                                         </td>
                                         <td class="uta-table__bold">@item.Producto.Name</td>
                                         <td style="text-align:right;color:#666">$ @item.Producto.UnitPrice.ToString("N2")</td>
@@ -401,72 +403,57 @@
             <div class="uta-modal__header">
                 <div>
                     <h3 class="uta-modal__title"><i class="bi bi-boxes"></i> &nbsp;Catálogo de Productos</h3>
-                    <p class="uta-modal__subtitle">Búsqueda optimizada en servidor con soporte para millones de registros</p>
+                    <p class="uta-modal__subtitle">Búsqueda optimizada por Descripción o Código ID</p>
                 </div>
                 <button class="uta-modal__close" @onclick="CerrarModalProducto"><i class="bi bi-x-lg"></i></button>
             </div>
 
             <div class="uta-modal__body">
-                @* Barra de Búsqueda Proactiva (Fase E) *@
+                @* Barra de Búsqueda Proactiva *@
                 <div class="uta-search-bar mb-3">
-                    <select class="uta-search-bar__select" @bind="_criterioBusquedaProducto">
-                        <option value="name">Descripción</option>
-                        <option value="id">Código ID</option>
+                    <select class="uta-search-bar__select" @bind="_searchCriteriaProduct">
+                        <option value="name">Descripción</option> @* 'name' para el default *@
+                        <option value="id">Código ID</option>     @* 'id' para el filtro numérico *@
                     </select>
-                          <input class="uta-search-bar__input" 
-                              type="text" 
-                              value="@_searchterm" 
-                              @oninput="OnInputSearch"
-                              placeholder="Escriba para buscar..." />
+                    <input class="uta-search-bar__input" 
+                           type="text" 
+                           value="@_searchterm" 
+                           @oninput="OnInputSearch"
+                           placeholder="Escriba para buscar..." />
                     <div class="uta-search-bar__icon-container px-3 d-flex align-items-center bg-light">
                         <i class="bi bi-search text-muted"></i>
                     </div>
                 </div>
 
+                @* Marcado del Modal Optimizado *@
                 <div class="uta-table-wrap uta-table-wrap--bordered">
                     <table class="uta-table">
                         <thead>
                             <tr>
+                                <th style="width: 100px;">Código (ID)</th>
                                 <th>Descripción</th>
                                 <th style="text-align:right">Precio</th>
-                                <th style="text-align:center">Stock</th>
-                                <th style="text-align:center;width:110px">Cantidad</th>
+                                <th style="text-align:center">Stock Disp.</th>
                                 <th style="text-align:center">Acción</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @if (!_resultadosProductos.Any())
-                            {
-                                <tr>
-                                    <td colspan="5" class="uta-table__empty">
-                                        <div class="uta-empty-state py-4">
-                                            <div class="uta-empty-state__icon"><i class="bi bi-box-seam"></i></div>
-                                            <div class="uta-empty-state__text">No hay resultados para mostrar</div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
                             @foreach (var p in _resultadosProductos)
                             {
-                                <tr @key="p.Id"> @* Optimización de renderizado de Blazor *@
+                                <tr @key="p.Id">
+                                    @* Resaltamos el ID para facilitar la búsqueda visual *@
+                                    <td><span class="uta-code-badge">@p.Id.ToString("D4")</span></td>
                                     <td class="uta-table__bold">@p.Name</td>
-                                    <td style="text-align:right;font-weight:600;color:#6B1A33">$ @p.UnitPrice.ToString("N2")</td>
+                                    <td style="text-align:right">$ @p.UnitPrice.ToString("N2")</td>
                                     <td style="text-align:center">
                                         <span class="uta-badge @(p.Stock > 0 ? "uta-badge--green" : "uta-badge--red")">
-                                            @p.Stock @(p.Stock == 1 ? "ud." : "uds.")
+                                            @p.Stock uds.
                                         </span>
                                     </td>
                                     <td style="text-align:center">
-                                        <input class="uta-qty-input uta-qty-input--cart" 
-                                               type="number" 
-                                               @bind="p.CantidadTemporal" 
-                                               min="1" 
-                                               max="@p.Stock" 
-                                               disabled="@(p.Stock <= 0)" />
-                                    </td>
-                                    <td style="text-align:center">
+                                        @* El botón solo añade 1 unidad por defecto. SRP: La edición va en la grilla principal *@
                                         <button class="uta-btn uta-btn--sm uta-btn--primary" 
-                                                @onclick="() => AgregarProducto(p)" 
+                                                @onclick="() => AddSimpleProduct(p)" 
                                                 disabled="@(p.Stock <= 0)">
                                             <i class="bi bi-plus-lg"></i> Añadir
                                         </button>
@@ -481,21 +468,20 @@
             @* Footer: Paginación Basada en Servidor (Fase C & E) *@
             @if (_totalItems > 0)
             {
-                <div class="uta-pagination-footer d-flex justify-content-between align-items-center p-3 rounded-bottom">
+                <div class="uta-pagination-footer rounded-bottom">
         
-                    @* Info *@
+                    @* Info: Uso de clases semánticas para evitar hardcoding *@
                     <div class="uta-pagination-info">
-                        <span class="small text-secondary">
-                            Se muestran <strong>@Desde</strong> a <strong>@Hasta</strong> de <strong>@_totalItems</strong> resultados
+                        <span class="small text-muted">
+                            Se muestran <strong class="uta-text-highlight">@Desde</strong> a <strong class="uta-text-highlight">@Hasta</strong> de <strong class="uta-text-highlight">@_totalItems</strong> resultados
                         </span>
                     </div>
 
-                    @* Tamaño de página *@
+                    @* Tamaño de página: Estructura corregida para legibilidad en el selector *@
                     <div class="d-flex align-items-center gap-2">
-                        <span class="small text-secondary">por página</span>
-                        <div class="border border-secondary rounded px-2 py-1">
-                            <select class="form-select form-select-sm bg-transparent text-white border-0 shadow-none"
-                                    style="width: 70px; cursor: pointer;"
+                        <span class="small text-muted">por página</span>
+                        <div class="uta-select-wrapper">
+                            <select class="form-select form-select-sm shadow-none" 
                                     @onchange="OnPageSizeChanged">
                                 @foreach (var size in new[] { 5, 10, 25, 50 })
                                 {
@@ -505,27 +491,24 @@
                         </div>
                     </div>
 
-                    @* Controles con ellipsis *@
-                    <div class="d-flex border border-secondary rounded overflow-hidden">
-                        @{
-                            var paginas = GetPaginasVisibles(_currentPage, _totalPages);
-                        }
-                        @foreach (var p in paginas)
+                    @* Controles con ellipsis: Lógica delegada al Helper *@
+                    <div class="d-flex overflow-hidden">
+                        @foreach (var p in GenerateVisiblePages)
                         {
                             if (p == -1)
                             {
-                                <span class="btn btn-sm btn-dark text-secondary border-end border-secondary px-2" 
-                                      style="pointer-events:none;">...</span>
+                                <span class="uta-pagination-btn uta-pagination-btn--ellipsis">...</span>
                             }
                             else
                             {
                                 var pNum = p;
-                                <button class="btn btn-sm border-end border-secondary rounded-0 @(pNum == _currentPage ? "btn-warning text-dark fw-bold" : "btn-dark text-white")"
+                                <button class="uta-pagination-btn @(pNum == _currentPage ? "uta-pagination-btn--active" : "")"
                                         @onclick="() => ChangePage(pNum)">@pNum</button>
                             }
                         }
-                        <button class="btn btn-sm btn-dark text-white @(!TieneSiguiente ? "disabled" : "")"
-                                @onclick="() => ChangePage(_currentPage + 1)">
+                        <button class="uta-pagination-btn @(!TieneSiguiente ? "disabled" : "")"
+                                @onclick="() => ChangePage(_currentPage + 1)"
+                                disabled="@(!TieneSiguiente)">
                             <i class="bi bi-chevron-right"></i>
                         </button>
                     </div>
@@ -547,9 +530,41 @@
     private int Desde => _totalItems == 0 ? 0 : ((_currentPage - 1) * _pageSize) + 1;
     private int Hasta => Math.Min(_currentPage * _pageSize, _totalItems);
 
+    private List<int> GenerateVisiblePages => PaginationHelper.GenerateVisiblePages(_currentPage, _totalPages);
+
     private string _searchterm = "";
     private System.Timers.Timer? _debounceTimer;
-    private List<ProductoUI> _resultadosProductos = new();
+    private List<ProductUI> _resultadosProductos = new();
+
+    private async Task AddSimpleProduct(ProductUI selectedProduct)
+    {
+        var existingItem = _carrito.FirstOrDefault(c => c.Producto.Id == selectedProduct.Id );
+
+        if(existingItem != null)
+        {
+            if (existingItem.Cantidad + 1 > selectedProduct.Stock)
+            {
+                await MostrarNotificacion($"Stock insuficiente para aumentar '{selectedProduct.Name}'", true);   
+            }
+
+            existingItem.Cantidad++;
+        }
+        else
+        {
+            _carrito.Add(new CarritoItem
+            {
+                Producto = new ProductModel
+                {
+                    Id = selectedProduct.Id,
+                    Name = selectedProduct.Name,
+                    UnitPrice = selectedProduct.UnitPrice,
+                    Stock = selectedProduct.Stock
+                },
+                Cantidad = 1
+            });    
+        }
+        await MostrarNotificacion($"{selectedProduct.Name} añadido correctamente.");
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -571,9 +586,9 @@
         }
 
         paginas.Add(1);
-        
+
         if (paginaActual > 3) paginas.Add(-1);
-        
+
         int inicio = Math.Max(2, paginaActual - 1);
         int fin = Math.Min(totalPaginas - 1, paginaActual + 1);
 
@@ -584,26 +599,45 @@
         return paginas.Distinct().ToList();
     }
 
-    private async Task LoadData()
-    {
-        var response = await ApiService.GetProductosPaginadosAsync(_currentPage, _pageSize, _searchterm);
-
-        if (response != null)
+   private async Task LoadData()
+   {
+        try 
         {
-            _totalItems = response.TotalCount;
-            _totalPages = response.TotalPages;
+            var response = await ApiService.GetProductosPaginadosAsync(
+                _currentPage, 
+                _pageSize, 
+                _searchterm, 
+                _searchCriteriaProduct);
 
-            _resultadosProductos = response.Items.Select(p => new ProductoUI 
-            { 
-                Id = p.Id, 
-                Name = p.Name, 
-                UnitPrice = p.UnitPrice, 
-                Stock = p.Stock 
-            }).ToList();
+            if (response is not null)
+            {
+                _totalItems = response.TotalCount;
+                _totalPages = response.TotalPages;
+
+                _resultadosProductos = response.Items.Select(item => new ProductUI 
+                { 
+                    Id = item.Id, 
+                    Name = item.Name, 
+                    UnitPrice = item.UnitPrice, 
+                    Stock = item.Stock 
+                }).ToList();
+            }
+            else 
+            {
+                _resultadosProductos.Clear();
+                _totalItems = 0;
+            }
         }
-
-        StateHasChanged();
-    }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading products: {ex.Message}");
+            await MostrarNotificacion("Communication error with the server.", true);
+        }
+        finally 
+        {
+            StateHasChanged();
+        }
+   }
 
     private async Task OnPageSizeChanged(ChangeEventArgs e)
     {
@@ -646,7 +680,7 @@
 
 
     private string _criterioBusquedaCliente = "cedula";
-    private string _criterioBusquedaProducto = "name";
+    private string _searchCriteriaProduct = "name";
 
     private int _itemsPorPagina = 5;
 
@@ -667,7 +701,7 @@
 
     private void CambioCriterioProducto(ChangeEventArgs e)
     {
-        _criterioBusquedaProducto = e.Value?.ToString() ?? "name";
+        _searchCriteriaProduct = e.Value?.ToString() ?? "name";
         _searchterm = "";
         _resultadosProductos.Clear();
         _currentPage = 1;
@@ -726,7 +760,7 @@
         public decimal Subtotal => Producto.UnitPrice * Cantidad;
     }
 
-    public class ProductoUI : ProductModel
+    public class ProductUI : ProductModel
     {
         public int CantidadTemporal { get; set; } = 1;
     }
@@ -765,7 +799,7 @@
     }
     private void CerrarModalProducto() => _mostrarModalProducto = false;
 
-    private async Task AgregarProducto(ProductoUI prod)
+    private async Task AgregarProducto(ProductUI prod)
     {
         if (prod.CantidadTemporal > prod.Stock) { await MostrarNotificacion($"Solo hay {prod.Stock} en stock.", true); return; }
         var itemExistente = _carrito.FirstOrDefault(c => c.Producto.Id == prod.Id);

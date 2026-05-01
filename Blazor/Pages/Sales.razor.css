@@ -101,6 +101,20 @@
   FINAL DE LOS ESTILOS DE PAGINACIÓN 
 ==================================================== */
 
+.uta-stock-helper {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #6c757d;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: color 0.2s;
+}
+
+    .uta-stock-helper:hover {
+        color: #6B1A33; /* Rojo Vino UTA */
+        text-decoration: underline;
+    }
+
 *, *::before, *::after {
     box-sizing: border-box;
 }

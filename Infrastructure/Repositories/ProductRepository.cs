@@ -50,35 +50,6 @@ public class ProductRepository : IProductRepository
             .ToListAsync();
     }
 
-    public async Task<List<Product>> SearchByNameAsync(string name)
-    {
-        return await _context.Products
-            .AsNoTracking()
-            .Where(p => p.Name.StartsWith(name))
-            .Take(50)
-            .ToListAsync();
-    }
-
-    public async Task<PagedResponse<Product>> ListarPaginadoAsync(int pageNumber, int pageSize, string? term = null)
-    {
-        var query = _context.Products.AsNoTracking();
-
-        if (!string.IsNullOrWhiteSpace(term))
-        {
-            query = query.Where(p => p.Name.Contains(term) || p.Id.ToString().Contains(term));
-        }
-
-        var totalCount = await query.CountAsync();
-
-        var items = await query
-            .OrderBy(p => p.Name)
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
-
-        return new PagedResponse<Product>(items, totalCount, pageNumber, pageSize);
-    }
-
     public async Task<PagedResponse<Product>> ListarPaginadoAsync(int pageNumber, int pageSize, string? term = null, string searchBy = "name")
     {
         IQueryable<Product> query = _context.Products.AsNoTracking();
@@ -87,23 +58,33 @@ public class ProductRepository : IProductRepository
         {
             term = term.Trim();
 
-            query = searchBy.ToLower() switch
-            {
-                "id" when int.TryParse(term, out int idValue) => query.Where(p => p.Id == idValue),
-                "id" => query.Where(p => p.Id.ToString().StartsWith(term)),
+            var criterion = searchBy.ToLower();
 
-                _ => query.Where(p => p.Name.StartsWith(term))
-            };
+            if (criterion == "id")
+            {
+                
+                query = query.Where(p => p.Id.ToString().StartsWith(term));
+
+            }
+            else 
+            {
+
+                query = query.Where(p => p.Name.StartsWith(term));
+
+            }
+
         }
 
         var totalCount = await query.CountAsync();
 
         var items = await query
-            .OrderBy(p => p.Name)
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
+        .OrderBy(p => p.Id)
+        .Skip((pageNumber - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
 
         return new PagedResponse<Product>(items, totalCount, pageNumber, pageSize);
     }
+
 }
+

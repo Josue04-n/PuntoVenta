@@ -28,20 +28,20 @@ public class PosApiService
     }
 
     // 2. OBTENER PRODUCTOS
-    public async Task<List<ProductModel>> SearchProductsAsync(string term, string searchBy = "name")
-    {
-        try
-        {
-            var response = await _http.GetFromJsonAsync<List<ProductModel>>($"api/Products/search?term={term}&searchBy={searchBy}");
-            return response ?? new List<ProductModel>();
-        }
-        catch
-        {
-            return new List<ProductModel>();
+    //public async Task<List<ProductModel>> SearchProductsAsync(string term, string searchBy = "name")
+    //{
+    //    try
+    //    {
+    //        var response = await _http.GetFromJsonAsync<List<ProductModel>>($"api/Products/search?term={term}&searchBy={searchBy}");
+    //        return response ?? new List<ProductModel>();
+    //    }
+    //    catch
+    //    {
+    //        return new List<ProductModel>();
 
 
-        }
-    }
+    //    }
+    //}
 
     // 3. CREAR VENTA
 
@@ -64,12 +64,11 @@ public class PosApiService
         }
     }
 
-    public async Task<PagedResponse<ProductModel>?> GetProductosPaginadosAsync(int pageNumber, int pageSize, string? term = null)
+    public async Task<PagedResponse<ProductModel>?> GetProductosPaginadosAsync(int page, int size, string? term, string searchBy)
     {
         try
         {
-            var url = $"api/Products/paginado?pageNumber={pageNumber}&pageSize={pageSize}";
-
+            var url = $"api/Products/paginado?pageNumber={page}&pageSize={size}&searchBy={searchBy}";
             if (!string.IsNullOrWhiteSpace(term))
             {
                 url += $"&term={Uri.EscapeDataString(term)}";
@@ -80,14 +79,4 @@ public class PosApiService
         catch { return null; }
     }
 
-    public async Task<PagedResponse<ProductModel>?> ObtenerPaginadosAsync(int pagina, int tamaño, string? filtro = null)
-    {
-        // Construimos la URL con los parámetros para el endpoint /paginado
-        var url = $"api/Products/paginado?pageNumber={pagina}&pageSize={tamaño}";
-
-        if (!string.IsNullOrWhiteSpace(filtro))
-            url += $"&term={Uri.EscapeDataString(filtro)}";
-
-        return await _http.GetFromJsonAsync<PagedResponse<ProductModel>>(url);
-    }
 }
