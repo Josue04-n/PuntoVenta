@@ -14,18 +14,18 @@ public class PosApiService
     // IMPLEMENTAR LOS MÉTODOS PARA CONSUMIR LA API
 
     // 1. OBTENER CLIENTES
-    public async Task<List<CustomerModel>> SearchCustomersAsync(string term, string searchBy = "cedula")
-    {
-        try
-        {
-            var response = await _http.GetFromJsonAsync<List<CustomerModel>>($"api/Customer/search?term={term}&searchBy={searchBy}");
-            return response ?? new List<CustomerModel>();
-        }
-        catch
-        {
-            return new List<CustomerModel>();
-        }
-    }
+    //public async Task<List<CustomerModel>> SearchCustomersAsync(string term, string searchBy = "cedula")
+    //{
+    //    try
+    //    {
+    //        var response = await _http.GetFromJsonAsync<List<CustomerModel>>($"api/Customer/search?term={term}&searchBy={searchBy}");
+    //        return response ?? new List<CustomerModel>();
+    //    }
+    //    catch
+    //    {
+    //        return new List<CustomerModel>();
+    //    }
+    //}
 
     // 2. OBTENER PRODUCTOS
     //public async Task<List<ProductModel>> SearchProductsAsync(string term, string searchBy = "name")
@@ -45,7 +45,7 @@ public class PosApiService
 
     // 3. CREAR VENTA
 
-    public async Task<HttpResponseMessage> CreateSaleAsync(CreateSaleRequest request)
+    public async Task<HttpResponseMessage> CreateSaleAsync(Application.DTOs.CreateSaleRequest request)
     {
         return await _http.PostAsJsonAsync("api/Sales", request);
     }

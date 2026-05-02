@@ -1,11 +1,11 @@
 ﻿namespace Application.DTOs;
 
-public class CreateSaleRequest
+public record CreateSaleRequest
 {
     public int CustomerId { get; set; }
     public List<CreateRequestDetail> Details { get; set; } = new();
 
-    public class CreateRequestDetail()
+    public record CreateRequestDetail()
     { 
         public int ProductId { get; set; }
         public int Amount { get; set; } 

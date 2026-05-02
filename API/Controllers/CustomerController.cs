@@ -1,4 +1,5 @@
 ﻿using Application.DTOs;
+using Application.DTOs.Common;
 using Application.Interfaces.Repositories;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -17,26 +18,41 @@ public class CustomerController : ControllerBase
     }
 
     [HttpGet("search")]
-    public async Task<IActionResult> Search([FromQuery] string term, [FromQuery] string searchBy = "cedula")
+    public async Task<ActionResult<PagedResponse<CustomerResponseDto>>> Search(
+        [FromQuery] string? termino = null,
+        [FromQuery] string criterio = "cedula",
+        [FromQuery] int pagina = 1,
+        [FromQuery] int tamaño = 10)
     {
-        if (string.IsNullOrWhiteSpace(term))
-            return BadRequest(new { mensaje = "El término de búsqueda es obligatorio." });
+        var resultado = await _clienteRepository.ListAsyncPaginatedClients(pagina, tamaño, termino, criterio);
 
-        var results = await _clienteRepository.SearchAsync(term, searchBy);
-
-        var response = results.Select(c => new CustomerResponseDto
+        var itemsDto = resultado.Items.Select(c => new CustomerResponseDto
         {
             Id = c.Id,
             IDCard = c.IDCard,
-            Name = c.Name,
-            LastName = c.LastName,
+            Name = $"{c.LastName} {c.Name}",
             Phone = c.Phone,
             Address = c.Address,
             Email = c.Email
+        }).ToList();
+
+        return Ok(new PagedResponse<CustomerResponseDto>(itemsDto, resultado.TotalCount, pagina, tamaño));
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<CustomerResponseDto>> GetById(int id)
+    {
+        var cliente = await _clienteRepository.GetByIdAsync(id);
+
+        if (cliente == null) return NotFound(new { mensaje = "Cliente no encontrado" });
+
+        return Ok(new CustomerResponseDto
+        {
+            Id = cliente.Id,
+            IDCard = cliente.IDCard,
+            Name = cliente.Name,
+            LastName = cliente.LastName
         });
-
-        return Ok(results);
-
     }
 
 }

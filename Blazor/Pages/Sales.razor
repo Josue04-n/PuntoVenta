@@ -1,9 +1,12 @@
 @page "/ventas"
+@using Application.DTOs
+@using Application.DTOs.Common
 @using Blazor.Helpers
 @using Blazor.Models
 @using Blazor.Services
 @using System.Timers
 @inject PosApiService ApiService
+@inject CustomerApiService CustomerApiService
 @inject IJSRuntime JS
 @inject NavigationManager NavManager
 
@@ -114,7 +117,7 @@
                     <div class="uta-client-data-grid">
                         <div class="uta-data-item">
                             <span class="uta-data-item__label">Cédula / RUC</span>
-                            <span class="uta-data-item__value">@(_clienteSeleccionado != null ? _clienteSeleccionado.IDCard : "9999999999")</span>
+                            <span class="uta-data-item__value">@(_clienteSeleccionado != null ? _clienteSeleccionado.IDCard : "-")</span>
                         </div>
                         <div class="uta-data-item">
                             <span class="uta-data-item__label">Teléfono</span>
@@ -315,85 +318,133 @@
 </div>
 
 <div class="d-print-none">
-@if (_mostrarModalCliente)
-{
-    <div class="uta-overlay" @onclick="CerrarModalCliente">
-        <div class="uta-modal uta-modal--xl" @onclick:stopPropagation="true">
-            <div class="uta-modal__header">
-                <div>
-                    <h3 class="uta-modal__title"><i class="bi bi-people-fill"></i> &nbsp;Directorio de Clientes</h3>
-                    <p class="uta-modal__subtitle">Busque y seleccione el cliente para esta venta</p>
+
+    @if (_mostrarModalCliente)
+    {
+        <div class="uta-overlay" @onclick="CerrarModalCliente">
+            <div class="uta-modal uta-modal--xl" @onclick:stopPropagation="true">
+                <div class="uta-modal__header">
+                    <div>
+                        <h3 class="uta-modal__title"><i class="bi bi-people-fill"></i> &nbsp;Directorio de Clientes</h3>
+                        <p class="uta-modal__subtitle">Busque y seleccione el cliente para esta venta</p>
+                    </div>
+                    <button class="uta-modal__close" @onclick="CerrarModalCliente"><i class="bi bi-x-lg"></i></button>
                 </div>
-                <button class="uta-modal__close" @onclick="CerrarModalCliente"><i class="bi bi-x-lg"></i></button>
-            </div>
-            <div class="uta-modal__body">
-                <div class="uta-search-bar">
-                    <select class="uta-search-bar__select" value="@_criterioBusquedaCliente" @onchange="CambioCriterioCliente">
-                        <option value="id">ID Interno</option>
-                        <option value="cedula">Cédula</option>
-                        <option value="nombre">Nombre / Apellido</option>
-                    </select>
-                          <input class="uta-search-bar__input" type="text" @bind="_terminoCliente" @bind:event="oninput"
-                              @onkeyup="PresionoEnterCliente" placeholder="Escriba para buscar y presione Enter..."
-                              onkeypress="@(GetOnKeyPressHandler(_criterioBusquedaCliente))" />
-                    <button class="uta-btn uta-btn--primary uta-search-bar__btn" @onclick="BuscarClientesEnAPI">
-                        <i class="bi bi-search"></i> &nbsp;Buscar
-                    </button>
-                </div>
-                <div class="uta-table-wrap uta-table-wrap--bordered">
-                    <table class="uta-table">
-                        <thead>
-                            <tr>
-                                <th>Nombre Completo</th>
-                                <th style="text-align:center">Cédula</th>
-                                <th style="text-align:center">Teléfono</th>
-                                <th>Dirección</th>
-                                <th>Correo</th>
-                                <th style="text-align:center">Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (!ClientesPaginados.Any() && !string.IsNullOrEmpty(_terminoCliente))
-                            {
+
+                <div class="uta-modal__body">
+                    <div class="uta-search-bar">
+                        <select class="uta-search-bar__select" @bind="_criterioBusquedaCliente">
+                            <option value="cedula">Cédula</option>
+                            <option value="nombre">Nombre / Apellido</option>
+                            <option value="id">ID Interno</option>
+                        </select>
+
+                        <input class="uta-search-bar__input" 
+                               type="text" 
+                               value="@_terminoCliente"
+                               @oninput="InputCustomerSearch"
+                               placeholder="Escriba para filtrar clientes..."/>
+
+                        <button class="uta-btn uta-btn--primary uta-search-bar__btn" @onclick="LoadClientsAsync">
+                            <i class="bi bi-search"></i>
+                        </button>
+
+                    </div>
+                    <div class="uta-table-wrap uta-table-wrap--bordered">
+                        <table class="uta-table">
+                            <thead>
                                 <tr>
-                                    <td colspan="6" class="uta-table__empty">
-                                        <div class="uta-empty-state">
-                                            <div class="uta-empty-state__icon"><i class="bi bi-search"></i></div>
-                                            <div class="uta-empty-state__text">Sin resultados para "@_terminoCliente"</div>
-                                        </div>
-                                    </td>
+                                    <th>Nombre Completo</th>
+                                    <th style="text-align:center">Cédula</th>
+                                    <th style="text-align:center">Teléfono</th>
+                                    <th>Dirección</th>
+                                    <th>Correo</th>
+                                    <th style="text-align:center">Acción</th>
                                 </tr>
-                            }
-                            @foreach (var c in ClientesPaginados)
-                            {
-                                <tr>
-                                    <td class="uta-table__bold">@c.Name @c.LastName</td>
-                                    <td style="text-align:center"><span class="uta-code-badge">@c.IDCard</span></td>
-                                    <td style="text-align:center;color:#666">@(string.IsNullOrEmpty(c.Phone) ? "—" : c.Phone)</td>
-                                    <td style="color:#666">@(string.IsNullOrEmpty(c.Address) ? "—" : c.Address)</td>
-                                    <td style="color:#666">@(string.IsNullOrEmpty(c.Email) ? "—" : c.Email)</td>
-                                    <td style="text-align:center">
-                                        <button class="uta-btn uta-btn--sm uta-btn--success" @onclick="() => SeleccionarCliente(c)">
-                                            <i class="bi bi-check2"></i> Seleccionar
-                                        </button>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @if (!ClientesPaginados.Any() && !string.IsNullOrEmpty(_terminoCliente))
+                                {
+                                    <tr>
+                                        <td colspan="6" class="uta-table__empty">
+                                            <div class="uta-empty-state">
+                                                <div class="uta-empty-state__icon"><i class="bi bi-search"></i></div>
+                                                <div class="uta-empty-state__text">Sin resultados para "@_terminoCliente"</div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                @foreach (var c in ClientesPaginados)
+                                {
+                                    <tr>
+                                        <td class="uta-table__bold"> @c.LastName @c.Name</td>
+                                        <td style="text-align:center"><span class="uta-code-badge">@c.IDCard</span></td>
+                                        <td style="text-align:center;color:#666">@(string.IsNullOrEmpty(c.Phone) ? "—" : c.Phone)</td>
+                                        <td style="color:#666">@(string.IsNullOrEmpty(c.Address) ? "—" : c.Address)</td>
+                                        <td style="color:#666">@(string.IsNullOrEmpty(c.Email) ? "—" : c.Email)</td>
+                                        <td style="text-align:center">
+                                            <button class="uta-btn uta-btn--sm uta-btn--success" @onclick="() => SeleccionarCliente(c)">
+                                                <i class="bi bi-check2"></i> Seleccionar
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
-            @if (TotalPaginasClientes > 1)
-            {
-                <div class="uta-modal__footer">
-                    <button class="uta-btn uta-btn--outline uta-btn--sm" @onclick="PaginaAnteriorCliente" disabled="@(_paginaActualCliente == 1)"><i class="bi bi-chevron-left"></i> Anterior</button>
-                    <span class="uta-page-info">Página @_paginaActualCliente de @TotalPaginasClientes</span>
-                    <button class="uta-btn uta-btn--outline uta-btn--sm" @onclick="PaginaSiguienteCliente" disabled="@(_paginaActualCliente == TotalPaginasClientes)">Siguiente <i class="bi bi-chevron-right"></i></button>
-                </div>
-            }
+
+                @if (TotalPaginasClientes > 1)
+                {
+                    <div class="uta-pagination-footer rounded-bottom">
+    
+    @* Info de resultados para Clientes *@
+    <div class="uta-pagination-info">
+        <span class="small text-muted">
+            Se muestran <strong class="uta-text-highlight">@ClienteDesde</strong> a <strong class="uta-text-highlight">@ClienteHasta</strong> de <strong class="uta-text-highlight">@_totalItemsClientes</strong> resultados
+        </span>
+    </div>
+
+    @* Selector de tamaño de página para Clientes *@
+    <div class="d-flex align-items-center gap-2">
+        <span class="small text-muted">por página</span>
+        <div class="uta-select-wrapper">
+            <select class="form-select form-select-sm shadow-none" 
+                    @onchange="OnPageSizeChangedCliente">
+                @foreach (var size in new[] { 5, 10, 25, 50 })
+                {
+                    <option value="@size" selected="@(_itemsPorPaginaCliente == size)">@size</option>
+                }
+            </select>
         </div>
     </div>
-}
+
+    @* Navegación con Ellipsis usando tu PaginationHelper *@
+    <div class="d-flex overflow-hidden">
+        @foreach (var p in VisiblePagesCliente)
+        {
+            if (p == -1)
+            {
+                <span class="uta-pagination-btn uta-pagination-btn--ellipsis">...</span>
+            }
+            else
+            {
+                var pNum = p;
+                <button class="uta-pagination-btn @(pNum == _paginaActualCliente ? "uta-pagination-btn--active" : "")"
+                        @onclick="() => IrAPaginaCliente(pNum)">@pNum</button>
+            }
+        }
+        <button class="uta-pagination-btn @(!TieneSiguienteCliente ? "disabled" : "")"
+                @onclick="() => IrAPaginaCliente(_paginaActualCliente + 1)"
+                disabled="@(!TieneSiguienteCliente)">
+            <i class="bi bi-chevron-right"></i>
+        </button>
+    </div>
+</div>
+                }
+            </div>
+        </div>
+    }
 
 @* Catálogo de Productos Paginado *@
 @if (_mostrarModalProducto)
@@ -520,21 +571,105 @@
 </div>
 
 @code {
+
+    private string _searchCustomerTerm = string.Empty;
+    private string _searchCriterion = "cedula";
+    private int _currentCustomerPage = 1;
+    private int _customerPageSize = 10;
+    private PagedResponse<CustomerResponseDto>? _customerPagedData;
+
+    private List<CustomerModel> _customerResults = new();
+    private CustomerModel? _selectedCustomer;
+    private bool _isSearchingCustomers = false;
+
     private int _pageSize = 10;
     private int _currentPage = 1;
     private int _totalItems;
     private int _totalPages;
+
+    private CustomerModel? _clienteSeleccionado;
+    private List<CarritoItem> _carrito = new();
+    private string _mensajeAlerta = "";
+    private bool _esError = false;
+    private bool _ventaCompletada = false;
+    private string _numeroFactura = "BORRADOR";
+
+    private string _criterioBusquedaCliente = "cedula";
+    private string _searchCriteriaProduct = "name";
+    private int _itemsPorPagina = 5;
+
+    public int TotalPaginasClientes { get; set; }
+    private int _paginaActualCliente = 1;
+    private int _itemsPorPaginaCliente = 10;
+    private int _totalItemsClientes = 0;
+
+    private List<CustomerModel> _resultadosClientes = new();
+    public List<CustomerModel> ClientesPaginados { get; set; } = new();
+    private bool _mostrarModalCliente = false;
+    private string _terminoCliente = string.Empty;
 
     private bool TieneAnterior => _currentPage > 1;
     private bool TieneSiguiente => _currentPage < _totalPages;
     private int Desde => _totalItems == 0 ? 0 : ((_currentPage - 1) * _pageSize) + 1;
     private int Hasta => Math.Min(_currentPage * _pageSize, _totalItems);
 
+    private int ClienteDesde => _totalItemsClientes == 0 ? 0 : ((_paginaActualCliente - 1) * _itemsPorPaginaCliente) + 1;
+    private int ClienteHasta => Math.Min(_paginaActualCliente * _itemsPorPaginaCliente, _totalItemsClientes);
+    private bool TieneSiguienteCliente => _paginaActualCliente < TotalPaginasClientes;
+
+    // Reutilización de tu Helper para el modal de clientes
+    private List<int> VisiblePagesCliente => PaginationHelper.GenerateVisiblePages(_paginaActualCliente, TotalPaginasClientes);
+
     private List<int> GenerateVisiblePages => PaginationHelper.GenerateVisiblePages(_currentPage, _totalPages);
 
     private string _searchterm = "";
     private System.Timers.Timer? _debounceTimer;
     private List<ProductUI> _resultadosProductos = new();
+
+    private decimal SubtotalGlobal => _carrito.Sum(i => i.Subtotal);
+    private decimal IvaGlobal => SubtotalGlobal * 0.15m;
+    private decimal TotalFinal => SubtotalGlobal + IvaGlobal;
+    private bool PuedeFinalizar => _clienteSeleccionado != null && _carrito.Any() && _carrito.All(c => c.Cantidad > 0 && c.Cantidad <= c.Producto.Stock);
+
+    private async Task InputCustomerSearch(ChangeEventArgs e)
+    {
+
+        _terminoCliente = e.Value?.ToString() ?? string.Empty;
+        _paginaActualCliente = 1;
+        await LoadClientsAsync();
+    }
+
+    private async Task LoadClientsAsync()
+    {
+        _isSearchingCustomers = true;
+    
+        var response = await CustomerApiService.SearchCustomersAsync(
+            _terminoCliente, 
+            _criterioBusquedaCliente, 
+            _paginaActualCliente, 
+            _itemsPorPaginaCliente
+        );
+
+        if (response != null)
+        {
+            _totalItemsClientes = response.TotalCount;
+            TotalPaginasClientes = response.TotalPages;
+
+            ClientesPaginados = response.Items.Select(dto => new CustomerModel 
+            { 
+                Id = dto.Id,
+                IDCard = dto.IDCard,
+                Name = dto.Name,
+                LastName = dto.LastName,
+                Phone = dto.Phone,
+                Address = dto.Address,
+                Email = dto.Email
+            }).ToList();
+        }
+
+        _isSearchingCustomers = false;
+        StateHasChanged();
+    }
 
     private async Task AddSimpleProduct(ProductUI selectedProduct)
     {
@@ -599,8 +734,8 @@
         return paginas.Distinct().ToList();
     }
 
-   private async Task LoadData()
-   {
+    private async Task LoadData()
+    {
         try 
         {
             var response = await ApiService.GetProductosPaginadosAsync(
@@ -637,7 +772,7 @@
         {
             StateHasChanged();
         }
-   }
+    }
 
     private async Task OnPageSizeChanged(ChangeEventArgs e)
     {
@@ -671,25 +806,42 @@
         await LoadData();
     }
 
-    private CustomerModel? _clienteSeleccionado;
-    private List<CarritoItem> _carrito = new();
-    private string _mensajeAlerta = "";
-    private bool _esError = false;
-    private bool _ventaCompletada = false;
-    private string _numeroFactura = "BORRADOR";
+    private async Task IrAPaginaCliente(int pagina)
+    {
+        _paginaActualCliente = pagina;
 
+        await LoadClientsAsync();
+    }
 
-    private string _criterioBusquedaCliente = "cedula";
-    private string _searchCriteriaProduct = "name";
+    private async Task OnPageSizeChangedCliente(ChangeEventArgs e)
+    {
+        
+        if (int.TryParse(e.Value?.ToString(), out int nuevoTamaño))
+        {
+            _itemsPorPaginaCliente = nuevoTamaño;
+            _paginaActualCliente = 1; 
+            await LoadClientsAsync();
+        }
 
-    private int _itemsPorPagina = 5;
+    }
 
-    private int _paginaActualCliente = 1;
-    private int TotalPaginasClientes => (int)Math.Ceiling(_resultadosClientes.Count / (double)_itemsPorPagina);
-    private IEnumerable<CustomerModel> ClientesPaginados => _resultadosClientes.Skip((_paginaActualCliente - 1) * _itemsPorPagina).Take(_itemsPorPagina);
+    private void PaginaAnteriorCliente() 
+    { 
 
-    private void PaginaAnteriorCliente() { if (_paginaActualCliente > 1) _paginaActualCliente--; }
-    private void PaginaSiguienteCliente() { if (_paginaActualCliente < TotalPaginasClientes) _paginaActualCliente++; }
+        if (_paginaActualCliente > 1) _paginaActualCliente--;
+
+    }
+
+    private async Task PaginaSiguienteCliente() 
+    {
+        if (_paginaActualCliente < TotalPaginasClientes)
+        {
+
+            _paginaActualCliente++;
+            await LoadClientsAsync();
+
+        }
+    }
 
     private void CambioCriterioCliente(ChangeEventArgs e)
     {
@@ -765,25 +917,29 @@
         public int CantidadTemporal { get; set; } = 1;
     }
 
-    private bool _mostrarModalCliente = false;
-    private string _terminoCliente = "";
-    private List<CustomerModel> _resultadosClientes = new();
-
-    private void AbrirModalCliente() { _mostrarModalCliente = true; _resultadosClientes.Clear(); _terminoCliente = ""; _paginaActualCliente = 1; }
-    private void CerrarModalCliente() => _mostrarModalCliente = false;
-    private async Task PresionoEnterCliente(KeyboardEventArgs e) { if (e.Key == "Enter") await BuscarClientesEnAPI(); }
-
-    private async Task BuscarClientesEnAPI()
+    private async Task AbrirModalCliente() 
     {
-        if (string.IsNullOrWhiteSpace(_terminoCliente)) return;
-        _resultadosClientes = await ApiService.SearchCustomersAsync(_terminoCliente, _criterioBusquedaCliente);
-        _paginaActualCliente = 1; 
+        _terminoCliente = "";
+        _paginaActualCliente = 1;
+        _mostrarModalCliente = true;
+        await LoadClientsAsync();
+
     }
 
-    private void SeleccionarCliente(CustomerModel cliente)
+    private void CerrarModalCliente() => _mostrarModalCliente = false;
+
+    private async Task PresionoEnterCliente(KeyboardEventArgs e) 
+    { 
+        if (e.Key == "Enter") await LoadClientsAsync();
+    }
+
+    private void SeleccionarCliente(CustomerModel customer)
     {
-        _clienteSeleccionado = cliente;
-        CerrarModalCliente();
+        _clienteSeleccionado = customer;
+        _terminoCliente = string.Empty;
+        _mostrarModalCliente = false;
+
+        StateHasChanged();
     }
 
     private bool _mostrarModalProducto = false;
@@ -797,6 +953,7 @@
         await LoadData();
 
     }
+
     private void CerrarModalProducto() => _mostrarModalProducto = false;
 
     private async Task AgregarProducto(ProductUI prod)
@@ -817,11 +974,6 @@
     }
 
     private void EliminarDelCarrito(CarritoItem item) => _carrito.Remove(item);
-
-    private decimal SubtotalGlobal => _carrito.Sum(i => i.Subtotal);
-    private decimal IvaGlobal => SubtotalGlobal * 0.15m;
-    private decimal TotalFinal => SubtotalGlobal + IvaGlobal;
-    private bool PuedeFinalizar => _clienteSeleccionado != null && _carrito.Any() && _carrito.All(c => c.Cantidad > 0 && c.Cantidad <= c.Producto.Stock);
 
     private async Task VerificarCantidadCarrito(CarritoItem item)
     {
@@ -864,13 +1016,13 @@
             }
         }
 
-        var solicitudVenta = new CreateSaleRequest
+        var solicitudVenta = new Application.DTOs.CreateSaleRequest
         {
             CustomerId = _clienteSeleccionado.Id,
-            Details = _carrito.Select(item => new CreateSaleDetailRequest 
-            { 
-                ProductId = item.Producto.Id, 
-                Amount = item.Cantidad 
+            Details = _carrito.Select(item => new Application.DTOs.CreateSaleRequest.CreateRequestDetail 
+            {
+                ProductId = item.Producto.Id,
+                Amount = item.Cantidad
             }).ToList()
         };
 

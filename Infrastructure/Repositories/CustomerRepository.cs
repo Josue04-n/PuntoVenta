@@ -1,4 +1,5 @@
-﻿using Application.Interfaces.Repositories;
+﻿using Application.DTOs.Common;
+using Application.Interfaces.Repositories;
 using Domain.Entities;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,47 @@ public class CustomerRepository : ICustomerRepository
     {
         return await _context.Customers.FindAsync(id);
     }
+
+    public async Task<Customer> GetByIdCardAsync(string IDCard)
+    {
+        return await _context.Customers
+            .AsNoTracking()
+            .FirstOrDefaultAsync(c => c.IDCard == IDCard);
+    }
+
+    public async Task<PagedResponse<Customer>> ListAsyncPaginatedClients(
+        int pageNumber, 
+        int pageSize, 
+        string? term = null,
+        string criterian = "cedula")
+    {
+        IQueryable<Customer> query = _context.Customers.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(term))
+        {
+            term = term.Trim().ToLower();
+
+            query = criterian.Trim().ToLower() switch
+            {
+                "id" => int.TryParse(term, out int idSearch)
+                    ? query.Where(c => c.Id == idSearch)
+                    : query,
+                "cedula" => query.Where(c => c.IDCard.StartsWith(term)),
+                "nombre" => query.Where(c => c.LastName.ToLower().StartsWith(term)),
+                _ => query.Where(c => c.IDCard.StartsWith(term))
+            };
+        }
+
+        var totalCount = await query.CountAsync();
+        var items = await query
+            .OrderBy(c => c.LastName)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PagedResponse<Customer>(items, totalCount, pageNumber, pageSize);
+    }
+
 
     public async Task<IEnumerable<Customer>> SearchAsync(string term, string searchBy)
     {

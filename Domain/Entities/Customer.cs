@@ -10,6 +10,7 @@ public class Customer
     public string Address { get; private set; } = string.Empty;
     public string Email { get; private set; } = string.Empty;
 
+    public bool IsValid => !string.IsNullOrWhiteSpace(IDCard) && IDCard.Length <= 10;
     private Customer() { }
 
 }
