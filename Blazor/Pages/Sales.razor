@@ -104,7 +104,7 @@
                 <div class="uta-card__body">
                     <div class="uta-client-header">
                         <div class="uta-client-avatar">
-                            @(_clienteSeleccionado != null ? $"{_clienteSeleccionado.Name[0]}{_clienteSeleccionado.LastName[0]}" : "CF")
+                            @(_clienteSeleccionado?.Name?.Length > 0 && _clienteSeleccionado?.LastName?.Length > 0 ? $"{_clienteSeleccionado.Name[0]}{_clienteSeleccionado.LastName[0]}" : "CF")
                         </div>
                         <div class="uta-client-title">
                             <h4 class="uta-client-name">
@@ -116,8 +116,8 @@
                     
                     <div class="uta-client-data-grid">
                         <div class="uta-data-item">
-                            <span class="uta-data-item__label">Cédula / RUC</span>
-                            <span class="uta-data-item__value">@(_clienteSeleccionado != null ? _clienteSeleccionado.IDCard : "-")</span>
+                            <span class="uta-data-item__label">Cédula </span>
+                            <span class="uta-data-item__value">@(_clienteSeleccionado != null ? _clienteSeleccionado.IDCard : "—")</span>
                         </div>
                         <div class="uta-data-item">
                             <span class="uta-data-item__label">Teléfono</span>
@@ -185,10 +185,11 @@
                                     <tr>
                                         <td><span class="uta-code-badge">@item.Producto.Id.ToString("D4")</span></td>
                                         <td style="text-align:center">
-                                            <input class="uta-qty-input uta-qty-input--cart" type="number" 
-                                                   @bind="item.Cantidad" 
-                                                   @bind:event="oninput"
-                                                   max="@item.Producto.Stock" />
+                                            <input class="uta-qty-input uta-qty-input--cart" 
+                                                   type="number" 
+                                                   value="@item.Cantidad" 
+                                                   @oninput="@((e) => ActualizarCantidad(item, e))"
+                                                   min="1" />
                                             <div class="uta-stock-hint" @onclick="() => item.Cantidad = item.Producto.Stock" style="cursor:pointer">
                                                 Disponible: <strong>@item.Producto.Stock</strong>
                                             </div>
@@ -642,7 +643,7 @@
     private async Task LoadClientsAsync()
     {
         _isSearchingCustomers = true;
-    
+
         var response = await CustomerApiService.SearchCustomersAsync(
             _terminoCliente, 
             _criterioBusquedaCliente, 
@@ -815,7 +816,7 @@
 
     private async Task OnPageSizeChangedCliente(ChangeEventArgs e)
     {
-        
+
         if (int.TryParse(e.Value?.ToString(), out int nuevoTamaño))
         {
             _itemsPorPaginaCliente = nuevoTamaño;
@@ -908,8 +909,40 @@
     public class CarritoItem
     {
         public ProductModel Producto { get; set; } = null!;
-        public int Cantidad { get; set; }
-        public decimal Subtotal => Producto.UnitPrice * Cantidad;
+        private int _cantidad;
+        public int Cantidad
+        {
+            get => _cantidad;
+            set
+            {
+                if (value < 1) _cantidad = 1;
+                else if (value > Producto.Stock) _cantidad = Producto.Stock;
+                else _cantidad = value;
+            }    
+        }
+        public decimal Subtotal => Cantidad * Producto.UnitPrice;
+
+    }
+
+    private void ActualizarCantidad(CarritoItem item, ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int nuevaCantidad))
+        {
+            if (nuevaCantidad < 1) 
+            {
+                item.Cantidad = 1;
+                return;
+            }
+
+            if (nuevaCantidad > item.Producto.Stock)
+            {
+                item.Cantidad = item.Producto.Stock; 
+            }
+            else
+            {
+                item.Cantidad = nuevaCantidad;
+            }
+        }
     }
 
     public class ProductUI : ProductModel
@@ -1065,18 +1098,19 @@
                         await JS.InvokeVoidAsync("Swal.fire", new
                         {
                             title = "Ajuste Automático de Factura",
-                            html = htmlMessage,
+                            html = htmlMessage, 
                             icon = "warning",
                             confirmButtonText = "Entendido, continuar con la venta",
-                            buttonsStyling = false,
+                            buttonsStyling = false, 
                             customClass = new {
-                                popup = "uta-card uta-card--modal",
-                                title = "uta-modal-title",
-                                confirmButton = "uta-btn uta-btn--primary uta-btn--lg"
+                                popup = "uta-swal-card",
+                                title = "uta-swal-title",
+                                confirmButton = "uta-btn uta-btn--primary uta-btn--lg",
+                                htmlContainer = "uta-swal-html"
                             },
                             showClass = new {
-                                popup = "animate__animated animate__fadeInUp"
-                        }
+                                popup = "animate__animated animate__fadeInUp animate__faster"
+                            }
                         });
 
                         RemoveOutOfStockProducts(errorResponse.Errors);
