@@ -42,6 +42,14 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Sale>(entity =>
         {
+            entity.Property(v => v.SubTotal).HasPrecision(18, 2);
+            entity.Property(v => v.VatPercentage).HasPrecision(5, 2);
+            entity.Property(v => v.VatAmount).HasPrecision(18, 2);
+            entity.Property(v => v.Total).HasPrecision(18, 2);
+
+            entity.ToTable(t => t.HasCheckConstraint("CK_Sale_Total_Consistency", "Total = SubTotal + VatAmount"));
+
+
             entity.HasKey(s => s.Id);
 
             // Relación con Cliente (DIP & SRP)

@@ -5,6 +5,8 @@
 @using Blazor.Models
 @using Blazor.Services
 @using System.Timers
+@using System.Text.Json;
+@inject IJSRuntime JS
 @inject PosApiService ApiService
 @inject CustomerApiService CustomerApiService
 @inject IJSRuntime JS
@@ -180,33 +182,35 @@
                                         </td>
                                     </tr>
                                 }
-                                @foreach (var item in _carrito)
-                                {
-                                    <tr>
-                                        <td><span class="uta-code-badge">@item.Producto.Id.ToString("D4")</span></td>
-                                        <td style="text-align:center">
-                                            <input class="uta-qty-input uta-qty-input--cart" 
-                                                   type="number" 
-                                                   value="@item.Cantidad" 
-                                                   @oninput="@((e) => ActualizarCantidad(item, e))"
-                                                   min="1" />
-                                            <div class="uta-stock-hint" @onclick="() => item.Cantidad = item.Producto.Stock" style="cursor:pointer">
-                                                Disponible: <strong>@item.Producto.Stock</strong>
-                                            </div>
-                                        </td>
-                                        <td class="uta-table__bold">@item.Producto.Name</td>
-                                        <td style="text-align:right;color:#666">$ @item.Producto.UnitPrice.ToString("N2")</td>
-                                        <td style="text-align:right;font-weight:600;color:#1a1a1a">$ @item.Subtotal.ToString("N2")</td>
-                                        @if (!_ventaCompletada)
-                                        {
-                                            <td class="d-print-none" style="text-align:center">
-                                                <button class="uta-icon-btn uta-icon-btn--red" title="Quitar" @onclick="() => EliminarDelCarrito(item)">
-                                                    <i class="bi bi-trash3-fill"></i>
-                                                </button>
+                                    @foreach (var item in _carrito)
+                                    {
+                                        <tr>
+                                            <td><span class="uta-code-badge">@item.Product.Id.ToString("D4")</span></td>
+                                            <td style="text-align:center">
+                                                <input class="uta-qty-input uta-qty-input--cart" 
+                                                       type="number" 
+                                                       value="@item.Amount" 
+                                                       @oninput="@((e) => ActualizarCantidad(item, e))"
+                                                       min="1" />
+                                                <div class="uta-stock-hint" @onclick="() => item.Amount = item.AvailableStock" style="cursor:pointer">
+                                                    Disponible: <strong>@item.AvailableStock</strong>
+                                                </div>
                                             </td>
-                                        }
-                                    </tr>
-                                }
+                                            <td class="uta-table__bold">@item.Product.Name</td>
+
+                                            <td style="text-align:right;color:#666">$ @item.Product.UnitPrice.ToString("N2")</td>
+
+                                            <td style="text-align:right;font-weight:600;color:#1a1a1a">$ @item.SubTotal.ToString("N2")</td>
+                                            @if (!_ventaCompletada)
+                                            {
+                                                <td class="d-print-none" style="text-align:center">
+                                                    <button class="uta-icon-btn uta-icon-btn--red" title="Quitar" @onclick="() => EliminarDelCarrito(item)">
+                                                        <i class="bi bi-trash3-fill"></i>
+                                                    </button>
+                                                </td>
+                                            }
+                                        </tr>
+                                    }
                             </tbody>
                         </table>
                     </div>
@@ -280,9 +284,20 @@
                     <div class="d-print-none" style="margin-top: 1.5rem">
                         @if (!_ventaCompletada)
                         {
-                            <button class="uta-btn uta-btn--primary uta-btn--block uta-btn--lg" @onclick="FinalizarVenta" disabled="@(!PuedeFinalizar)">
-                                <i class="bi bi-check2-all"></i> &nbsp; PROCESAR VENTA
+                            <!-- Botón Primario: Más grande y llamativo -->
+                            <button class="uta-btn uta-btn--primary uta-btn--lg" 
+                                    @onclick="FinalizarVenta" 
+                                    disabled="@(!PuedeFinalizar)">
+                                <i class="bi bi-check2-all"></i> PROCESAR VENTA
                             </button>
+
+                            <!-- Botón Secundario: Outline para indicar que es una acción de retroceso -->
+                            <button type="button" 
+                                    class="uta-btn-pos uta-btn-pos--cancel" 
+                                    @onclick="CancelSale">
+                                <i class="bi bi-x-circle"></i> CANCELAR FACTURA
+                            </button>
+
                             @if (!PuedeFinalizar)
                             {
                                 <p class="uta-hint mt-2">
@@ -573,6 +588,8 @@
 
 @code {
 
+    private SalesRegistryModel _salesModel = new SalesRegistryModel();
+
     private string _searchCustomerTerm = string.Empty;
     private string _searchCriterion = "cedula";
     private int _currentCustomerPage = 1;
@@ -589,7 +606,8 @@
     private int _totalPages;
 
     private CustomerModel? _clienteSeleccionado;
-    private List<CarritoItem> _carrito = new();
+    //private List<CarritoItem> _carrito = new();
+    private List<CartItemModel> _carrito = new();
     private string _mensajeAlerta = "";
     private bool _esError = false;
     private bool _ventaCompletada = false;
@@ -618,23 +636,85 @@
     private int ClienteHasta => Math.Min(_paginaActualCliente * _itemsPorPaginaCliente, _totalItemsClientes);
     private bool TieneSiguienteCliente => _paginaActualCliente < TotalPaginasClientes;
 
-    // Reutilización de tu Helper para el modal de clientes
     private List<int> VisiblePagesCliente => PaginationHelper.GenerateVisiblePages(_paginaActualCliente, TotalPaginasClientes);
-
     private List<int> GenerateVisiblePages => PaginationHelper.GenerateVisiblePages(_currentPage, _totalPages);
 
     private string _searchterm = "";
     private System.Timers.Timer? _debounceTimer;
     private List<ProductUI> _resultadosProductos = new();
 
-    private decimal SubtotalGlobal => _carrito.Sum(i => i.Subtotal);
+    private decimal SubtotalGlobal => _carrito.Sum(i => i.SubTotal);
     private decimal IvaGlobal => SubtotalGlobal * 0.15m;
     private decimal TotalFinal => SubtotalGlobal + IvaGlobal;
-    private bool PuedeFinalizar => _clienteSeleccionado != null && _carrito.Any() && _carrito.All(c => c.Cantidad > 0 && c.Cantidad <= c.Producto.Stock);
+    private bool PuedeFinalizar => _clienteSeleccionado != null && _carrito.Any() && _carrito.All(c => c.Amount > 0 && c.Amount <= c.Product.Stock);
+
+    private async Task UpdateBrowsingProtection()
+    {
+        if (_salesModel.HasData)
+        {
+            await JS.InvokeVoidAsync("navigationGuard.enable");
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("navigationGuard.disable");
+        }    
+    }
+
+    private async Task CancelSale()
+    {
+        var result = await JS.InvokeAsync<object>("Swal.fire", new
+        {
+            title = "¿Cancelar venta?",
+            text = "Se perderán todos los productos cargados en el carrito.",
+            icon = "warning",
+            showCancelButton = true,
+            confirmButtonColor = "#6B1A33", 
+            cancelButtonColor = "#6c757d",
+            confirmButtonText = "Sí, cancelar",
+            cancelButtonText = "No, mantener"
+        });
+
+        if (await Confirmed(result))
+        {
+            PerformTotalCleaning();
+            await UpdateBrowsingProtection();
+
+            await JS.InvokeVoidAsync("Swal.fire", new {
+                toast = true,
+                position = "top-end",
+                icon = "success",
+                title = "Venta cancelada",
+                showConfirmButton = false,
+                timer = 2000
+            });
+        }
+    }
+
+    private async Task<bool> Confirmed(object result)
+    {
+        if (result == null) return false;
+
+        try
+        {
+            var element = (JsonElement)result;
+            return element.TryGetProperty("isConfirmed", out var confirmed) && confirmed.GetBoolean();
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private void PerformTotalCleaning()
+    {
+        _salesModel = new SalesRegistryModel();
+        _carrito?.Clear();
+        _clienteSeleccionado = null;
+        StateHasChanged();
+    }
 
     private async Task InputCustomerSearch(ChangeEventArgs e)
     {
-
         _terminoCliente = e.Value?.ToString() ?? string.Empty;
         _paginaActualCliente = 1;
         await LoadClientsAsync();
@@ -674,29 +754,29 @@
 
     private async Task AddSimpleProduct(ProductUI selectedProduct)
     {
-        var existingItem = _carrito.FirstOrDefault(c => c.Producto.Id == selectedProduct.Id );
+        var existingItem = _carrito.FirstOrDefault(c => c.Product.Id == selectedProduct.Id );
 
         if(existingItem != null)
         {
-            if (existingItem.Cantidad + 1 > selectedProduct.Stock)
+            if (existingItem.Amount + 1 > selectedProduct.Stock)
             {
                 await MostrarNotificacion($"Stock insuficiente para aumentar '{selectedProduct.Name}'", true);   
             }
 
-            existingItem.Cantidad++;
+            existingItem.Amount++;
         }
         else
         {
-            _carrito.Add(new CarritoItem
+            _carrito.Add(new CartItemModel
             {
-                Producto = new ProductModel
+                Product = new ProductModel
                 {
                     Id = selectedProduct.Id,
                     Name = selectedProduct.Name,
                     UnitPrice = selectedProduct.UnitPrice,
                     Stock = selectedProduct.Stock
                 },
-                Cantidad = 1
+                Amount = 1
             });    
         }
         await MostrarNotificacion($"{selectedProduct.Name} añadido correctamente.");
@@ -881,68 +961,40 @@
         _mensajeAlerta = ""; StateHasChanged();
     }
 
-    private async Task ActualizarCantidadCart(CarritoItem item, ChangeEventArgs e)
+    private async Task ActualizarCantidad(CartItemModel item, ChangeEventArgs e)
     {
         if (int.TryParse(e.Value?.ToString(), out int nuevaCantidad))
         {
             if (nuevaCantidad <= 0)
             {
-                item.Cantidad = 1;
-                await MostrarNotificacion("La cantidad mínima es 1. Use el botón de papelera para eliminar.", true);
+                item.Amount = 1;
+                await JS.InvokeVoidAsync("Swal.fire", new { icon = "info", title = "Cantidad mínima", text = "La cantidad debe ser al menos 1." });
             }
-            else if (nuevaCantidad > item.Producto.Stock)
+            else if (nuevaCantidad > item.AvailableStock)
             {
-                item.Cantidad = item.Producto.Stock;
-                await MostrarNotificacion($"Stock insuficiente. Solo hay {item.Producto.Stock} disponibles.", true);
+                item.Amount = item.AvailableStock;
+                await JS.InvokeVoidAsync("Swal.fire", new { icon = "warning", title = "Stock insuficiente", text = $"Solo hay {item.AvailableStock} disponibles." });
             }
             else
             {
-                item.Cantidad = nuevaCantidad;
+                item.Amount = nuevaCantidad;
             }
         }
         else
         {
-            item.Cantidad = 1; 
+            item.Amount = 1;
         }
+
+        RecalcularTotalesFactura();
     }
 
-    public class CarritoItem
+    private void RecalcularTotalesFactura()
     {
-        public ProductModel Producto { get; set; } = null!;
-        private int _cantidad;
-        public int Cantidad
-        {
-            get => _cantidad;
-            set
-            {
-                if (value < 1) _cantidad = 1;
-                else if (value > Producto.Stock) _cantidad = Producto.Stock;
-                else _cantidad = value;
-            }    
-        }
-        public decimal Subtotal => Cantidad * Producto.UnitPrice;
-
-    }
-
-    private void ActualizarCantidad(CarritoItem item, ChangeEventArgs e)
-    {
-        if (int.TryParse(e.Value?.ToString(), out int nuevaCantidad))
-        {
-            if (nuevaCantidad < 1) 
-            {
-                item.Cantidad = 1;
-                return;
-            }
-
-            if (nuevaCantidad > item.Producto.Stock)
-            {
-                item.Cantidad = item.Producto.Stock; 
-            }
-            else
-            {
-                item.Cantidad = nuevaCantidad;
-            }
-        }
+        _salesModel.Subtotal = _carrito.Sum(x => x.SubTotal);
+        _salesModel.Iva = _salesModel.Subtotal * 0.15m;
+        _salesModel.Total = _salesModel.Subtotal + _salesModel.Iva;
+    
+        StateHasChanged(); 
     }
 
     public class ProductUI : ProductModel
@@ -979,7 +1031,7 @@
 
     private async Task  AbrirModalProducto()
     {
-        
+
         _mostrarModalProducto = true; 
         _searchterm = ""; 
         _currentPage = 1;
@@ -989,42 +1041,90 @@
 
     private void CerrarModalProducto() => _mostrarModalProducto = false;
 
-    private async Task AgregarProducto(ProductUI prod)
+private async Task AgregarProducto(ProductUI prod)
+{
+    var itemExistente = _carrito.FirstOrDefault(c => c.ProductId == prod.Id);
+
+    if (itemExistente != null)
     {
-        if (prod.CantidadTemporal > prod.Stock) { await MostrarNotificacion($"Solo hay {prod.Stock} en stock.", true); return; }
-        var itemExistente = _carrito.FirstOrDefault(c => c.Producto.Id == prod.Id);
-        if (itemExistente != null)
-        {
-            if (itemExistente.Cantidad + prod.CantidadTemporal > prod.Stock) { await MostrarNotificacion("Excede stock.", true); return; }
-            itemExistente.Cantidad += prod.CantidadTemporal;
-        }
-        else
-        {
-            _carrito.Add(new CarritoItem { Producto = new ProductModel { Id = prod.Id, Name = prod.Name, UnitPrice = prod.UnitPrice, Stock = prod.Stock }, Cantidad = prod.CantidadTemporal });
-        }
-        await MostrarNotificacion($"{prod.Name} añadido.");
-        prod.CantidadTemporal = 1;
+        itemExistente.Amount += prod.CantidadTemporal;
+    }
+    else
+    {
+        _carrito.Add(new CartItemModel 
+        { 
+            ProductId = prod.Id,         // Antes: solo se llenaba dentro de .Product
+            ProductName = prod.Name,     // Antes: solo se llenaba dentro de .Product
+            UnitPrice = prod.UnitPrice, // Antes: era 0, por eso Subtotal era 0
+            Amount = prod.CantidadTemporal,
+            AvailableStock = prod.Stock,
+            // Mantener el objeto interno por compatibilidad
+            Product = new ProductModel { Id = prod.Id, Name = prod.Name, UnitPrice = prod.UnitPrice, Stock = prod.Stock }
+        });
     }
 
-    private void EliminarDelCarrito(CarritoItem item) => _carrito.Remove(item);
+    RecalcularTotalesFactura(); 
+    
+    await MostrarNotificacion($"{prod.Name} añadido.");
+    prod.CantidadTemporal = 1;
+    StateHasChanged();
+}
 
-    private async Task VerificarCantidadCarrito(CarritoItem item)
+    private async Task EliminarDelCarrito(CartItemModel item)
     {
-        if (item.Cantidad <= 0)
+        var result = await JS.InvokeAsync<object>("Swal.fire", new
         {
-            await MostrarNotificacion("La cantidad debe ser mayor a 0.", true);
-        }
-        else if (item.Cantidad > item.Producto.Stock)
+            title = "¿Quitar producto?",
+            text = $"¿Estás seguro de eliminar '{item.Product.Name}' del carrito?",
+            icon = "warning",
+            showCancelButton = true,
+            confirmButtonColor = "#6B1A33",
+            cancelButtonColor = "#6c757d",
+            confirmButtonText = "Sí, eliminar",
+            cancelButtonText = "No, mantener"
+        });
+
+        if (await Confirmed(result))
         {
-            await MostrarNotificacion($"Sobrepasa el inventario. Solo hay {item.Producto.Stock} disponibles.", true);
+            _carrito.Remove(item);
+
+            await JS.InvokeVoidAsync("Swal.fire", new {
+                toast = true,
+                position = "top-end",
+                icon = "success",
+                title = "Producto quitado",
+                showConfirmButton = false,
+                timer = 1500
+            });
+
+            StateHasChanged();
         }
+    }
+
+    private async Task VerificarCantidadCarrito(CartItemModel item) 
+    {
+        if (item.Amount <= 0)
+        {
+            await JS.InvokeVoidAsync("Swal.fire", new { icon = "error", title = "Invalid Amount", text = "Amount must be greater than 0." });
+            item.Amount = 1;
+        }
+        else if (item.Amount > item.AvailableStock)
+        {
+            await JS.InvokeVoidAsync("Swal.fire", new { 
+                icon = "warning", 
+                title = "Insufficent Stock", 
+                text = $"Only {item.AvailableStock} units available." 
+            });
+            item.Amount = item.AvailableStock;
+        }
+        StateHasChanged();
     }
 
     private void RemoveOutOfStockProducts(List<StockValidationErrorModel> errors)
     {
         foreach (var error in errors)
         {
-            var itemARemover = _carrito.FirstOrDefault(c => c.Producto.Id == error.IdProducto);
+            var itemARemover = _carrito.FirstOrDefault(c => c.Product.Id == error.IdProducto);
             if (itemARemover != null)
             {
                 _carrito.Remove(itemARemover);
@@ -1042,9 +1142,9 @@
 
         foreach (var item in _carrito)
         {
-            if (item.Cantidad > item.Producto.Stock)
+            if (item.Amount > item.Product.Stock)
             {
-                await MostrarNotificacion($"Stock insuficiente para '{item.Producto.Name}'. Disponible: {item.Producto.Stock}.", true);
+                await MostrarNotificacion($"Stock insuficiente para '{item.Product.Name}'. Disponible: {item.Product.Stock}.", true);
                 return; 
             }
         }
@@ -1052,10 +1152,10 @@
         var solicitudVenta = new Application.DTOs.CreateSaleRequest
         {
             CustomerId = _clienteSeleccionado.Id,
-            Details = _carrito.Select(item => new Application.DTOs.CreateSaleRequest.CreateRequestDetail 
+            Details = _carrito.Select(item => new CreateRequestDetail
             {
-                ProductId = item.Producto.Id,
-                Amount = item.Cantidad
+                ProductId = item.Product.Id,
+                Amount = item.Amount
             }).ToList()
         };
 
@@ -1148,7 +1248,7 @@
 
                         foreach (var prod in errorResponse.DeletedProducts)
                         {
-                            var item = _carrito.FirstOrDefault(c => c.Producto.Id == prod.ProductId);
+                            var item = _carrito.FirstOrDefault(c => c.Product.Id == prod.ProductId);
                             if (item != null) _carrito.Remove(item);
                         }
                         StateHasChanged();

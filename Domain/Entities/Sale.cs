@@ -2,28 +2,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities;
-
-public class SaleDetail
-{
-    public int Id { get; private set; }
-    public int ProductId { get; private set; }
-    public int Amount { get; private set; }
-    public Price UnitPrice { get; private set; }
-    public virtual Product Product { get; set; }
-    [ForeignKey("ProductId")]
-    public Price SubTotal => UnitPrice * Amount;
-
-    private SaleDetail(){}
-
-    public SaleDetail(int productId, int amount, Price unitPrice)
-    {
-        ProductId = productId;
-        Amount = amount;
-        UnitPrice = unitPrice;
-    }
-
-}
-
 public class Sale 
 {
     public int Id { get; private set; }
@@ -32,17 +10,23 @@ public class Sale
     public int CustomerId { get; private set; }
     [ForeignKey("CustomerId")]
     public virtual Customer? Customer { get; private set; }
-    private readonly List<SaleDetail> _details = new();
 
+    public decimal SubTotal { get; private set; }
+    public decimal VatPercentage { get; private set; } 
+    public decimal VatAmount { get; private set; }
+    public decimal Total { get; private set; }
+
+    private readonly List<SaleDetail> _details = new();
     public IReadOnlyCollection<SaleDetail> Details => _details.AsReadOnly();
 
     private const decimal Vat = 0.15m;
 
-    public decimal SubTotal => _details.Sum(d => d.SubTotal.Worth);
-    public decimal VatAmount => SubTotal * Vat;
-    public decimal Total => SubTotal + VatAmount;
+    public Sale()
+    {
+        
+    }
 
-    public Sale(string invoiceNumber, int customerId)
+    public Sale(string invoiceNumber, int customerId, decimal vatRate = 15.00m)
     {
         if (customerId<=0)
         {
@@ -50,6 +34,8 @@ public class Sale
         }
         InvoiceNumber = invoiceNumber;
         CustomerId = customerId;
+        VatPercentage = vatRate;
+
         var ecuadorTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SA Pacific Standard Time");
         IssueDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, ecuadorTimeZone);
     }
@@ -59,6 +45,14 @@ public class Sale
         product.DecreaseStock(amount);
         var detail = new SaleDetail(product.Id, amount, product.UnitPrice);
         _details.Add(detail);
+        UpdateTotals();
+    }
+
+    public void UpdateTotals()
+    {
+        SubTotal = _details.Sum(d => d.SubTotal.Worth);
+        VatAmount = Math.Round(SubTotal * (VatPercentage / 100m), 2, MidpointRounding.AwayFromZero);
+        Total = SubTotal + VatAmount;
     }
 
 }

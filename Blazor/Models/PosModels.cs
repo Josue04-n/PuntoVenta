@@ -75,3 +75,25 @@ public class DeletedProductInfoModel
     public int ProductId { get; set; }
     public string ProductName { get; set; } = string.Empty;
 }
+
+public class CartItemModel
+{
+    public int ProductId { get; set; }
+    public ProductModel Product { get; set; } = new();
+    public string ProductName { get; set; } = string.Empty;
+    public int Amount { get; set; }
+    public decimal UnitPrice { get; set; }
+    public int AvailableStock { get; set; }
+    public decimal SubTotal => Amount * UnitPrice;
+}
+
+public class SalesRegistryModel 
+{
+    public int? CustomerID { get; set; }
+    public string CustomerName { get; set; } = "Consumidor Final";
+    public List<CartItemModel> Items { get; set; } = new();
+    public decimal Subtotal { get; set; }
+    public decimal Iva { get; set; }
+    public decimal Total { get; set; }
+    public bool HasData => Items.Any();
+}

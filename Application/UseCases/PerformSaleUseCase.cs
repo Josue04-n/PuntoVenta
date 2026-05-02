@@ -54,15 +54,8 @@ public class PerformSaleUseCase
             }
         }
 
-        if (deletedProducts.Any())
-        {
-            throw new ProductDeletedException(deletedProducts);
-        }
-
-        if (errorsStock.Any())
-        {
-            throw new BulkStockException(errorsStock);
-        }
+        if (deletedProducts.Any()) throw new ProductDeletedException(deletedProducts);
+        if (errorsStock.Any()) throw new BulkStockException(errorsStock);
 
         string invoiceNumber = await _saleRepository.GenerateInvoiceNumberAsync();
         var sale = new Sale(invoiceNumber, request.CustomerId);
@@ -70,10 +63,10 @@ public class PerformSaleUseCase
         foreach (var (product, amount) in validatedProducts)
         {
             sale.AddDetail(product, amount);
-            product.RemoveStock(amount);
+            //product.RemoveStock(amount);
         }
 
-        await _productRepository.UpdateRangeAsync(validatedProducts.Select(p => p.product).ToList());
+        //await _productRepository.UpdateRangeAsync(validatedProducts.Select(p => p.product).ToList());
         await _saleRepository.AddAsync(sale);
 
         return sale;

@@ -42,7 +42,8 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("IDCard")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -58,7 +59,36 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("IDCard")
+                        .IsUnique();
+
                     b.ToTable("Customers");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Product", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("Stock")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Products", t =>
+                        {
+                            t.HasTrigger("TR_PreventNegativeStockAndPrice");
+                        });
+
+                    b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
                 });
 
             modelBuilder.Entity("Domain.Entities.Sale", b =>
@@ -79,11 +109,30 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("IssueDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<decimal>("SubTotal")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Total")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("VatAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("VatPercentage")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Sales");
+                    b.ToTable("Sales", t =>
+                        {
+                            t.HasCheckConstraint("CK_Sale_Total_Consistency", "Total = SubTotal + VatAmount");
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.SaleDetail", b =>
@@ -112,38 +161,44 @@ namespace Infrastructure.Migrations
                     b.ToTable("SaleDetails");
                 });
 
-            modelBuilder.Entity("Domain.ValueObjects.Product", b =>
+            modelBuilder.Entity("Domain.Entities.Product", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.OwnsOne("Domain.ValueObjects.Price", "UnitPrice", b1 =>
+                        {
+                            b1.Property<int>("ProductId")
+                                .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                            b1.Property<decimal>("Worth")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("decimal(18,2)")
+                                .HasColumnName("UnitPrice");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                            b1.HasKey("ProductId");
 
-                    b.Property<int>("Stock")
-                        .HasColumnType("int");
+                            b1.ToTable("Products");
 
-                    b.HasKey("Id");
+                            b1.WithOwner()
+                                .HasForeignKey("ProductId");
+                        });
 
-                    b.ToTable("Products");
+                    b.Navigation("UnitPrice")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entities.Sale", b =>
                 {
-                    b.HasOne("Domain.Entities.Customer", null)
+                    b.HasOne("Domain.Entities.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("Domain.Entities.SaleDetail", b =>
                 {
-                    b.HasOne("Domain.ValueObjects.Product", null)
+                    b.HasOne("Domain.Entities.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -173,29 +228,7 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("SaleDetailId");
                         });
 
-                    b.Navigation("UnitPrice")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Domain.ValueObjects.Product", b =>
-                {
-                    b.OwnsOne("Domain.ValueObjects.Price", "UnitPrice", b1 =>
-                        {
-                            b1.Property<int>("ProductId")
-                                .HasColumnType("int");
-
-                            b1.Property<decimal>("Worth")
-                                .HasPrecision(18, 2)
-                                .HasColumnType("decimal(18,2)")
-                                .HasColumnName("UnitPrice");
-
-                            b1.HasKey("ProductId");
-
-                            b1.ToTable("Products");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ProductId");
-                        });
+                    b.Navigation("Product");
 
                     b.Navigation("UnitPrice")
                         .IsRequired();

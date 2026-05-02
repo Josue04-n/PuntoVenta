@@ -77,4 +77,25 @@ public class SaleRepository : ISaleRepository
         }
         return Enumerable.Empty<Sale>();
     }
+
+    public Task<(IEnumerable<Sale> Items, int TotalCount)> GetPagedAsync(int page, int pageSize, string? term = null)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<Sale?> GetByIdWithDetailsAsync(int id)
+    {
+        return await _context.Sales
+            .Include(s => s.Customer)
+            .Include(s => s.Details)
+                .ThenInclude(d => d.Product)
+            .FirstOrDefaultAsync(s => s.Id == id);
+    }
+
+    public async Task<int> SaveSaleAsync(Sale sale)
+    {
+        await _context.Sales.AddAsync(sale);
+        await _context.SaveChangesAsync();
+        return sale.Id;
+    }
 }

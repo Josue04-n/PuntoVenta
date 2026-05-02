@@ -33,6 +33,21 @@
     </div>
     <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <script>
+        window.navigationGuard = {
+            enable: function () {
+                window.onbeforeunload = function (e) {
+                    const message = "Hay cambios sin guardar. ¿Estás seguro de que quieres salir?";
+                    e.returnValue = message; 
+                    return message;
+                };
+            },
+            disable: function () {
+                window.onbeforeunload = null;
+            }
+        };
+    </script>
 </body>
 
 </html>

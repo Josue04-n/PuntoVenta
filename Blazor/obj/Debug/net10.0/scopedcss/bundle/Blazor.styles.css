@@ -965,7 +965,7 @@ main[b-7zm4x0sqzy] {
 }
 
     .uta-stock-helper:hover[b-tm5r5hx4ve] {
-        color: #6B1A33; /* Rojo Vino UTA */
+        color: #6B1A33; 
         text-decoration: underline;
     }
 
@@ -1924,4 +1924,28 @@ main[b-7zm4x0sqzy] {
     border-radius: 12px !important;
     border: 1px solid #e9ecef !important;
     padding: 2rem !important;
+}
+
+.uta-btn-pos[b-tm5r5hx4ve] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    /* Ajustamos el padding para que iguale al .uta-btn--lg (0.8rem 1.5rem) */
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px; /* Usamos 8px para que coincida con .uta-btn */
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    gap: 10px;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.uta-btn-pos--cancel[b-tm5r5hx4ve] {
+    background-color: transparent;
+    color: #6B1A33; /* Usamos el rojo vino UTA de tu variable */
+    border: 1px solid #6B1A33;
+    margin-top: 10px;
 }
