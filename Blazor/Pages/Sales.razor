@@ -185,20 +185,21 @@
                                     @foreach (var item in _carrito)
                                     {
                                         <tr>
-                                            <td><span class="uta-code-badge">@item.Product.Id.ToString("D4")</span></td>
+                                            <td><span class="uta-code-badge">@item.ProductId.ToString("D4")</span></td>
                                             <td style="text-align:center">
                                                 <input class="uta-qty-input uta-qty-input--cart" 
                                                        type="number" 
                                                        value="@item.Amount" 
                                                        @oninput="@((e) => ActualizarCantidad(item, e))"
-                                                       min="1" />
-                                                <div class="uta-stock-hint" @onclick="() => item.Amount = item.AvailableStock" style="cursor:pointer">
+                                                       min="1"
+                                                       onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" />
+                                                <div class="uta-stock-hint" @onclick="() => { item.Amount = item.AvailableStock; RecalcularTotalesFactura(); }" style="cursor:pointer">
                                                     Disponible: <strong>@item.AvailableStock</strong>
                                                 </div>
                                             </td>
-                                            <td class="uta-table__bold">@item.Product.Name</td>
+                                            <td class="uta-table__bold">@item.ProductName</td>
 
-                                            <td style="text-align:right;color:#666">$ @item.Product.UnitPrice.ToString("N2")</td>
+                                            <td style="text-align:right;color:#666">$ @item.UnitPrice.ToString("N2")</td>
 
                                             <td style="text-align:right;font-weight:600;color:#1a1a1a">$ @item.SubTotal.ToString("N2")</td>
                                             @if (!_ventaCompletada)
@@ -710,7 +711,7 @@
         _salesModel = new SalesRegistryModel();
         _carrito?.Clear();
         _clienteSeleccionado = null;
-        StateHasChanged();
+        RecalcularTotalesFactura();
     }
 
     private async Task InputCustomerSearch(ChangeEventArgs e)
@@ -754,32 +755,7 @@
 
     private async Task AddSimpleProduct(ProductUI selectedProduct)
     {
-        var existingItem = _carrito.FirstOrDefault(c => c.Product.Id == selectedProduct.Id );
-
-        if(existingItem != null)
-        {
-            if (existingItem.Amount + 1 > selectedProduct.Stock)
-            {
-                await MostrarNotificacion($"Stock insuficiente para aumentar '{selectedProduct.Name}'", true);   
-            }
-
-            existingItem.Amount++;
-        }
-        else
-        {
-            _carrito.Add(new CartItemModel
-            {
-                Product = new ProductModel
-                {
-                    Id = selectedProduct.Id,
-                    Name = selectedProduct.Name,
-                    UnitPrice = selectedProduct.UnitPrice,
-                    Stock = selectedProduct.Stock
-                },
-                Amount = 1
-            });    
-        }
-        await MostrarNotificacion($"{selectedProduct.Name} añadido correctamente.");
+        await AgregarProducto(selectedProduct);
     }
 
     protected override async Task OnInitializedAsync()
@@ -963,29 +939,31 @@
 
     private async Task ActualizarCantidad(CartItemModel item, ChangeEventArgs e)
     {
-        if (int.TryParse(e.Value?.ToString(), out int nuevaCantidad))
+        if (!int.TryParse(e.Value?.ToString(), out int nuevaCantidad))
         {
-            if (nuevaCantidad <= 0)
+            item.Amount = 1;
+            await MostrarNotificacion("Entrada no válida. Se ha restablecido la cantidad a 1.");
+        }
+        else
+        {
+            if (nuevaCantidad < 1)
             {
                 item.Amount = 1;
-                await JS.InvokeVoidAsync("Swal.fire", new { icon = "info", title = "Cantidad mínima", text = "La cantidad debe ser al menos 1." });
+                await MostrarNotificacion("Cantidad mínima alcanzada (1).");
             }
             else if (nuevaCantidad > item.AvailableStock)
             {
-                item.Amount = item.AvailableStock;
-                await JS.InvokeVoidAsync("Swal.fire", new { icon = "warning", title = "Stock insuficiente", text = $"Solo hay {item.AvailableStock} disponibles." });
+                item.Amount = 1; 
+                await MostrarNotificacion($"Stock insuficiente. Cantidad reajustada a 1 (Máximo disponible: {item.AvailableStock}).");
             }
             else
             {
                 item.Amount = nuevaCantidad;
             }
         }
-        else
-        {
-            item.Amount = 1;
-        }
 
         RecalcularTotalesFactura();
+        StateHasChanged();
     }
 
     private void RecalcularTotalesFactura()
@@ -1097,7 +1075,7 @@ private async Task AgregarProducto(ProductUI prod)
                 timer = 1500
             });
 
-            StateHasChanged();
+            RecalcularTotalesFactura();
         }
     }
 
@@ -1280,5 +1258,6 @@ private async Task AgregarProducto(ProductUI prod)
     private void NuevaVenta()
     {
         _carrito.Clear(); _clienteSeleccionado = null; _ventaCompletada = false; _numeroFactura = "BORRADOR";
+        RecalcularTotalesFactura();
     }
 }

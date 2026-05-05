@@ -79,12 +79,14 @@ public class DeletedProductInfoModel
 public class CartItemModel
 {
     public int ProductId { get; set; }
-    public ProductModel Product { get; set; } = new();
     public string ProductName { get; set; } = string.Empty;
     public int Amount { get; set; }
     public decimal UnitPrice { get; set; }
     public int AvailableStock { get; set; }
     public decimal SubTotal => Amount * UnitPrice;
+
+    // Objeto anidado opcional para compatibilidad con lógica de persistencia si es necesario
+    public ProductModel Product { get; set; } = new();
 }
 
 public class SalesRegistryModel 

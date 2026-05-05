@@ -174,8 +174,7 @@
               "RelativeToolTip": "Infrastructure\\Repositories\\SaleRepository.cs",
               "ViewState": "AgIAAAMAAAAAAAAAAADwvwcAAAAtAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-02T16:22:04.052Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-02T16:22:04.052Z"
             },
             {
               "$type": "Document",
@@ -199,8 +198,7 @@
               "RelativeToolTip": "Application\\DTOs\\CreateSaleRequest.cs",
               "ViewState": "AgIAAAEAAAAAAAAAAADwvwcAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-02T02:40:37.074Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-02T02:40:37.074Z"
             },
             {
               "$type": "Document",
@@ -212,8 +210,7 @@
               "RelativeToolTip": "Blazor\\Models\\CustomerModel.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-01T22:33:06.098Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-01T22:33:06.098Z"
             },
             {
               "$type": "Document",
@@ -225,8 +222,7 @@
               "RelativeToolTip": "Blazor\\Models\\PosModels.cs",
               "ViewState": "AgIAAFYAAAAAAAAAAAAWwF4AAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-01T03:39:12.508Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-01T03:39:12.508Z"
             },
             {
               "$type": "Document",
@@ -236,7 +232,7 @@
               "RelativeDocumentMoniker": "Blazor\\Pages\\Sales.razor",
               "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Sales.razor",
               "RelativeToolTip": "Blazor\\Pages\\Sales.razor",
-              "ViewState": "AgIAABsBAAAAAAAAAAAswCwBAAAxAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-05-02T19:25:23.762Z",
               "EditorCaption": ""
@@ -251,8 +247,7 @@
               "RelativeToolTip": "Blazor\\wwwroot\\index.html",
               "ViewState": "AgIAABwAAAAAAAAAAAAQwCkAAAAtAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
-              "WhenOpened": "2026-05-02T21:00:05.186Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-02T21:00:05.186Z"
             },
             {
               "$type": "Document",
@@ -264,8 +259,7 @@
               "RelativeToolTip": "Blazor\\Pages\\Sales.razor.css",
               "ViewState": "AgIAADIEAAAAAAAAAAAswEMEAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-05-01T15:46:59.903Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-01T15:46:59.903Z"
             },
             {
               "$type": "Document",
