@@ -16,11 +16,22 @@
 
 @if (!string.IsNullOrEmpty(_mensajeAlerta))
 {
-    <div class="uta-toast @(_esError ? "uta-toast--error" : "uta-toast--success")">
-        <span class="uta-toast__icon">  
-            <i class="bi @(_esError ? "bi-x-circle-fill" : "bi-check-circle-fill")"></i>
-        </span>
-        <span>@_mensajeAlerta</span>
+    <div class="uta-toast-container">
+        <div class="uta-toast @(_esError ? "uta-toast--error" : "uta-toast--success")">
+            <div class="uta-toast__body">
+                <div class="uta-toast__icon">
+                    <i class="bi @(_esError ? "bi-exclamation-circle-fill" : "bi-check-circle-fill")"></i>
+                </div>
+                <div class="uta-toast__content">
+                    <h5 class="uta-toast__title">@(_esError ? "Hubo un problema" : "Acción exitosa")</h5>
+                    <p class="uta-toast__message">@_mensajeAlerta</p>
+                </div>
+                <button class="uta-toast__close" @onclick="() => _mensajeAlerta = string.Empty">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="uta-toast__progress"></div>
+        </div>
     </div>
 }
 
@@ -680,14 +691,7 @@
             PerformTotalCleaning();
             await UpdateBrowsingProtection();
 
-            await JS.InvokeVoidAsync("Swal.fire", new {
-                toast = true,
-                position = "top-end",
-                icon = "success",
-                title = "Venta cancelada",
-                showConfirmButton = false,
-                timer = 2000
-            });
+            await MostrarNotificacion("Venta cancelada");
         }
     }
 
@@ -1066,14 +1070,7 @@ private async Task AgregarProducto(ProductUI prod)
         {
             _carrito.Remove(item);
 
-            await JS.InvokeVoidAsync("Swal.fire", new {
-                toast = true,
-                position = "top-end",
-                icon = "success",
-                title = "Producto quitado",
-                showConfirmButton = false,
-                timer = 1500
-            });
+            await MostrarNotificacion("Producto quitado");
 
             RecalcularTotalesFactura();
         }
@@ -1090,8 +1087,16 @@ private async Task AgregarProducto(ProductUI prod)
         {
             await JS.InvokeVoidAsync("Swal.fire", new { 
                 icon = "warning", 
-                title = "Insufficent Stock", 
-                text = $"Only {item.AvailableStock} units available." 
+                title = "Stock insuficiente", 
+                text = $"Solo disponemos de {item.AvailableStock} unidades para este producto.",
+                confirmButtonText = "Entendido",
+                buttonsStyling = false,
+                customClass = new {
+                    container = "uta-swal-container",
+                    popup = "uta-swal-popup",
+                    title = "uta-swal-title",
+                    confirmButton = "uta-btn uta-btn--primary uta-btn--lg"
+                }
             });
             item.Amount = item.AvailableStock;
         }
@@ -1155,92 +1160,115 @@ private async Task AgregarProducto(ProductUI prod)
                 _ventaCompletada = true;
                 StateHasChanged();
             }
-            else if (respuestaHttp.StatusCode == System.Net.HttpStatusCode.BadRequest)
-            {
-                var contenidoJson = await respuestaHttp.Content.ReadAsStringAsync();
-                var jsonDoc = System.Text.Json.JsonDocument.Parse(contenidoJson);
-                var tipoError = jsonDoc.RootElement.TryGetProperty("type", out var t) ? t.GetString() : "BulkStock";
-
-                if (tipoError == "BulkStock")
-                {
-                    var errorResponse = System.Text.Json.JsonSerializer.Deserialize<BulkStockErrorResponse>(contenidoJson, new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                    if (errorResponse != null && errorResponse.Errors.Any())
-                    {
-                        var htmlMessage = "<ul>";
-                        foreach (var error in errorResponse.Errors)
-                        {
-                            htmlMessage += $"<li><strong>{error.NombreProducto}</strong>: Solicitaste {error.CantidadSolicitada}, pero solo hay {error.StockDisponible} en inventario.</li>";
-                        }
-                        htmlMessage += "</ul>";
-
-                        await JS.InvokeVoidAsync("Swal.fire", new
-                        {
-                            title = "Ajuste Automático de Factura",
-                            html = htmlMessage, 
-                            icon = "warning",
-                            confirmButtonText = "Entendido, continuar con la venta",
-                            buttonsStyling = false, 
-                            customClass = new {
-                                popup = "uta-swal-card",
-                                title = "uta-swal-title",
-                                confirmButton = "uta-btn uta-btn--primary uta-btn--lg",
-                                htmlContainer = "uta-swal-html"
-                            },
-                            showClass = new {
-                                popup = "animate__animated animate__fadeInUp animate__faster"
-                            }
-                        });
-
-                        RemoveOutOfStockProducts(errorResponse.Errors);
-                        StateHasChanged();
-                    }
-                }
-                else if (tipoError == "ProductDeleted")
-                {
-                    var errorResponse = System.Text.Json.JsonSerializer.Deserialize<ProductDeletedErrorResponse>(contenidoJson, new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                    if (errorResponse != null && errorResponse.DeletedProducts.Any())
-                    {
-                        var htmlMessage = "<ul>";
-                        foreach (var prod in errorResponse.DeletedProducts)
-                        {
-                            htmlMessage += $"<li>Producto <strong>{prod.ProductName}</strong> (ID: {prod.ProductId}) ya no está disponible.</li>";
-                        }
-                        htmlMessage += "</ul>";
-
-                        await JS.InvokeVoidAsync("Swal.fire", new
-                        {
-                            icon = "error",
-                            title = "Productos no disponibles",
-                            html = htmlMessage,
-                            confirmButtonText = "Entendido",
-                            buttonsStyling = false,
-                            customClass = new {
-                                popup = "uta-card uta-card--modal", 
-                                title = "uta-modal-title",
-                                confirmButton = "uta-btn uta-btn--primary uta-btn--lg" 
-                            },
-                            showClass = new {
-                                popup = "animate__animated animate__fadeInUp" 
-                            }
-                        });
-
-                        foreach (var prod in errorResponse.DeletedProducts)
-                        {
-                            var item = _carrito.FirstOrDefault(c => c.Product.Id == prod.ProductId);
-                            if (item != null) _carrito.Remove(item);
-                        }
-                        StateHasChanged();
-                    }
-                }
-                else
-                {
-                    await MostrarNotificacion($"Error: {contenidoJson}", true);
-                }
-            }
             else
             {
-                var errorServidor = await respuestaHttp.Content.ReadAsStringAsync();
-                await MostrarNotificacion($"Error inesperado en el servidor: {errorServidor}", true);
+                var contenidoJson = await respuestaHttp.Content.ReadAsStringAsync();
+                bool errorManejado = false;
+
+                try 
+                {
+                    var jsonDoc = System.Text.Json.JsonDocument.Parse(contenidoJson);
+                    if (jsonDoc.RootElement.TryGetProperty("type", out var t))
+                    {
+                        var tipoError = t.GetString();
+
+                        if (tipoError == "BulkStock")
+                        {
+                            var options = new System.Text.Json.JsonSerializerOptions 
+                            { 
+                                PropertyNameCaseInsensitive = true,
+                                PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
+                            };
+                            var errorResponse = System.Text.Json.JsonSerializer.Deserialize<BulkStockErrorResponse>(contenidoJson, options);
+                            if (errorResponse != null && errorResponse.Errors != null && errorResponse.Errors.Any())
+                            {
+                                var htmlMessage = "<div class='uta-swal-list-container'><ul class='uta-swal-list'>";
+                                foreach (var error in errorResponse.Errors)
+                                {
+                                    htmlMessage += $"<li><i class='bi bi-dot'></i> <strong>{error.NombreProducto}</strong>: Solicitaste {error.CantidadSolicitada}, pero solo hay {error.StockDisponible} en stock.</li>";
+                                }
+                                htmlMessage += "</ul></div>";
+
+                                await JS.InvokeVoidAsync("Swal.fire", new
+                                {
+                                    icon = "error",
+                                    title = "Ajuste de Inventario",
+                                    html = htmlMessage,
+                                    confirmButtonText = "Entendido",
+                                    buttonsStyling = false,
+                                    customClass = new {
+                                        container = "uta-swal-container",
+                                        popup = "uta-swal-popup",
+                                        title = "uta-swal-title",
+                                        htmlContainer = "uta-swal-html",
+                                        confirmButton = "uta-btn uta-btn--primary uta-btn--lg" 
+                                    },
+                                    showClass = new {
+                                        popup = "animate__animated animate__fadeInUp" 
+                                    }
+                                });
+
+                                RemoveOutOfStockProducts(errorResponse.Errors);
+                                errorManejado = true;
+                            }
+                        }
+                        else if (tipoError == "ProductDeleted")
+                        {
+                            var options = new System.Text.Json.JsonSerializerOptions 
+                            { 
+                                PropertyNameCaseInsensitive = true,
+                                PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
+                            };
+                            var errorResponse = System.Text.Json.JsonSerializer.Deserialize<ProductDeletedErrorResponse>(contenidoJson, options);
+                            if (errorResponse != null && errorResponse.DeletedProducts != null && errorResponse.DeletedProducts.Any())
+                            {
+                                var htmlMessage = "<div class='uta-swal-list-container'><ul class='uta-swal-list'>";
+                                foreach (var prod in errorResponse.DeletedProducts)
+                                {
+                                    htmlMessage += $"<li><i class='bi bi-dot'></i> Producto <strong>{prod.ProductName}</strong> (ID: {prod.ProductId}) ya no está disponible.</li>";
+                                }
+                                htmlMessage += "</ul></div>";
+
+                                await JS.InvokeVoidAsync("Swal.fire", new
+                                {
+                                    icon = "error",
+                                    title = "Productos No Disponibles",
+                                    html = htmlMessage,
+                                    confirmButtonText = "Entendido",
+                                    buttonsStyling = false,
+                                    customClass = new {
+                                        container = "uta-swal-container",
+                                        popup = "uta-swal-popup",
+                                        title = "uta-swal-title",
+                                        htmlContainer = "uta-swal-html",
+                                        confirmButton = "uta-btn uta-btn--primary uta-btn--lg" 
+                                    },
+                                    showClass = new {
+                                        popup = "animate__animated animate__fadeInUp" 
+                                    }
+                                });
+
+                                foreach (var prod in errorResponse.DeletedProducts)
+                                {
+                                    var item = _carrito.FirstOrDefault(c => c.Product.Id == prod.ProductId);
+                                    if (item != null) _carrito.Remove(item);
+                                }
+                                errorManejado = true;
+                            }
+                        }
+                    }
+                }
+                catch (Exception exDeserialize)
+                {
+                    Console.WriteLine($"Error parseando JSON: {exDeserialize.Message}");
+                }
+
+                if (!errorManejado)
+                {
+                    await MostrarNotificacion($"Error inesperado en el servidor: {contenidoJson}", true);
+                }
+                
+                StateHasChanged();
             }
         }
         catch (Exception ex)

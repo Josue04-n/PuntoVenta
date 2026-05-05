@@ -1,9 +1,10 @@
-﻿/* ====================================================
+/* ====================================================
   INICIO DE LOS ESTILOS DE PAGINACIÓN 
    ==================================================== */
 
 .uta-pagination-footer {
-    background-color: #f8f9fa; /* Fondo claro para contraste con el modal */
+    background-color: #f8f9fa;
+    /* Fondo claro para contraste con el modal */
     border-top: 1px solid #dee2e6;
     font-family: 'Inter', sans-serif;
     display: flex;
@@ -14,7 +15,8 @@
 
 /* Resaltado de información de registros */
 .uta-text-highlight {
-    color: #6B1A33 !important; /* Rojo Vino UTA */
+    color: #6B1A33 !important;
+    /* Rojo Vino UTA */
     font-weight: 700;
 }
 
@@ -25,7 +27,8 @@
 }
 
 .uta-pagination-footer .form-select {
-    color: #212529 !important; /* Texto oscuro siempre visible */
+    color: #212529 !important;
+    /* Texto oscuro siempre visible */
     background-color: #ffffff;
     border: 1px solid #ced4da;
     cursor: pointer;
@@ -34,11 +37,11 @@
     padding: 0.375rem 1.75rem 0.375rem 0.75rem;
 }
 
-    /* Asegurar que las opciones dentro del select sean legibles */
-    .uta-pagination-footer .form-select option {
-        background-color: #ffffff;
-        color: #212529;
-    }
+/* Asegurar que las opciones dentro del select sean legibles */
+.uta-pagination-footer .form-select option {
+    background-color: #ffffff;
+    color: #212529;
+}
 
 /* Botones de Navegación Estilo UTA */
 .uta-pagination-btn {
@@ -58,26 +61,27 @@
     text-decoration: none;
 }
 
-    .uta-pagination-btn:last-child {
-        border-right: 1px solid #dee2e6;
-        border-top-right-radius: 6px;
-        border-bottom-right-radius: 6px;
-    }
+.uta-pagination-btn:last-child {
+    border-right: 1px solid #dee2e6;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
 
-    .uta-pagination-btn:first-child {
-        border-top-left-radius: 6px;
-        border-bottom-left-radius: 6px;
-    }
+.uta-pagination-btn:first-child {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
 
-    /* Hover: Efecto suave en gris */
-    .uta-pagination-btn:hover:not(.disabled):not(.uta-pagination-btn--active) {
-        background-color: #f1f3f5;
-        color: #521528;
-    }
+/* Hover: Efecto suave en gris */
+.uta-pagination-btn:hover:not(.disabled):not(.uta-pagination-btn--active) {
+    background-color: #f1f3f5;
+    color: #521528;
+}
 
 /* ESTADO ACTIVO: Identidad UTA */
 .uta-pagination-btn--active {
-    background-color: #6B1A33 !important; /* Rojo Vino */
+    background-color: #6B1A33 !important;
+    /* Rojo Vino */
     color: #ffffff !important;
     border-color: #6B1A33 !important;
     z-index: 2;
@@ -110,12 +114,14 @@
     transition: color 0.2s;
 }
 
-    .uta-stock-helper:hover {
-        color: #6B1A33; 
-        text-decoration: underline;
-    }
+.uta-stock-helper:hover {
+    color: #6B1A33;
+    text-decoration: underline;
+}
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
@@ -194,7 +200,7 @@
 /* ESTADÍSTICAS REDISEÑADAS */
 .uta-stats-row {
     display: grid;
-    grid-template-columns: repeat(4,1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 1.2rem;
     margin-bottom: 1.5rem;
 }
@@ -205,14 +211,14 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     border: 1px solid #e9ecef;
     transition: transform 0.2s;
 }
 
-    .uta-stat-card:hover {
-        transform: translateY(-2px);
-    }
+.uta-stat-card:hover {
+    transform: translateY(-2px);
+}
 
 .uta-stat-card__icon {
     font-size: 2rem;
@@ -246,20 +252,20 @@
     color: #1a1a1a;
 }
 
-    .uta-stat-card--light .uta-stat-card__label {
-        color: #6c757d;
-    }
+.uta-stat-card--light .uta-stat-card__label {
+    color: #6c757d;
+}
 
 .uta-stat-card--dark {
     background: #6B1A33;
     color: #fff;
     border-color: #521528;
-    box-shadow: 0 8px 15px rgba(107,26,51,0.2);
+    box-shadow: 0 8px 15px rgba(107, 26, 51, 0.2);
 }
 
-    .uta-stat-card--dark .uta-stat-card__label {
-        color: rgba(255,255,255,0.8);
-    }
+.uta-stat-card--dark .uta-stat-card__label {
+    color: rgba(255, 255, 255, 0.8);
+}
 
 .uta-content-grid {
     display: grid;
@@ -277,7 +283,7 @@
 .uta-card {
     background: #fff;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     border: 1px solid #e9ecef;
     overflow: hidden;
 }
@@ -315,9 +321,9 @@
     padding: 1.5rem;
 }
 
-    .uta-card__body.p-0 {
-        padding: 0;
-    }
+.uta-card__body.p-0 {
+    padding: 0;
+}
 
 .uta-client-header {
     display: flex;
@@ -404,34 +410,34 @@
     font-size: 0.85rem;
 }
 
-    .uta-table thead tr {
-        background: #f8f9fa;
-        border-bottom: 2px solid #dee2e6;
-    }
+.uta-table thead tr {
+    background: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+}
 
-    .uta-table th {
-        padding: 0.85rem 1rem;
-        font-size: 0.75rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        color: #495057;
-        text-align: left;
-    }
+.uta-table th {
+    padding: 0.85rem 1rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #495057;
+    text-align: left;
+}
 
-    .uta-table td {
-        padding: 0.85rem 1rem;
-        border-bottom: 1px solid #e9ecef;
-        color: #495057;
-        vertical-align: middle;
-    }
+.uta-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid #e9ecef;
+    color: #495057;
+    vertical-align: middle;
+}
 
-    .uta-table tbody tr:last-child td {
-        border-bottom: none;
-    }
+.uta-table tbody tr:last-child td {
+    border-bottom: none;
+}
 
-    .uta-table tbody tr:hover td {
-        background: #fdf5f7;
-    }
+.uta-table tbody tr:hover td {
+    background: #fdf5f7;
+}
 
 .uta-table__bold {
     font-weight: 600;
@@ -590,15 +596,15 @@
     text-decoration: none;
 }
 
-    .uta-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed !important;
-        transform: none !important;
-    }
+.uta-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
 
-    .uta-btn:not(:disabled):active {
-        transform: scale(0.98);
-    }
+.uta-btn:not(:disabled):active {
+    transform: scale(0.98);
+}
 
 .uta-btn--block {
     width: 100%;
@@ -617,23 +623,23 @@
 .uta-btn--primary {
     background: #6B1A33;
     color: #fff;
-    box-shadow: 0 2px 4px rgba(107,26,51,0.2);
+    box-shadow: 0 2px 4px rgba(107, 26, 51, 0.2);
 }
 
-    .uta-btn--primary:not(:disabled):hover {
-        background: #521528;
-        box-shadow: 0 4px 8px rgba(107,26,51,0.3);
-    }
+.uta-btn--primary:not(:disabled):hover {
+    background: #521528;
+    box-shadow: 0 4px 8px rgba(107, 26, 51, 0.3);
+}
 
 .uta-btn--success {
     background: #16a34a;
     color: #fff;
-    box-shadow: 0 2px 4px rgba(22,163,74,0.2);
+    box-shadow: 0 2px 4px rgba(22, 163, 74, 0.2);
 }
 
-    .uta-btn--success:not(:disabled):hover {
-        background: #15803d;
-    }
+.uta-btn--success:not(:disabled):hover {
+    background: #15803d;
+}
 
 .uta-btn--outline {
     background: #fff;
@@ -641,19 +647,19 @@
     border: 1px solid #6B1A33;
 }
 
-    .uta-btn--outline:hover {
-        background: #fdf5f7;
-    }
-
-.uta-btn--white {
-    background: rgba(255,255,255,0.15);
-    color: #fff;
-    border: 1px solid rgba(255,255,255,0.4);
+.uta-btn--outline:hover {
+    background: #fdf5f7;
 }
 
-    .uta-btn--white:hover {
-        background: rgba(255,255,255,0.3);
-    }
+.uta-btn--white {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.uta-btn--white:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
 
 .uta-icon-btn {
     width: 30px;
@@ -673,11 +679,11 @@
     color: #dc2626;
 }
 
-    .uta-icon-btn--red:hover {
-        background: #dc2626;
-        color: #fff;
-        transform: scale(1.05);
-    }
+.uta-icon-btn--red:hover {
+    background: #dc2626;
+    color: #fff;
+    transform: scale(1.05);
+}
 
 .uta-badge {
     display: inline-flex;
@@ -710,7 +716,7 @@
 }
 
 .uta-badge--white-outline {
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
     color: #fff;
 }
 
@@ -731,7 +737,7 @@
     border: 1px solid #ced4da;
     border-radius: 6px;
     text-align: center;
-    font-family: 'Inter',sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 0.85rem;
     font-weight: 600;
     outline: none;
@@ -739,10 +745,10 @@
     transition: border-color 0.2s;
 }
 
-    .uta-qty-input:focus {
-        border-color: #6B1A33;
-        box-shadow: 0 0 0 3px rgba(107,26,51,0.1);
-    }
+.uta-qty-input:focus {
+    border-color: #6B1A33;
+    box-shadow: 0 0 0 3px rgba(107, 26, 51, 0.1);
+}
 
 .uta-qty-input--cart {
     background-color: #f8f9fa;
@@ -752,77 +758,160 @@
     width: 60px;
 }
 
-    .uta-qty-input--cart:hover {
-        border-color: #ced4da;
-    }
+.uta-qty-input--cart:hover {
+    border-color: #ced4da;
+}
 
-.uta-toast {
+/* ====================================================
+   NOTIFICACIONES PREMIUM (TOASTS)
+   ==================================================== */
+.uta-toast-container {
     position: fixed;
     top: 1.5rem;
     right: 1.5rem;
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    padding: 0.85rem 1.25rem;
-    border-radius: 10px;
-    font-family: 'Inter',sans-serif;
-    font-size: 0.85rem;
-    font-weight: 600;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    min-width: 280px;
-    animation: toastSlide 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 10000;
+    pointer-events: none;
 }
 
-@@keyframes toastSlide {
+.uta-toast {
+    pointer-events: auto;
+    width: 350px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 16px;
+    box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.1), 
+                0 5px 15px -5px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    margin-bottom: 1rem;
+    animation: utaToastIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    position: relative;
+}
+
+@keyframes utaToastIn {
     from {
         opacity: 0;
-        transform: translateX(30px);
+        transform: translateX(40px) scale(0.9);
     }
-
     to {
         opacity: 1;
-        transform: translateX(0);
+        transform: translateX(0) scale(1);
     }
+}
+
+.uta-toast__body {
+    padding: 1.25rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
 }
 
 .uta-toast__icon {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
-    flex-shrink: 0;
+    font-size: 1.4rem;
+}
+
+.uta-toast--success .uta-toast__icon {
+    background: rgba(22, 163, 74, 0.1);
+    color: #16a34a;
+}
+
+.uta-toast--error .uta-toast__icon {
+    background: rgba(220, 38, 38, 0.1);
+    color: #dc2626;
+}
+
+.uta-toast__content {
+    flex: 1;
+}
+
+.uta-toast__title {
+    margin: 0 0 0.25rem 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.uta-toast__message {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #64748b;
+    line-height: 1.4;
+}
+
+.uta-toast__close {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0.25rem;
+    font-size: 1.1rem;
+    line-height: 1;
+    border-radius: 6px;
+    transition: all 0.2s;
+    margin-top: -0.25rem;
+    margin-right: -0.25rem;
+}
+
+.uta-toast__close:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: #475569;
+}
+
+/* Barra de progreso animada */
+.uta-toast__progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    width: 100%;
+}
+
+.uta-toast--success .uta-toast__progress {
+    background: linear-gradient(to right, #16a34a, #4ade80);
+    animation: utaToastProgress 3s linear forwards;
+}
+
+.uta-toast--error .uta-toast__progress {
+    background: linear-gradient(to right, #dc2626, #f87171);
+    animation: utaToastProgress 3s linear forwards;
+}
+
+@keyframes utaToastProgress {
+    from { width: 100%; }
+    to { width: 0%; }
 }
 
 .uta-toast--success {
-    background: #fff;
-    color: #15803d;
-    border-left: 4px solid #16a34a;
+    box-shadow: 0 15px 35px -5px rgba(22, 163, 74, 0.15), 0 5px 15px -5px rgba(0, 0, 0, 0.05);
 }
 
 .uta-toast--error {
-    background: #fff;
-    color: #b91c1c;
-    border-left: 4px solid #dc2626;
+    box-shadow: 0 15px 35px -5px rgba(220, 38, 38, 0.15), 0 5px 15px -5px rgba(0, 0, 0, 0.05);
 }
 
 .uta-overlay {
     position: fixed;
     inset: 0;
     z-index: 1000;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 1.5rem;
-    backdrop-filter: blur(3px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     animation: fadeIn .2s ease;
 }
 
-@@keyframes fadeIn {
+@keyframes fadeIn {
     from {
         opacity: 0;
     }
@@ -835,16 +924,16 @@
 .uta-modal {
     background: #fff;
     border-radius: 14px;
-    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     width: 100%;
     max-height: 90vh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    animation: modalUp .3s cubic-bezier(.34,1.4,.64,1);
+    animation: modalUp .3s cubic-bezier(.34, 1.4, .64, 1);
 }
 
-@@keyframes modalUp {
+@keyframes modalUp {
     from {
         opacity: 0;
         transform: translateY(20px) scale(.98);
@@ -883,12 +972,12 @@
 
 .uta-modal__subtitle {
     font-size: 0.8rem;
-    color: rgba(255,255,255,0.8);
+    color: rgba(255, 255, 255, 0.8);
     margin: 0;
 }
 
 .uta-modal__close {
-    background: rgba(255,255,255,.15);
+    background: rgba(255, 255, 255, .15);
     border: none;
     width: 32px;
     height: 32px;
@@ -902,9 +991,9 @@
     transition: background .2s;
 }
 
-    .uta-modal__close:hover {
-        background: rgba(255,255,255,.25);
-    }
+.uta-modal__close:hover {
+    background: rgba(255, 255, 255, .25);
+}
 
 .uta-modal__body {
     padding: 1.5rem;
@@ -938,13 +1027,13 @@
     border-radius: 8px;
     padding: 0;
     overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .uta-search-bar__select {
     border: none;
     background: #f8f9fa;
-    font-family: 'Inter',sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 0.85rem;
     font-weight: 600;
     color: #495057;
@@ -954,15 +1043,15 @@
     cursor: pointer;
 }
 
-    .uta-search-bar__select:focus {
-        background: #e9ecef;
-    }
+.uta-search-bar__select:focus {
+    background: #e9ecef;
+}
 
 .uta-search-bar__input {
     flex: 1;
     border: none;
     background: transparent;
-    font-family: 'Inter',sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 0.9rem;
     color: #212529;
     padding: 0.6rem 1rem;
@@ -970,9 +1059,9 @@
     min-width: 0;
 }
 
-    .uta-search-bar__input::placeholder {
-        color: #adb5bd;
-    }
+.uta-search-bar__input::placeholder {
+    color: #adb5bd;
+}
 
 .uta-search-bar__btn {
     border-radius: 0 !important;
@@ -997,7 +1086,7 @@
 
 @media (max-width: 768px) {
     .uta-stats-row {
-        grid-template-columns: repeat(2,1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .uta-page {
@@ -1016,20 +1105,24 @@
         gap: 0.5rem;
     }
 
-    .uta-search-bar__select, .uta-search-bar__input, .uta-search-bar__btn {
+    .uta-search-bar__select,
+    .uta-search-bar__input,
+    .uta-search-bar__btn {
         width: 100%;
         border: 1px solid #ced4da;
         border-radius: 8px !important;
     }
 }
 
-@@media print {
+@media print {
     .uta-page {
         background: #fff;
         padding: 0;
     }
 
-    .uta-stat-card, .uta-card__header, .uta-totals__grand {
+    .uta-stat-card,
+    .uta-card__header,
+    .uta-totals__grand {
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
@@ -1049,9 +1142,9 @@
     line-height: 1.5;
 }
 
-    .uta-alert-list li {
-        margin-bottom: 0.5rem;
-    }
+.uta-alert-list li {
+    margin-bottom: 0.5rem;
+}
 
 .uta-modal-text {
     color: #1a1a1a;
@@ -1061,7 +1154,8 @@
 
 .uta-modal-title {
     font-family: 'Inter', sans-serif;
-    color: #6B1A33 !important; /* Nuestro color de marca */
+    color: #6B1A33 !important;
+    /* Nuestro color de marca */
     font-weight: 700 !important;
 }
 
@@ -1072,14 +1166,16 @@
     padding: 2rem !important;
 }
 
+/* ====================================================
+   BOTONES DE ACCIÓN RÁPIDA (POS)
+   ==================================================== */
 .uta-btn-pos {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
-    /* Ajustamos el padding para que iguale al .uta-btn--lg (0.8rem 1.5rem) */
     padding: 0.8rem 1.5rem;
-    border-radius: 8px; /* Usamos 8px para que coincida con .uta-btn */
+    border-radius: 8px;
     font-weight: 700;
     font-size: 0.9rem;
     text-transform: uppercase;
@@ -1087,11 +1183,99 @@
     gap: 10px;
     cursor: pointer;
     border: 2px solid transparent;
+    font-family: 'Inter', sans-serif;
 }
 
 .uta-btn-pos--cancel {
     background-color: transparent;
-    color: #6B1A33; /* Usamos el rojo vino UTA de tu variable */
+    color: #6B1A33;
     border: 1px solid #6B1A33;
     margin-top: 10px;
+}
+
+.uta-btn-pos--cancel:hover {
+    background-color: #fdf5f7;
+    border-color: #521528;
+    color: #521528;
+}
+
+/* ====================================================
+   SWEETALERT UTA REDESIGN
+   ==================================================== */
+.uta-swal-container {
+    backdrop-filter: blur(5px);
+}
+
+.uta-swal-popup {
+    border-radius: 20px !important;
+    padding: 2.5rem !important;
+    border: 1px solid rgba(0, 0, 0, 0.05) !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2) !important;
+    font-family: 'Inter', sans-serif !important;
+}
+
+.uta-swal-title {
+    color: #6B1A33 !important;
+    font-size: 1.6rem !important;
+    font-weight: 800 !important;
+    margin-bottom: 0.75rem !important;
+}
+
+.uta-swal-html {
+    color: #4b5563 !important;
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+}
+
+.uta-swal-list-container {
+    text-align: left;
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    border-left: 4px solid #6B1A33;
+    margin-top: 1rem;
+}
+
+.uta-swal-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.uta-swal-list li {
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    color: #374151;
+}
+
+.uta-swal-list li i {
+    color: #6B1A33;
+    font-size: 1.2rem;
+}
+
+/* Reutilización de botones existentes en Swal */
+.swal2-styled.swal2-confirm.uta-btn {
+    margin-top: 1.5rem !important;
+}
+/* Toasts de SweetAlert con Glassmorphism */
+.swal2-popup.swal2-toast.uta-swal-toast {
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(10px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(180%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08) !important;
+    padding: 1rem !important;
+}
+
+.swal2-popup.swal2-toast.uta-swal-toast .swal2-title {
+    color: #4b5563 !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+}
+
+.swal2-popup.swal2-toast.uta-swal-toast .swal2-success-ring {
+    border-color: rgba(22, 163, 74, 0.2) !important;
 }
