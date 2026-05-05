@@ -79,21 +79,36 @@
         <div class="uta-stat-card uta-stat-card--light">
             <div class="uta-stat-card__icon text-warning"><i class="bi bi-calculator"></i></div>
             <div class="uta-stat-card__details">
-                <div class="uta-stat-card__number">$ @SubtotalGlobal.ToString("N2")</div>
+                <div class="uta-stat-card__number">
+                    <div class="uta-price">
+                        <span class="uta-price__symbol">$</span>
+                        <span class="uta-price__value">@SubtotalGlobal.ToString("N2")</span>
+                    </div>
+                </div>
                 <div class="uta-stat-card__label">Subtotal Venta</div>
             </div>
         </div>
         <div class="uta-stat-card uta-stat-card--light">
             <div class="uta-stat-card__icon text-info"><i class="bi bi-percent"></i></div>
             <div class="uta-stat-card__details">
-                <div class="uta-stat-card__number">$ @IvaGlobal.ToString("N2")</div>
+                <div class="uta-stat-card__number">
+                    <div class="uta-price">
+                        <span class="uta-price__symbol">$</span>
+                        <span class="uta-price__value">@IvaGlobal.ToString("N2")</span>
+                    </div>
+                </div>
                 <div class="uta-stat-card__label">Impuestos (IVA 15%)</div>
             </div>
         </div>
         <div class="uta-stat-card uta-stat-card--dark">
             <div class="uta-stat-card__icon"><i class="bi bi-cash-coin"></i></div>
             <div class="uta-stat-card__details">
-                <div class="uta-stat-card__number">$ @TotalFinal.ToString("N2")</div>
+                <div class="uta-stat-card__number">
+                    <div class="uta-price">
+                        <span class="uta-price__symbol">$</span>
+                        <span class="uta-price__value">@TotalFinal.ToString("N2")</span>
+                    </div>
+                </div>
                 <div class="uta-stat-card__label">Monto Total a Pagar</div>
             </div>
         </div>
@@ -210,9 +225,19 @@
                                             </td>
                                             <td class="uta-table__bold">@item.ProductName</td>
 
-                                            <td style="text-align:right;color:#666">$ @item.UnitPrice.ToString("N2")</td>
+                                            <td style="text-align:right;color:#666">
+                                                <div class="uta-price uta-price--right">
+                                                    <span class="uta-price__symbol">$</span>
+                                                    <span class="uta-price__value">@item.UnitPrice.ToString("N2")</span>
+                                                </div>
+                                            </td>
 
-                                            <td style="text-align:right;font-weight:600;color:#1a1a1a">$ @item.SubTotal.ToString("N2")</td>
+                                            <td style="text-align:right;font-weight:600;color:#1a1a1a">
+                                                <div class="uta-price uta-price--right">
+                                                    <span class="uta-price__symbol">$</span>
+                                                    <span class="uta-price__value">@item.SubTotal.ToString("N2")</span>
+                                                </div>
+                                            </td>
                                             @if (!_ventaCompletada)
                                             {
                                                 <td class="d-print-none" style="text-align:center">
@@ -281,15 +306,24 @@
                     <div class="uta-totals">
                         <div class="uta-totals__row">
                             <span>Subtotal</span>
-                            <span>$ @SubtotalGlobal.ToString("N2")</span>
+                            <span class="uta-price uta-price--right">
+                                <span class="uta-price__symbol">$</span>
+                                <span class="uta-price__value">@SubtotalGlobal.ToString("N2")</span>
+                            </span>
                         </div>
                         <div class="uta-totals__row">
                             <span>IVA 15%</span>
-                            <span>$ @IvaGlobal.ToString("N2")</span>
+                            <span class="uta-price uta-price--right">
+                                <span class="uta-price__symbol">$</span>
+                                <span class="uta-price__value">@IvaGlobal.ToString("N2")</span>
+                            </span>
                         </div>
                         <div class="uta-totals__grand mt-2">
                             <span>TOTAL A PAGAR</span>
-                            <span>$ @TotalFinal.ToString("N2")</span>
+                            <span class="uta-price uta-price--right">
+                                <span class="uta-price__symbol">$</span>
+                                <span class="uta-price__value">@TotalFinal.ToString("N2")</span>
+                            </span>
                         </div>
                     </div>
 
@@ -523,7 +557,12 @@
                                     @* Resaltamos el ID para facilitar la búsqueda visual *@
                                     <td><span class="uta-code-badge">@p.Id.ToString("D4")</span></td>
                                     <td class="uta-table__bold">@p.Name</td>
-                                    <td style="text-align:right">$ @p.UnitPrice.ToString("N2")</td>
+                                    <td style="text-align:right">
+                                        <div class="uta-price uta-price--right">
+                                            <span class="uta-price__symbol">$</span>
+                                            <span class="uta-price__value">@p.UnitPrice.ToString("N2")</span>
+                                        </div>
+                                    </td>
                                     <td style="text-align:center">
                                         <span class="uta-badge @(p.Stock > 0 ? "uta-badge--green" : "uta-badge--red")">
                                             @p.Stock uds.

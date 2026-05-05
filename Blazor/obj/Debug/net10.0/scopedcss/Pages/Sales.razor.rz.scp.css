@@ -431,6 +431,29 @@
     vertical-align: middle;
 }
 
+/* ALINEACIÓN DE PRECIOS Y MONEDA */
+.uta-price[b-tm5r5hx4ve] {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.25rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.uta-price--right[b-tm5r5hx4ve] {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.uta-price__symbol[b-tm5r5hx4ve] {
+    font-weight: 500;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+.uta-price__value[b-tm5r5hx4ve] {
+    font-weight: inherit;
+}
+
 .uta-table tbody tr:last-child td[b-tm5r5hx4ve] {
     border-bottom: none;
 }
@@ -762,152 +785,69 @@
     border-color: #ced4da;
 }
 
-/* ====================================================
-   NOTIFICACIONES PREMIUM (TOASTS)
-   ==================================================== */
-.uta-toast-container[b-tm5r5hx4ve] {
+.uta-toast[b-tm5r5hx4ve] {
     position: fixed;
     top: 1.5rem;
     right: 1.5rem;
-    z-index: 10000;
-    pointer-events: none;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.85rem 1.25rem;
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    min-width: 280px;
+    animation: toastSlide-b-tm5r5hx4ve 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.uta-toast[b-tm5r5hx4ve] {
-    pointer-events: auto;
-    width: 350px;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px) saturate(180%);
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 16px;
-    box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.1), 
-                0 5px 15px -5px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
-    margin-bottom: 1rem;
-    animation: utaToastIn-b-tm5r5hx4ve 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    position: relative;
-}
-
-@keyframes utaToastIn-b-tm5r5hx4ve {
+@keyframes toastSlide-b-tm5r5hx4ve {
     from {
         opacity: 0;
-        transform: translateX(40px) scale(0.9);
+        transform: translateX(30px);
     }
+
     to {
         opacity: 1;
-        transform: translateX(0) scale(1);
+        transform: translateX(0);
     }
-}
-
-.uta-toast__body[b-tm5r5hx4ve] {
-    padding: 1.25rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
 }
 
 .uta-toast__icon[b-tm5r5hx4ve] {
-    flex-shrink: 0;
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.4rem;
-}
-
-.uta-toast--success .uta-toast__icon[b-tm5r5hx4ve] {
-    background: rgba(22, 163, 74, 0.1);
-    color: #16a34a;
-}
-
-.uta-toast--error .uta-toast__icon[b-tm5r5hx4ve] {
-    background: rgba(220, 38, 38, 0.1);
-    color: #dc2626;
-}
-
-.uta-toast__content[b-tm5r5hx4ve] {
-    flex: 1;
-}
-
-.uta-toast__title[b-tm5r5hx4ve] {
-    margin: 0 0 0.25rem 0;
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #1a1a1a;
-}
-
-.uta-toast__message[b-tm5r5hx4ve] {
-    margin: 0;
-    font-size: 0.85rem;
-    color: #64748b;
-    line-height: 1.4;
-}
-
-.uta-toast__close[b-tm5r5hx4ve] {
-    background: transparent;
-    border: none;
-    color: #94a3b8;
-    cursor: pointer;
-    padding: 0.25rem;
-    font-size: 1.1rem;
-    line-height: 1;
-    border-radius: 6px;
-    transition: all 0.2s;
-    margin-top: -0.25rem;
-    margin-right: -0.25rem;
-}
-
-.uta-toast__close:hover[b-tm5r5hx4ve] {
-    background: rgba(0, 0, 0, 0.05);
-    color: #475569;
-}
-
-/* Barra de progreso animada */
-.uta-toast__progress[b-tm5r5hx4ve] {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 4px;
-    width: 100%;
-}
-
-.uta-toast--success .uta-toast__progress[b-tm5r5hx4ve] {
-    background: linear-gradient(to right, #16a34a, #4ade80);
-    animation: utaToastProgress-b-tm5r5hx4ve 3s linear forwards;
-}
-
-.uta-toast--error .uta-toast__progress[b-tm5r5hx4ve] {
-    background: linear-gradient(to right, #dc2626, #f87171);
-    animation: utaToastProgress-b-tm5r5hx4ve 3s linear forwards;
-}
-
-@keyframes utaToastProgress-b-tm5r5hx4ve {
-    from { width: 100%; }
-    to { width: 0%; }
+    font-size: 1rem;
+    flex-shrink: 0;
 }
 
 .uta-toast--success[b-tm5r5hx4ve] {
-    box-shadow: 0 15px 35px -5px rgba(22, 163, 74, 0.15), 0 5px 15px -5px rgba(0, 0, 0, 0.05);
+    background: #fff;
+    color: #15803d;
+    border-left: 4px solid #16a34a;
 }
 
 .uta-toast--error[b-tm5r5hx4ve] {
-    box-shadow: 0 15px 35px -5px rgba(220, 38, 38, 0.15), 0 5px 15px -5px rgba(0, 0, 0, 0.05);
+    background: #fff;
+    color: #b91c1c;
+    border-left: 4px solid #dc2626;
 }
 
 .uta-overlay[b-tm5r5hx4ve] {
     position: fixed;
     inset: 0;
     z-index: 1000;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 1.5rem;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(3px);
     animation: fadeIn-b-tm5r5hx4ve .2s ease;
 }
 
@@ -1166,16 +1106,15 @@
     padding: 2rem !important;
 }
 
-/* ====================================================
-   BOTONES DE ACCIÓN RÁPIDA (POS)
-   ==================================================== */
 .uta-btn-pos[b-tm5r5hx4ve] {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
+    /* Ajustamos el padding para que iguale al .uta-btn--lg (0.8rem 1.5rem) */
     padding: 0.8rem 1.5rem;
     border-radius: 8px;
+    /* Usamos 8px para que coincida con .uta-btn */
     font-weight: 700;
     font-size: 0.9rem;
     text-transform: uppercase;
@@ -1183,99 +1122,65 @@
     gap: 10px;
     cursor: pointer;
     border: 2px solid transparent;
-    font-family: 'Inter', sans-serif;
 }
 
 .uta-btn-pos--cancel[b-tm5r5hx4ve] {
     background-color: transparent;
     color: #6B1A33;
+    /* Usamos el rojo vino UTA de tu variable */
     border: 1px solid #6B1A33;
     margin-top: 10px;
 }
 
-.uta-btn-pos--cancel:hover[b-tm5r5hx4ve] {
-    background-color: #fdf5f7;
-    border-color: #521528;
-    color: #521528;
+
+/* Estilos para el separador de stock en el modal de ventas */
+.uta-table-separator-row[b-tm5r5hx4ve] {
+    padding: 0 !important;
+    background-color: #f8f9fa !important;
 }
+
+.uta-stock-separator[b-tm5r5hx4ve] {
+    background: linear-gradient(90deg, #6c757d 0%, #495057 100%);
+    color: white;
+    padding: 8px 15px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    border-left: 4px solid #dc3545;
+}
+
+.uta-stock-separator i[b-tm5r5hx4ve] {
+    font-size: 1rem;
+}
+
+
 
 /* ====================================================
-   SWEETALERT UTA REDESIGN
+   SEPARADOR DE STOCK EN TABLAS
    ==================================================== */
-.uta-swal-container[b-tm5r5hx4ve] {
-    backdrop-filter: blur(5px);
+.uta-table-separator-row[b-tm5r5hx4ve] {
+    padding: 0 !important;
 }
 
-.uta-swal-popup[b-tm5r5hx4ve] {
-    border-radius: 20px !important;
-    padding: 2.5rem !important;
-    border: 1px solid rgba(0, 0, 0, 0.05) !important;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2) !important;
-    font-family: 'Inter', sans-serif !important;
-}
-
-.uta-swal-title[b-tm5r5hx4ve] {
-    color: #6B1A33 !important;
-    font-size: 1.6rem !important;
-    font-weight: 800 !important;
-    margin-bottom: 0.75rem !important;
-}
-
-.uta-swal-html[b-tm5r5hx4ve] {
-    color: #4b5563 !important;
-    font-size: 1rem !important;
-    line-height: 1.6 !important;
-}
-
-.uta-swal-list-container[b-tm5r5hx4ve] {
-    text-align: left;
-    background: #f8f9fa;
-    border-radius: 12px;
-    padding: 1rem 1.5rem;
-    border-left: 4px solid #6B1A33;
-    margin-top: 1rem;
-}
-
-.uta-swal-list[b-tm5r5hx4ve] {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.uta-swal-list li[b-tm5r5hx4ve] {
-    margin-bottom: 0.5rem;
+.uta-stock-separator[b-tm5r5hx4ve] {
+    background: #f8fafc;
+    color: #64748b;
+    padding: 0.6rem 1.25rem;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
+    border-top: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
     gap: 0.5rem;
-    color: #374151;
 }
 
-.uta-swal-list li i[b-tm5r5hx4ve] {
-    color: #6B1A33;
-    font-size: 1.2rem;
-}
-
-/* Reutilización de botones existentes en Swal */
-.swal2-styled.swal2-confirm.uta-btn[b-tm5r5hx4ve] {
-    margin-top: 1.5rem !important;
-}
-/* Toasts de SweetAlert con Glassmorphism */
-.swal2-popup.swal2-toast.uta-swal-toast[b-tm5r5hx4ve] {
-    background: rgba(255, 255, 255, 0.8) !important;
-    backdrop-filter: blur(10px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(10px) saturate(180%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    border-radius: 12px !important;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08) !important;
-    padding: 1rem !important;
-}
-
-.swal2-popup.swal2-toast.uta-swal-toast .swal2-title[b-tm5r5hx4ve] {
-    color: #4b5563 !important;
-    font-size: 0.95rem !important;
-    font-weight: 600 !important;
-}
-
-.swal2-popup.swal2-toast.uta-swal-toast .swal2-success-ring[b-tm5r5hx4ve] {
-    border-color: rgba(22, 163, 74, 0.2) !important;
+.uta-stock-separator i[b-tm5r5hx4ve] {
+    font-size: 0.9rem;
+    color: #94a3b8;
 }

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "lLmyQppJOoM=",
+  "dgSpecHash": "rol923LCvfU=",
   "success": true,
   "projectFilePath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\API.csproj",
   "expectedPackageFiles": [
@@ -56,15 +56,5 @@
     "C:\\Users\\LENOVO\\.nuget\\packages\\system.security.cryptography.pkcs\\9.0.4\\system.security.cryptography.pkcs.9.0.4.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\system.security.cryptography.protecteddata\\9.0.4\\system.security.cryptography.protecteddata.9.0.4.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1900",
-      "level": "Warning",
-      "message": "Error al obtener los datos de vulnerabilidad del paquete: No se puede cargar el índice de servicio del origen https://api.nuget.org/v3/index.json.",
-      "projectPath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\API.csproj",
-      "warningLevel": 1,
-      "filePath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\API.csproj",
-      "targetGraphs": []
-    }
-  ]
+  "logs": []
 }
