@@ -1,4 +1,4 @@
-﻿using Application.DTOs;
+using Application.DTOs;
 using Application.DTOs.Common;
 using Application.Interfaces.Repositories;
 using Domain.Entities;
@@ -30,7 +30,8 @@ public class CustomerController : ControllerBase
         {
             Id = c.Id,
             IDCard = c.IDCard,
-            Name = $"{c.LastName} {c.Name}",
+            Name = c.Name,
+            LastName = c.LastName,
             Phone = c.Phone,
             Address = c.Address,
             Email = c.Email

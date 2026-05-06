@@ -1,4 +1,4 @@
-﻿using Application.DTOs;
+using Application.DTOs;
 using Application.DTOs.Common;
 using Blazor.Models;
 using System.Net.Http.Json;
@@ -15,7 +15,8 @@ public class CustomerApiService
         int page,
         int size = 10)
     {
-        var url = $"api/Customer/search?termino={term}&criterio={criterion}&pagina={page}&tamaño={size}";
+        var escapedTerm = System.Uri.EscapeDataString(term ?? string.Empty);
+        var url = $"api/Customer/search?termino={escapedTerm}&criterio={criterion}&pagina={page}&tamaño={size}";
         return await _http.GetFromJsonAsync<PagedResponse<CustomerResponseDto>>(url);
     }
 }

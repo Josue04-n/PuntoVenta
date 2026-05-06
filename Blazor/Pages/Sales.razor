@@ -405,6 +405,8 @@
                                type="text" 
                                value="@_terminoCliente"
                                @oninput="InputCustomerSearch"
+                               maxlength="@(CriterioBusquedaCliente == "nombre" ? 25 : 10)"
+                               onkeypress="@GetOnKeyPressHandler(CriterioBusquedaCliente)"
                                placeholder="Escriba para filtrar clientes..."/>
 
                         <button class="uta-btn uta-btn--primary uta-search-bar__btn" @onclick="LoadClientsAsync">

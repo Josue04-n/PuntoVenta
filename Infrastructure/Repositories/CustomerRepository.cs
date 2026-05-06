@@ -1,4 +1,4 @@
-﻿using Application.DTOs.Common;
+using Application.DTOs.Common;
 using Application.Interfaces.Repositories;
 using Domain.Entities;
 using Infrastructure.Data;
@@ -31,7 +31,7 @@ public class CustomerRepository : ICustomerRepository
         int pageNumber, 
         int pageSize, 
         string? term = null,
-        string criterian = "cedula")
+        string searchBy = "cedula")
     {
         IQueryable<Customer> query = _context.Customers.AsNoTracking();
 
@@ -39,13 +39,11 @@ public class CustomerRepository : ICustomerRepository
         {
             term = term.Trim().ToLower();
 
-            query = criterian.Trim().ToLower() switch
+            query = searchBy.Trim().ToLower() switch
             {
-                "id" => int.TryParse(term, out int idSearch)
-                    ? query.Where(c => c.Id == idSearch)
-                    : query,
+                "id" => query.Where(c => c.Id.ToString().StartsWith(term)),
                 "cedula" => query.Where(c => c.IDCard.StartsWith(term)),
-                "nombre" => query.Where(c => c.LastName.ToLower().StartsWith(term)),
+                "nombre" => query.Where(c => c.LastName.ToLower().StartsWith(term) || c.Name.ToLower().StartsWith(term)),
                 _ => query.Where(c => c.IDCard.StartsWith(term))
             };
         }
