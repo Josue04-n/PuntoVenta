@@ -16,20 +16,18 @@
 
 @if (!string.IsNullOrEmpty(_mensajeAlerta))
 {
-    <div class="uta-toast-container">
+    <div class="uta-toast-wrapper">
         <div class="uta-toast @(_esError ? "uta-toast--error" : "uta-toast--success")">
-            <div class="uta-toast__body">
-                <div class="uta-toast__icon">
-                    <i class="bi @(_esError ? "bi-exclamation-circle-fill" : "bi-check-circle-fill")"></i>
-                </div>
-                <div class="uta-toast__content">
-                    <h5 class="uta-toast__title">@(_esError ? "Hubo un problema" : "Acción exitosa")</h5>
-                    <p class="uta-toast__message">@_mensajeAlerta</p>
-                </div>
-                <button class="uta-toast__close" @onclick="() => _mensajeAlerta = string.Empty">
-                    <i class="bi bi-x-lg"></i>
-                </button>
+            <div class="uta-toast__icon">
+                <i class="bi @(_esError ? "bi-exclamation-triangle-fill" : "bi-check2-circle")"></i>
             </div>
+            <div class="uta-toast__body">
+                <div class="uta-toast__title">@(_esError ? "Atención" : "¡Éxito!")</div>
+                <div class="uta-toast__message">@_mensajeAlerta</div>
+            </div>
+            <button class="uta-toast__close" @onclick="() => _mensajeAlerta = string.Empty">
+                <i class="bi bi-x"></i>
+            </button>
             <div class="uta-toast__progress"></div>
         </div>
     </div>
@@ -208,49 +206,93 @@
                                         </td>
                                     </tr>
                                 }
-                                    @foreach (var item in _carrito)
-                                    {
-                                        <tr>
-                                            <td><span class="uta-code-badge">@item.ProductId.ToString("D4")</span></td>
-                                            <td style="text-align:center">
-                                                <input class="uta-qty-input uta-qty-input--cart" 
-                                                       type="number" 
-                                                       value="@item.Amount" 
-                                                       @oninput="@((e) => ActualizarCantidad(item, e))"
-                                                       min="1"
-                                                       onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" />
-                                                <div class="uta-stock-hint" @onclick="() => { item.Amount = item.AvailableStock; RecalcularTotalesFactura(); }" style="cursor:pointer">
-                                                    Disponible: <strong>@item.AvailableStock</strong>
-                                                </div>
-                                            </td>
-                                            <td class="uta-table__bold">@item.ProductName</td>
+                                @foreach (var item in CarritoPaginado)
+                                {
+                                    <tr>
+                                        <td><span class="uta-code-badge">@item.ProductId.ToString("D4")</span></td>
+                                        <td style="text-align:center">
+                                            <input class="uta-qty-input uta-qty-input--cart" 
+                                                   type="number" 
+                                                   value="@item.Amount" 
+                                                   @oninput="@((e) => ActualizarCantidad(item, e))"
+                                                   min="1"
+                                                   onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" />
+                                            <div class="uta-stock-hint" @onclick="() => { item.Amount = item.AvailableStock; RecalcularTotalesFactura(); }" style="cursor:pointer">
+                                                Disponible: <strong>@item.AvailableStock</strong>
+                                            </div>
+                                        </td>
+                                        <td class="uta-table__bold">@item.ProductName</td>
 
-                                            <td style="text-align:right;color:#666">
-                                                <div class="uta-price uta-price--right">
-                                                    <span class="uta-price__symbol">$</span>
-                                                    <span class="uta-price__value">@item.UnitPrice.ToString("N2")</span>
-                                                </div>
-                                            </td>
+                                        <td style="text-align:right;color:#666">
+                                            <div class="uta-price uta-price--right">
+                                                <span class="uta-price__symbol">$</span>
+                                                <span class="uta-price__value">@item.UnitPrice.ToString("N2")</span>
+                                            </div>
+                                        </td>
 
-                                            <td style="text-align:right;font-weight:600;color:#1a1a1a">
-                                                <div class="uta-price uta-price--right">
-                                                    <span class="uta-price__symbol">$</span>
-                                                    <span class="uta-price__value">@item.SubTotal.ToString("N2")</span>
-                                                </div>
+                                        <td style="text-align:right;font-weight:600;color:#1a1a1a">
+                                            <div class="uta-price uta-price--right">
+                                                <span class="uta-price__symbol">$</span>
+                                                <span class="uta-price__value">@item.SubTotal.ToString("N2")</span>
+                                            </div>
+                                        </td>
+                                        @if (!_ventaCompletada)
+                                        {
+                                            <td class="d-print-none" style="text-align:center">
+                                                <button class="uta-icon-btn uta-icon-btn--red" title="Quitar" @onclick="() => EliminarDelCarrito(item)">
+                                                    <i class="bi bi-trash3-fill"></i>
+                                                </button>
                                             </td>
-                                            @if (!_ventaCompletada)
-                                            {
-                                                <td class="d-print-none" style="text-align:center">
-                                                    <button class="uta-icon-btn uta-icon-btn--red" title="Quitar" @onclick="() => EliminarDelCarrito(item)">
-                                                        <i class="bi bi-trash3-fill"></i>
-                                                    </button>
-                                                </td>
-                                            }
-                                        </tr>
-                                    }
+                                        }
+                                    </tr>
+                                }
                             </tbody>
                         </table>
                     </div>
+
+                    @if (_carrito.Any())
+                    {
+                        <div class="uta-pagination-footer d-print-none">
+                            <div class="uta-pagination-info">
+                                <span class="small text-muted">
+                                    Se muestran <strong class="uta-text-highlight">@CarritoDesde</strong> a <strong class="uta-text-highlight">@CarritoHasta</strong> de <strong class="uta-text-highlight">@_carrito.Count</strong> productos
+                                </span>
+                            </div>
+
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="small text-muted">por página</span>
+                                <div class="uta-select-wrapper">
+                                    <select class="form-select form-select-sm shadow-none" @onchange="OnPageSizeChangedCarrito">
+                                        @foreach (var size in new[] { 5, 10, 25 })
+                                        {
+                                            <option value="@size" selected="@(_itemsPorPaginaCarrito == size)">@size</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="d-flex overflow-hidden">
+                                @foreach (var p in VisiblePagesCarrito)
+                                {
+                                    if (p == -1)
+                                    {
+                                        <span class="uta-pagination-btn uta-pagination-btn--ellipsis">...</span>
+                                    }
+                                    else
+                                    {
+                                        var pNum = p;
+                                        <button class="uta-pagination-btn @(pNum == _paginaActualCarrito ? "uta-pagination-btn--active" : "")"
+                                                @onclick="() => IrAPaginaCarrito(pNum)">@pNum</button>
+                                    }
+                                }
+                                <button class="uta-pagination-btn @(!TieneSiguienteCarrito ? "disabled" : "")"
+                                        @onclick="() => IrAPaginaCarrito(_paginaActualCarrito + 1)"
+                                        disabled="@(!TieneSiguienteCarrito)">
+                                    <i class="bi bi-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -397,7 +439,7 @@
                     <div class="uta-search-bar">
                         <select class="uta-search-bar__select" @bind="CriterioBusquedaCliente">
                             <option value="cedula">Cédula</option>
-                            <option value="nombre">Nombre / Apellido</option>
+                            <option value="nombre">Apellido</option>
                             <option value="id">ID Interno</option>
                         </select>
 
@@ -418,6 +460,7 @@
                         <table class="uta-table">
                             <thead>
                                 <tr>
+                                    <th style="width: 80px; text-align: center;">Código (ID)</th>
                                     <th>Nombre Completo</th>
                                     <th style="text-align:center">Cédula</th>
                                     <th style="text-align:center">Teléfono</th>
@@ -430,7 +473,7 @@
                                 @if (!ClientesPaginados.Any() && !string.IsNullOrEmpty(_terminoCliente))
                                 {
                                     <tr>
-                                        <td colspan="6" class="uta-table__empty">
+                                        <td colspan="7" class="uta-table__empty">
                                             <div class="uta-empty-state">
                                                 <div class="uta-empty-state__icon"><i class="bi bi-search"></i></div>
                                                 <div class="uta-empty-state__text">Sin resultados para "@_terminoCliente"</div>
@@ -441,6 +484,7 @@
                                 @foreach (var c in ClientesPaginados)
                                 {
                                     <tr>
+                                        <td style="text-align:center"><span class="uta-code-badge">@c.Id.ToString("D3")</span></td>
                                         <td class="uta-table__bold"> @c.LastName @c.Name</td>
                                         <td style="text-align:center"><span class="uta-code-badge">@c.IDCard</span></td>
                                         <td style="text-align:center;color:#666">@(string.IsNullOrEmpty(c.Phone) ? "—" : c.Phone)</td>
@@ -458,7 +502,7 @@
                     </div>
                 </div>
 
-                @if (TotalPaginasClientes > 1)
+                @if (_totalItemsClientes > 0)
                 {
                     <div class="uta-pagination-footer rounded-bottom">
     
@@ -665,6 +709,19 @@
     private bool _esError = false;
     private bool _ventaCompletada = false;
     private string _numeroFactura = "BORRADOR";
+
+    private int _paginaActualCarrito = 1;
+    private int _itemsPorPaginaCarrito = 5;
+    private int TotalPaginasCarrito => (int)Math.Ceiling((double)_carrito.Count / _itemsPorPaginaCarrito);
+    private List<CartItemModel> CarritoPaginado => _carrito
+        .Skip((_paginaActualCarrito - 1) * _itemsPorPaginaCarrito)
+        .Take(_itemsPorPaginaCarrito)
+        .ToList();
+
+    private int CarritoDesde => _carrito.Count == 0 ? 0 : ((_paginaActualCarrito - 1) * _itemsPorPaginaCarrito) + 1;
+    private int CarritoHasta => Math.Min(_paginaActualCarrito * _itemsPorPaginaCarrito, _carrito.Count);
+    private bool TieneSiguienteCarrito => _paginaActualCarrito < TotalPaginasCarrito;
+    private List<int> VisiblePagesCarrito => PaginationHelper.GenerateVisiblePages(_paginaActualCarrito, TotalPaginasCarrito);
 
     private string _criterioBusquedaClienteBackingField = "cedula";
     private string CriterioBusquedaCliente
@@ -1062,12 +1119,13 @@
         if (e.Key == "Enter") await LoadClientsAsync();
     }
 
-    private void SeleccionarCliente(CustomerModel customer)
+    private async Task SeleccionarCliente(CustomerModel customer)
     {
         _clienteSeleccionado = customer;
         _terminoCliente = string.Empty;
         _mostrarModalCliente = false;
 
+        await MostrarNotificacion($"Cliente '{customer.Name} {customer.LastName}' seleccionado");
         StateHasChanged();
     }
 
@@ -1091,25 +1149,27 @@ private async Task AgregarProducto(ProductUI prod)
 
     if (itemExistente != null)
     {
+        // Si ya existe, avisamos al usuario y podemos incrementar o simplemente notificar
         itemExistente.Amount += prod.CantidadTemporal;
+        await MostrarNotificacion($"El producto '{prod.Name}' ya está seleccionado. Ajuste la cantidad en el carrito si es necesario.", true);
     }
     else
     {
         _carrito.Add(new CartItemModel 
         { 
-            ProductId = prod.Id,         // Antes: solo se llenaba dentro de .Product
-            ProductName = prod.Name,     // Antes: solo se llenaba dentro de .Product
-            UnitPrice = prod.UnitPrice, // Antes: era 0, por eso Subtotal era 0
+            ProductId = prod.Id,
+            ProductName = prod.Name,
+            UnitPrice = prod.UnitPrice,
             Amount = prod.CantidadTemporal,
             AvailableStock = prod.Stock,
-            // Mantener el objeto interno por compatibilidad
             Product = new ProductModel { Id = prod.Id, Name = prod.Name, UnitPrice = prod.UnitPrice, Stock = prod.Stock }
         });
+        // Ir a la última página para ver el producto recién añadido
+        _paginaActualCarrito = TotalPaginasCarrito;
+        await MostrarNotificacion($"{prod.Name} añadido al carrito.");
     }
 
     RecalcularTotalesFactura(); 
-    
-    await MostrarNotificacion($"{prod.Name} añadido.");
     prod.CantidadTemporal = 1;
     StateHasChanged();
 }
@@ -1132,9 +1192,33 @@ private async Task AgregarProducto(ProductUI prod)
         {
             _carrito.Remove(item);
 
+            // Ajustar página actual si queda vacía
+            if (_paginaActualCarrito > TotalPaginasCarrito && TotalPaginasCarrito > 0)
+            {
+                _paginaActualCarrito = TotalPaginasCarrito;
+            }
+            else if (TotalPaginasCarrito == 0)
+            {
+                _paginaActualCarrito = 1;
+            }
+
             await MostrarNotificacion("Producto quitado");
 
             RecalcularTotalesFactura();
+        }
+    }
+
+    private void IrAPaginaCarrito(int pagina)
+    {
+        _paginaActualCarrito = pagina;
+    }
+
+    private void OnPageSizeChangedCarrito(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int nuevoTamaño))
+        {
+            _itemsPorPaginaCarrito = nuevoTamaño;
+            _paginaActualCarrito = 1;
         }
     }
 
@@ -1345,9 +1429,10 @@ private async Task AgregarProducto(ProductUI prod)
         NavManager.NavigateTo($"/facturas?numeroFactura={_numeroFactura}");
     }
     
-    private void NuevaVenta()
+    private async Task NuevaVenta()
     {
         _carrito.Clear(); _clienteSeleccionado = null; _ventaCompletada = false; _numeroFactura = "BORRADOR";
         RecalcularTotalesFactura();
+        await MostrarNotificacion("Formulario de venta restablecido");
     }
 }

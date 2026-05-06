@@ -1639,57 +1639,146 @@ main[b-7zm4x0sqzy] {
     border-color: #ced4da;
 }
 
-.uta-toast[b-tm5r5hx4ve] {
+/* ====================================================
+   NOTIFICACIONES TOAST PREMIUM (Glassmorphism)
+   ==================================================== */
+.uta-toast-wrapper[b-tm5r5hx4ve] {
     position: fixed;
-    top: 1.5rem;
-    right: 1.5rem;
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    padding: 0.85rem 1.25rem;
-    border-radius: 10px;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 600;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    min-width: 280px;
-    animation: toastSlide-b-tm5r5hx4ve 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    top: 2rem;
+    right: 2rem;
+    z-index: 10000;
+    pointer-events: none;
 }
 
-@keyframes toastSlide-b-tm5r5hx4ve {
+.uta-toast[b-tm5r5hx4ve] {
+    pointer-events: auto;
+    min-width: 320px;
+    max-width: 400px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 1.25rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    position: relative;
+    overflow: hidden;
+    animation: toastEnter-b-tm5r5hx4ve 0.5s cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+
+@keyframes toastEnter-b-tm5r5hx4ve {
     from {
+        transform: translateX(100%) scale(0.9);
         opacity: 0;
-        transform: translateX(30px);
     }
 
     to {
+        transform: translateX(0) scale(1);
         opacity: 1;
-        transform: translateX(0);
     }
 }
 
 .uta-toast__icon[b-tm5r5hx4ve] {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
+    font-size: 1.4rem;
     flex-shrink: 0;
+    background: #f8f9fa;
 }
 
-.uta-toast--success[b-tm5r5hx4ve] {
-    background: #fff;
-    color: #15803d;
-    border-left: 4px solid #16a34a;
+.uta-toast--success .uta-toast__icon[b-tm5r5hx4ve] {
+    background: #ecfdf5;
+    color: #10b981;
 }
 
-.uta-toast--error[b-tm5r5hx4ve] {
-    background: #fff;
-    color: #b91c1c;
-    border-left: 4px solid #dc2626;
+.uta-toast--error .uta-toast__icon[b-tm5r5hx4ve] {
+    background: #fef2f2;
+    color: #ef4444;
+}
+
+.uta-toast__body[b-tm5r5hx4ve] {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding-top: 2px;
+}
+
+.uta-toast__title[b-tm5r5hx4ve] {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #1a1a1a;
+    letter-spacing: -0.2px;
+}
+
+.uta-toast__message[b-tm5r5hx4ve] {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #64748b;
+    line-height: 1.4;
+}
+
+.uta-toast__close[b-tm5r5hx4ve] {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 1.2rem;
+    line-height: 1;
+    transition: color 0.2s, transform 0.2s;
+    margin-top: -4px;
+    margin-right: -4px;
+}
+
+.uta-toast__close:hover[b-tm5r5hx4ve] {
+    color: #1a1a1a;
+    transform: rotate(90deg);
+}
+
+.uta-toast__progress[b-tm5r5hx4ve] {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.uta-toast__progress[b-tm5r5hx4ve]::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    transform-origin: left;
+    animation: toastProgress-b-tm5r5hx4ve 3s linear forwards;
+}
+
+.uta-toast--success .uta-toast__progress[b-tm5r5hx4ve]::after {
+    background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.uta-toast--error .uta-toast__progress[b-tm5r5hx4ve]::after {
+    background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+@keyframes toastProgress-b-tm5r5hx4ve {
+    from {
+        transform: scaleX(1);
+    }
+
+    to {
+        transform: scaleX(0);
+    }
 }
 
 .uta-overlay[b-tm5r5hx4ve] {
