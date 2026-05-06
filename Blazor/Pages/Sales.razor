@@ -395,7 +395,7 @@
 
                 <div class="uta-modal__body">
                     <div class="uta-search-bar">
-                        <select class="uta-search-bar__select" @bind="_criterioBusquedaCliente">
+                        <select class="uta-search-bar__select" @bind="CriterioBusquedaCliente">
                             <option value="cedula">Cédula</option>
                             <option value="nombre">Nombre / Apellido</option>
                             <option value="id">ID Interno</option>
@@ -524,7 +524,7 @@
             <div class="uta-modal__body">
                 @* Barra de Búsqueda Proactiva *@
                 <div class="uta-search-bar mb-3">
-                    <select class="uta-search-bar__select" @bind="_searchCriteriaProduct">
+                    <select class="uta-search-bar__select" @bind="SearchCriteriaProduct">
                         <option value="name">Descripción</option> @* 'name' para el default *@
                         <option value="id">Código ID</option>     @* 'id' para el filtro numérico *@
                     </select>
@@ -664,8 +664,32 @@
     private bool _ventaCompletada = false;
     private string _numeroFactura = "BORRADOR";
 
-    private string _criterioBusquedaCliente = "cedula";
-    private string _searchCriteriaProduct = "name";
+    private string _criterioBusquedaClienteBackingField = "cedula";
+    private string CriterioBusquedaCliente
+    {
+        get => _criterioBusquedaClienteBackingField;
+        set
+        {
+            if (_criterioBusquedaClienteBackingField != value)
+            {
+                _criterioBusquedaClienteBackingField = value;
+                HandleCustomerSearchCriteriaChange();
+            }
+        }
+    }
+    private string _searchCriteriaProductBackingField = "name";
+    private string SearchCriteriaProduct
+    {
+        get => _searchCriteriaProductBackingField;
+        set
+        {
+            if (_searchCriteriaProductBackingField != value)
+            {
+                _searchCriteriaProductBackingField = value;
+                HandleProductSearchCriteriaChange();
+            }
+        }
+    }
     private int _itemsPorPagina = 5;
 
     public int TotalPaginasClientes { get; set; }
@@ -770,7 +794,7 @@
 
         var response = await CustomerApiService.SearchCustomersAsync(
             _terminoCliente, 
-            _criterioBusquedaCliente, 
+            CriterioBusquedaCliente, 
             _paginaActualCliente, 
             _itemsPorPaginaCliente
         );
@@ -842,7 +866,7 @@
                 _currentPage, 
                 _pageSize, 
                 _searchterm, 
-                _searchCriteriaProduct);
+                SearchCriteriaProduct);
 
             if (response is not null)
             {
@@ -943,21 +967,18 @@
         }
     }
 
-    private void CambioCriterioCliente(ChangeEventArgs e)
+    private void HandleCustomerSearchCriteriaChange()
     {
-        _criterioBusquedaCliente = e.Value?.ToString() ?? "cedula";
         _terminoCliente = "";
-        _resultadosClientes.Clear();
         _paginaActualCliente = 1;
+        _ = LoadClientsAsync();
     }
 
-    private void CambioCriterioProducto(ChangeEventArgs e)
+    private void HandleProductSearchCriteriaChange()
     {
-        _searchCriteriaProduct = e.Value?.ToString() ?? "name";
         _searchterm = "";
-        _resultadosProductos.Clear();
         _currentPage = 1;
-        _totalItems = 0;
+        _ = LoadData();
     }
 
     private string GetOnKeyPressHandler(string criterio)
