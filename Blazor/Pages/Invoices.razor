@@ -1,9 +1,13 @@
-﻿@page "/facturas"
+@page "/facturas"
 @using Blazor.Models
 @using Blazor.Services
+@using Blazor.Helpers
+@using Application.DTOs.Common
+@using Domain.Entities
 @inject PosApiService ApiService
 @inject IJSRuntime JS
 @inject NavigationManager NavManager
+@implements IDisposable
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
@@ -37,16 +41,18 @@
         </div>
         <div class="uta-card__body">
             <div class="uta-search-bar" style="max-width: 800px; margin: 0 auto 1.5rem auto;">
-                <select class="uta-search-bar__select" value="@_criterioBusqueda" @onchange="CambioCriterioFacturas">
+                <select class="uta-search-bar__select" @bind="_criterioBusqueda" @bind:after="OnSearchCriteriaChanged">
                     <option value="numero">N° de Factura</option>
                     <option value="cliente">Apellido del Cliente</option>
                 </select>
-                  <input class="uta-search-bar__input" type="text" @bind="_terminoBusqueda" @bind:event="oninput"
-                      @onkeyup="PresionoEnter"
-                      onkeypress="@(GetOnKeyPressHandler(_criterioBusqueda))" />
-                <button class="uta-btn uta-btn--primary uta-search-bar__btn" @onclick="BuscarFacturas">
-                    Buscar
-                </button>
+                <input class="uta-search-bar__input" 
+                       type="text" 
+                       value="@_terminoBusqueda" 
+                       @oninput="OnInputSearch" 
+                       placeholder="Buscar por N° de Factura o Apellido de Cliente..." />
+                <div class="uta-search-bar__icon-container px-3 d-flex align-items-center bg-light">
+                    <i class="bi bi-search text-muted"></i>
+                </div>
             </div>
 
             <div class="uta-table-wrap uta-table-wrap--bordered">
@@ -63,7 +69,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if (!_facturas.Any())
+                        @if (_pagedSalesResponse?.Items == null || !_pagedSalesResponse.Items.Any())
                         {
                             <tr>
                                 <td colspan="7" class="uta-table__empty">
@@ -75,12 +81,12 @@
                                 </td>
                             </tr>
                         }
-                        @foreach (var f in FacturasPaginadas)
+                        @foreach (var f in _pagedSalesResponse?.Items ?? Enumerable.Empty<SaleResponseDto>())
                         {
                             <tr>
                                 <td><span class="uta-code-badge text-custom-primary">@f.InvoiceNumber</span></td>
-                                <td style="color:#666">@f.IssueDate</td>
-                                <td class="uta-table__bold">@f.CustomerName</td>
+                                <td style="color:#666">@FormatearFecha(f.IssueDate)</td>
+                                <td class="uta-table__bold">@ReordenarNombre(f.CustomerName)</td>
                                 <td style="text-align:right; color:#666">$ @f.SubTotal.ToString("N2")</td>
                                 <td style="text-align:right; color:#666">$ @f.VatAmount.ToString("N2")</td>
                                 <td style="text-align:right; font-weight:700; color:#1a1a1a">$ @f.Total.ToString("N2")</td>
@@ -100,12 +106,47 @@
                 </table>
             </div>
 
-            @if (TotalPaginas > 1)
+            @if (TotalItems > 0)
             {
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding: 0 0.5rem;">
-                    <button class="uta-btn uta-btn--outline uta-btn--sm" @onclick="PaginaAnterior" disabled="@(_paginaActual == 1)">‹ Anterior</button>
-                    <span style="font-size: 0.85rem; font-weight: 600; color: #6B1A33;">Página @_paginaActual de @TotalPaginas</span>
-                    <button class="uta-btn uta-btn--outline uta-btn--sm" @onclick="PaginaSiguiente" disabled="@(_paginaActual == TotalPaginas)">Siguiente ›</button>
+                <div class="uta-pagination-footer rounded-bottom mt-3">
+                    <div class="uta-pagination-info">
+                        <span class="small text-muted">
+                            Se muestran <strong class="uta-text-highlight">@Desde</strong> a <strong class="uta-text-highlight">@Hasta</strong> de <strong class="uta-text-highlight">@TotalItems</strong> facturas
+                        </span>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="small text-muted">por página</span>
+                        <div class="uta-select-wrapper">
+                            <select class="form-select form-select-sm shadow-none" @onchange="OnPageSizeChanged">
+                                @foreach (var size in new[] { 5, 10, 25, 50 })
+                                {
+                                    <option value="@size" selected="@(_itemsPorPagina == size)">@size</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-flex overflow-hidden">
+                        @foreach (var p in VisiblePages)
+                        {
+                            if (p == -1)
+                            {
+                                <span class="uta-pagination-btn uta-pagination-btn--ellipsis">...</span>
+                            }
+                            else
+                            {
+                                var pNum = p;
+                                <button class="uta-pagination-btn @(pNum == _paginaActual ? "uta-pagination-btn--active" : "")"
+                                        @onclick="() => ChangePage(pNum)">@pNum</button>
+                            }
+                        }
+                        <button class="uta-pagination-btn @(!TieneSiguiente ? "disabled" : "")"
+                                @onclick="() => ChangePage(_paginaActual + 1)"
+                                disabled="@(!TieneSiguiente)">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
                 </div>
             }
         </div>
@@ -121,9 +162,6 @@
             <h2 style="margin: 0; font-family: 'Inter', sans-serif;">Generando Factura...</h2>
             <p style="font-family: 'Inter', sans-serif; opacity: 0.8;">La descarga comenzará en breve</p>
         </div>
-        <style>
-            @@keyframes spin { 100% { transform: rotate(360deg); } }
-        </style>
     }
 
     <div class="uta-overlay" style="@(_esDescargaDirecta ? "z-index: 100; opacity: 0.01;" : "z-index: 1000;")" @onclick="CerrarModal">
@@ -157,12 +195,12 @@
                         
                         <p style="margin: 0 0 0.2rem 0; font-size: 0.75rem; font-weight: 700;">NÚMERO DE AUTORIZACIÓN / CLAVE DE ACCESO</p>
                         <p style="margin: 0 0 0.8rem 0; font-size: 0.7rem; font-family: monospace; background: #f4f6f9; padding: 0.3rem; text-align: center; border-radius: 4px;">
-                            @DateTime.Now.ToString("ddMMyyyy")0199999999990012001001@(_facturaSeleccionada.InvoiceNumber.Replace("FAC-", "").PadLeft(9, '0'))123456781
+                            @(DateTime.Now.ToString("ddMMyyyy"))0199999999990012001001@(_facturaSeleccionada.InvoiceNumber.Replace("FAC-", "").PadLeft(9, '0'))123456781
                         </p>
                         
                         <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; margin-bottom: 0.3rem;">
                             <strong style="white-space: nowrap;">FECHA Y HORA:</strong>
-                            <span style="text-align: right;">@_facturaSeleccionada.IssueDate</span>
+                            <span style="text-align: right;">@FormatearFecha(_facturaSeleccionada.IssueDate)</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; font-size: 0.8rem;">
                             <strong>AMBIENTE:</strong> <span>PRODUCCIÓN</span>
@@ -175,10 +213,9 @@
 
                 <div style="border: 1px solid #e0e0e0; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.85rem;">
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                        <div><strong>Cliente:</strong> @_facturaSeleccionada.CustomerName</div>
+                        <div><strong>Cliente:</strong> @ReordenarNombre(_facturaSeleccionada.CustomerName)</div>
                         <div><strong>Identificación:</strong> @_facturaSeleccionada.CustomerIDCard</div>
-                        <div><strong>Fecha Emisión:</strong> @_facturaSeleccionada.IssueDate</div>
-                        <div><strong>Teléfono:</strong> @_facturaSeleccionada.CustomerPhone</div>
+                        <div><strong>Fecha Emisión:</strong> @FormatearFecha(_facturaSeleccionada.IssueDate)</div>
                         <div style="grid-column: span 2;"><strong>Dirección:</strong> @_facturaSeleccionada.CustomerAddress</div>
                         <div style="grid-column: span 2;"><strong>Correo:</strong> @_facturaSeleccionada.CustomerEmail</div>
                     </div>
@@ -237,25 +274,32 @@
     </div>
 }
 @code {
-    private List<SaleResponseDto> _facturas = new();
+    private PagedResponse<SaleResponseDto>? _pagedSalesResponse;
     private string _terminoBusqueda = "";
     private string _criterioBusqueda = "numero";
     private SaleResponseDto? _facturaSeleccionada;
     
     private bool _esDescargaDirecta = false;
 
+    private int _paginaActual = 1;
+    private int _itemsPorPagina = 10;
+    private CancellationTokenSource _searchCts = new();
+
+    private int TotalItems => _pagedSalesResponse?.TotalCount ?? 0;
+    private int TotalPaginas => _pagedSalesResponse?.TotalPages ?? 0;
+    private int Desde => TotalItems == 0 ? 0 : ((_paginaActual - 1) * _itemsPorPagina) + 1;
+    private int Hasta => Math.Min(_paginaActual * _itemsPorPagina, TotalItems);
+    private bool TieneAnterior => _pagedSalesResponse?.HasPreviousPage ?? false;
+    private bool TieneSiguiente => _pagedSalesResponse?.HasNextPage ?? false;
+    private List<int> VisiblePages => PaginationHelper.GenerateVisiblePages(_paginaActual, TotalPaginas);
+
     [SupplyParameterFromQuery(Name = "numeroFactura")]
     public string? NumeroFacturaQuery { get; set; }
 
-    private int _itemsPorPagina = 5;
-    private int _paginaActual = 1;
-    private int TotalPaginas => (int)Math.Ceiling(_facturas.Count / (double)_itemsPorPagina);
-    private IEnumerable<SaleResponseDto> FacturasPaginadas => _facturas.Skip((_paginaActual - 1) * _itemsPorPagina).Take(_itemsPorPagina);
-
-    private void PaginaAnterior() { if (_paginaActual > 1) _paginaActual--; }
-    private void PaginaSiguiente() { if (_paginaActual < TotalPaginas) _paginaActual++; }
-
-    protected override async Task OnInitializedAsync() {}
+    protected override async Task OnInitializedAsync()
+    {
+        _searchCts = new CancellationTokenSource();
+    }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -263,39 +307,101 @@
         {
             _criterioBusqueda = "numero";
             _terminoBusqueda = NumeroFacturaQuery;
-            await BuscarFacturas();
+            await TriggerSearch(); // Use TriggerSearch to debounce
         }
     }
 
-    private void CambioCriterioFacturas(ChangeEventArgs e)
+    private async Task FetchInvoices(int pageNumber)
     {
-        _criterioBusqueda = e.Value?.ToString() ?? "numero";
+        _paginaActual = pageNumber;
+        _pagedSalesResponse = await ApiService.GetPagedSalesAsync(_paginaActual, _itemsPorPagina, _terminoBusqueda, _criterioBusqueda);
+        StateHasChanged();
+    }
+
+    private async Task OnInputSearch(ChangeEventArgs e)
+    {
+        string rawInput = e.Value?.ToString() ?? "";
+        _terminoBusqueda = SanitizeInput(rawInput);
+
+        if (string.IsNullOrWhiteSpace(_terminoBusqueda))
+        {
+            _pagedSalesResponse = null;
+            return;
+        }
+
+        await TriggerSearch();
+    }
+
+    private string SanitizeInput(string input)
+    {
+        // 1. Limit to 100 chars (UI limit)
+        if (input.Length > 100) input = input.Substring(0, 100);
+
+        // 2. Character filtering: Only letters and spaces for "cliente"
+        if (_criterioBusqueda == "cliente")
+        {
+            input = new string(input.Where(c => char.IsLetter(c) || char.IsWhiteSpace(c)).ToArray());
+        }
+
+        // 3. Normalize spaces: Trim start/end, replace multiple spaces with one
+        return System.Text.RegularExpressions.Regex.Replace(input.Trim(), @"\s+", " ");
+    }
+
+    private async Task OnSearchCriteriaChanged()
+    {
         _terminoBusqueda = ""; 
-        _facturas.Clear(); 
+        _pagedSalesResponse = null; 
         _paginaActual = 1;
     }
 
-    private string GetOnKeyPressHandler(string criterio)
+    private async Task OnSearchInputKeyUp(KeyboardEventArgs e)
     {
-        if (criterio == "cliente")
+        if (e.Key == "Enter")
         {
-            // Solo letras y espacios
-            return "return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode == 32 || event.charCode == 209 || event.charCode == 241 || event.charCode == 193 || event.charCode == 201 || event.charCode == 205 || event.charCode == 211 || event.charCode == 218 || event.charCode == 225 || event.charCode == 233 || event.charCode == 237 || event.charCode == 243 || event.charCode == 250";
+            await TriggerSearch();
         }
-        return "";
     }
 
-    private async Task PresionoEnter(KeyboardEventArgs e)
+    private async Task TriggerSearch()
     {
-        if (e.Key == "Enter") await BuscarFacturas();
+        _paginaActual = 1; 
+        _searchCts.Cancel(); 
+        _searchCts = new CancellationTokenSource();
+
+        try 
+        {
+            await Task.Delay(300, _searchCts.Token);
+            await FetchInvoices(_paginaActual);
+        }
+        catch (TaskCanceledException) { }
     }
 
+    // Method to handle the search button click, which should also trigger search
     private async Task BuscarFacturas()
     {
-        if (string.IsNullOrWhiteSpace(_terminoBusqueda)) return;
-        _facturas = await ApiService.SearchSalesAsync(_terminoBusqueda, _criterioBusqueda);
-        _paginaActual = 1;
+       await TriggerSearch();
     }
+
+    private async Task OnPageSizeChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int nuevoTamaño))
+        {
+            _itemsPorPagina = nuevoTamaño;
+            _paginaActual = 1;
+            await FetchInvoices(_paginaActual);
+        }
+    }
+
+    private async Task ChangePage(int newPage)
+    {
+        if (newPage >= 1 && newPage <= TotalPaginas)
+        {
+            await FetchInvoices(newPage);
+        }
+    }
+
+    private async Task PaginaAnterior() => await ChangePage(_paginaActual - 1);
+    private async Task PaginaSiguiente() => await ChangePage(_paginaActual + 1);
 
     // 1. Abre el modal para solo leer
     private void VerDetalle(SaleResponseDto factura)
@@ -309,15 +415,15 @@
     {
         _esDescargaDirecta = true;
         _facturaSeleccionada = factura;
-        
-        // Renderizamos los datos de la factura en el DOM
-        StateHasChanged();
-        await Task.Delay(200); // Esperamos un milisegundo a que el HTML esté listo
 
-        string fechaSegura = _facturaSeleccionada.IssueDate.Replace(" ", "_").Replace(":", "-").Replace("/", "-");
+        StateHasChanged();
+        await Task.Delay(200);
+
+        string fechaSegura = DateTime.TryParse(_facturaSeleccionada.IssueDate, out DateTime f) 
+            ? f.ToString("dd-MM-yyyy_HH-mm-ss") 
+            : _facturaSeleccionada.IssueDate.Replace(":", "-");
         string nombreDocumento = $"{_facturaSeleccionada.InvoiceNumber}_{fechaSegura}.pdf";
 
-        // Aquí usamos la librería html2pdf que pusimos en index.html
         await JS.InvokeVoidAsync("eval", $@"
             var element = document.getElementById('area-impresion');
             var opt = {{
@@ -327,8 +433,7 @@
               html2canvas:  {{ scale: 2, useCORS: true }},
               jsPDF:        {{ unit: 'mm', format: 'a4', orientation: 'portrait' }}
             }};
-            
-            // Crea el PDF, lo descarga y luego hace clic automático en 'Cerrar'
+
             html2pdf().set(opt).from(element).save().then(function() {{
                 var btnCerrar = document.getElementById('btn-cerrar-modal');
                 if (btnCerrar) btnCerrar.click();
@@ -340,5 +445,34 @@
     {
         _facturaSeleccionada = null;
         _esDescargaDirecta = false;
+    }
+
+    private string FormatearFecha(string fechaRaw)
+    {
+        if (string.IsNullOrWhiteSpace(fechaRaw)) return "N/A";
+        if (DateTime.TryParse(fechaRaw, out DateTime fecha))
+        {
+            return fecha.ToString("dd/MM/yyyy HH:mm:ss");
+        }
+        return fechaRaw;
+    }
+
+    private string ReordenarNombre(string nombreCompleto)
+    {
+        if (string.IsNullOrWhiteSpace(nombreCompleto)) return nombreCompleto;
+        var partes = nombreCompleto.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (partes.Length >= 2)
+        {
+            var apellido = partes.Last();
+            var nombres = string.Join(" ", partes.Take(partes.Length - 1));
+            return $"{apellido} {nombres}";
+        }
+        return nombreCompleto;
+    }
+
+    public void Dispose()
+    {
+        _searchCts.Cancel();
+        _searchCts.Dispose();
     }
 }

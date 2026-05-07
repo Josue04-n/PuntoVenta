@@ -1,4 +1,4 @@
-﻿using Application.DTOs.Common;
+using Application.DTOs.Common;
 using Blazor.Models;
 using System.Net.Http.Json;
 
@@ -77,6 +77,28 @@ public class PosApiService
             return await _http.GetFromJsonAsync<PagedResponse<ProductModel>>(url);
         }
         catch { return null; }
+    }
+
+    public async Task<PagedResponse<SaleResponseDto>?> GetPagedSalesAsync(int pageNumber, int pageSize, string? term, string? searchBy)
+    {
+        try
+        {
+            var url = $"api/Sales/paged?pageNumber={pageNumber}&pageSize={pageSize}";
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                url += $"&term={Uri.EscapeDataString(term)}";
+            }
+            if (!string.IsNullOrWhiteSpace(searchBy))
+            {
+                url += $"&searchBy={Uri.EscapeDataString(searchBy)}";
+            }
+
+            return await _http.GetFromJsonAsync<PagedResponse<SaleResponseDto>>(url);
+        }
+        catch
+        {
+            return null;
+        }
     }
 
 }

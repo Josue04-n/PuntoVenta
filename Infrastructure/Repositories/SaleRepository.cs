@@ -46,6 +46,13 @@ public class SaleRepository : ISaleRepository
                 .ThenInclude(d => d.Product)
             .AsNoTracking();
 
+        if (searchBy == "id" && int.TryParse(term, out int searchId))
+        {
+            return await query
+                .Where(s => s.Id == searchId)
+                .ToListAsync();
+        }
+
         if (searchBy == "recientes")
         {
             return await query
@@ -78,9 +85,42 @@ public class SaleRepository : ISaleRepository
         return Enumerable.Empty<Sale>();
     }
 
-    public Task<(IEnumerable<Sale> Items, int TotalCount)> GetPagedAsync(int page, int pageSize, string? term = null)
+    public async Task<(IEnumerable<Sale> Items, int TotalCount)> GetPagedAsync(int page, int pageSize, string? term = null, string? searchBy = null)
     {
-        throw new NotImplementedException();
+        IQueryable<Sale> query = _context.Sales
+            .Include(s => s.Customer)
+            .Include(s => s.Details)
+                .ThenInclude(d => d.Product)
+            .AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(term))
+        {
+            term = term.Trim().ToLower();
+            searchBy = searchBy?.Trim().ToLower() ?? "numero";
+
+            if (searchBy == "id" && int.TryParse(term, out int searchId))
+            {
+                query = query.Where(s => s.Id == searchId);
+            }
+            else if (searchBy == "numero")
+            {
+                query = query.Where(s => s.InvoiceNumber.ToLower().Contains(term));
+            }
+            else if (searchBy == "cliente")
+            {
+                query = query.Where(s => s.Customer != null && 
+                    (s.Customer.Name.ToLower().Contains(term) || s.Customer.LastName.ToLower().Contains(term)));
+            }
+        }
+
+        var totalCount = await query.CountAsync();
+        var items = await query
+            .OrderByDescending(s => s.IssueDate)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return (items, totalCount);
     }
 
     public async Task<Sale?> GetByIdWithDetailsAsync(int id)

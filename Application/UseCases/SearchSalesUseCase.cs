@@ -15,4 +15,9 @@ public class SearchSalesUseCase
     {
         return await _saleRepository.SearchAsync(term, searchBy);
     }
+
+    public async Task<(IEnumerable<Sale> Items, int TotalCount)> ExecutePagedAsync(int page, int pageSize, string? term, string? searchBy)
+    {
+        return await _saleRepository.GetPagedAsync(page, pageSize, term, searchBy);
+    }
 }

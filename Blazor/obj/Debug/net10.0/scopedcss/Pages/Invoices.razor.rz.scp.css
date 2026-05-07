@@ -323,7 +323,7 @@
     border-top: 1px solid #e9ecef;
 }
 
-@@media (max-width: 768px) {
+@media (max-width: 768px) {
     .uta-search-bar[b-x5qr9n8pad] {
         flex-direction: column;
         border: none;
@@ -343,4 +343,104 @@
         align-items: flex-start;
         gap: 1rem;
     }
+}
+
+/* ====================================================
+  INICIO DE LOS ESTILOS DE PAGINACIÓN 
+   ==================================================== */
+
+.uta-pagination-footer[b-x5qr9n8pad] {
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+}
+
+.uta-text-highlight[b-x5qr9n8pad] {
+    color: #6B1A33 !important;
+    font-weight: 700;
+}
+
+.uta-select-wrapper[b-x5qr9n8pad] {
+    position: relative;
+    width: 80px;
+}
+
+.uta-pagination-footer .form-select[b-x5qr9n8pad] {
+    color: #212529 !important;
+    background-color: #ffffff;
+    border: 1px solid #ced4da;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.375rem 1.75rem 0.375rem 0.75rem;
+}
+
+.uta-pagination-footer .form-select option[b-x5qr9n8pad] {
+    background-color: #ffffff;
+    color: #212529;
+}
+
+.uta-pagination-btn[b-x5qr9n8pad] {
+    min-width: 40px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    color: #6B1A33;
+    border: 1px solid #dee2e6;
+    border-right: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.uta-pagination-btn:last-child[b-x5qr9n8pad] {
+    border-right: 1px solid #dee2e6;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+.uta-pagination-btn:first-child[b-x5qr9n8pad] {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+
+.uta-pagination-btn:hover:not(.disabled):not(.uta-pagination-btn--active)[b-x5qr9n8pad] {
+    background-color: #f1f3f5;
+    color: #521528;
+}
+
+.uta-pagination-btn--active[b-x5qr9n8pad] {
+    background-color: #6B1A33 !important;
+    color: #ffffff !important;
+    border-color: #6B1A33 !important;
+    z-index: 2;
+}
+
+.uta-pagination-btn.disabled[b-x5qr9n8pad] {
+    background-color: #f8f9fa;
+    color: #adb5bd;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.uta-pagination-btn--ellipsis[b-x5qr9n8pad] {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    cursor: default;
+}
+
+/* ====================================================
+  FINAL DE LOS ESTILOS DE PAGINACIÓN 
+==================================================== */
+
+@keyframes spin-b-x5qr9n8pad { 
+    100% { transform: rotate(360deg); } 
 }

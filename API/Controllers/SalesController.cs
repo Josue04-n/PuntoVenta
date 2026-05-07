@@ -1,4 +1,5 @@
-﻿using Application.DTOs;
+using Application.DTOs;
+using Application.DTOs.Common;
 using Application.UseCases;
 using Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,38 @@ public class SalesController : ControllerBase
     {
         _performSaleUseCase = performSaleUseCase;
         _searchSalesUseCase = searchSalesUseCase;
+    }
+
+    [HttpGet("search")]
+    public async Task<ActionResult<IEnumerable<SaleResponseDto>>> SearchSales([FromQuery] string term, [FromQuery] string searchBy = "numero")
+    {
+        var sales = await _searchSalesUseCase.ExecuteAsync(term, searchBy);
+
+        var responseItems = sales.Select(s => new SaleResponseDto
+        {
+            Id = s.Id,
+            InvoiceNumber = s.InvoiceNumber,
+            IssueDate = s.IssueDate,
+            CustomerName = s.Customer != null ? $"{s.Customer.Name} {s.Customer.LastName}" : "Consumidor Final",
+            CustomerIDCard = s.Customer?.IDCard ?? "9999999999",
+            CustomerPhone = s.Customer?.Phone ?? string.Empty,
+            CustomerAddress = s.Customer?.Address ?? string.Empty,
+            CustomerEmail = s.Customer?.Email ?? string.Empty,
+            SubTotal = s.SubTotal,
+            VatAmount = s.VatAmount,
+            VatPercentage = s.VatPercentage,
+            Total = s.Total,
+            Details = s.Details.Select(d => new SaleDetailResponseDto
+            {
+                ProductId = d.ProductId,
+                ProductName = d.Product?.Name ?? "Producto no especificado",
+                Amount = d.Amount,
+                UnitPrice = d.UnitPrice.Worth,
+                SubTotal = d.SubTotal.Worth
+            }).ToList()
+        });
+
+        return Ok(responseItems);
     }
 
     [HttpPost]
@@ -75,13 +108,12 @@ public class SalesController : ControllerBase
         }
     }
 
-    [HttpGet("search")]
-    public async Task<IActionResult> Search([FromQuery] string term, [FromQuery] string searchBy = "numero")
+    [HttpGet("paged")]
+    public async Task<ActionResult<PagedResponse<SaleResponseDto>>> GetPagedSales([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] string? term = null, [FromQuery] string? searchBy = null)
     {
-        var sales = await _searchSalesUseCase.ExecuteAsync(term, searchBy);
+        var (sales, totalCount) = await _searchSalesUseCase.ExecutePagedAsync(pageNumber, pageSize, term, searchBy);
 
-        // Mapeo masivo optimizado para búsquedas históricas
-        var response = sales.Select(s => new SaleResponseDto
+        var responseItems = sales.Select(s => new SaleResponseDto
         {
             Id = s.Id,
             InvoiceNumber = s.InvoiceNumber,
@@ -105,6 +137,6 @@ public class SalesController : ControllerBase
             }).ToList()
         });
 
-        return Ok(response);
+        return Ok(new PagedResponse<SaleResponseDto>(responseItems.ToList(), totalCount, pageNumber, pageSize));
     }
 }

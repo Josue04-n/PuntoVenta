@@ -1,4 +1,4 @@
-﻿namespace Blazor.Helpers;
+namespace Blazor.Helpers;
 
 public class PaginationHelper
 {
@@ -20,7 +20,7 @@ public class PaginationHelper
         int start = Math.Max(2, currentPage -1);
         int end = Math.Min(totalPages - 1, currentPage + 1);
 
-        for (int i = start; i < end; i++) pages.Add(i);
+        for (int i = start; i <= end; i++) pages.Add(i);
 
         if (currentPage < totalPages -2 ) pages.Add(-1);
 
