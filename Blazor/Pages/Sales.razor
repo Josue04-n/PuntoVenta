@@ -1047,7 +1047,7 @@
         }
         else if (criterio == "nombre")
         {
-            return "return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode == 32 || event.charCode == 209 || event.charCode == 241 || event.charCode == 193 || event.charCode == 201 || event.charCode == 205 || event.charCode == 211 || event.charCode == 218 || event.charCode == 225 || event.charCode == 233 || event.charCode == 237 || event.charCode == 243 || event.charCode == 250";
+            return "return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode == 209 || event.charCode == 241 || event.charCode == 193 || event.charCode == 201 || event.charCode == 205 || event.charCode == 211 || event.charCode == 218 || event.charCode == 225 || event.charCode == 233 || event.charCode == 237 || event.charCode == 243 || event.charCode == 250";
         }
         return "";
     }
@@ -1148,8 +1148,7 @@ private async Task AgregarProducto(ProductUI prod)
 
     if (itemExistente != null)
     {
-        // Si ya existe, avisamos al usuario y podemos incrementar o simplemente notificar
-        itemExistente.Amount += prod.CantidadTemporal;
+        // Si ya existe, avisamos al usuario para que ajuste manualmente
         await MostrarNotificacion($"El producto '{prod.Name}' ya está seleccionado. Ajuste la cantidad en el carrito si es necesario.", true);
     }
     else
