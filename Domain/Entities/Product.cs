@@ -18,15 +18,15 @@ public class Product
         Stock = stock;
     }
 
-    public void DecreaseStock (int Amount)
+    public void DecreaseStock (int amount)
     {
-        if (Amount <= 0)
+        if (amount <= 0)
             throw new ArgumentException("La cantidad a descontar debe ser mayor a cero ");
 
-        if (Amount > Stock)
-            throw new ArgumentException($"Stock insuficiente para el producto '{Name}'. Disponible '{Stock}'. Solicitado '{Amount}'.");
+        if (amount > Stock)
+            throw new ArgumentException($"Stock insuficiente para el producto '{Name}'. Disponible '{Stock}'. Solicitado '{amount}'.");
 
-        Stock -= Amount;
+        Stock -= amount;
 
 
     }

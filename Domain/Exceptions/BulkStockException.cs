@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Domain.Exceptions;
 
-public record StockValidationError(int IdProducto, string NombreProducto, int CantidadSolicitada, int StockDisponible);
+public record StockValidationError(int ProductId, string ProductName, int RequestedQuantity, int AvailableStock);
 
 public class BulkStockException : Exception
 {
@@ -25,8 +25,8 @@ public class BulkStockException : Exception
         if (errors.Count == 1)
         {
             var error = errors.First();
-            return $"El producto '{error.NombreProducto}' no tiene stock suficiente. " +
-                   $"(Solicitado: {error.CantidadSolicitada}, Disponible: {error.StockDisponible})";
+            return $"El producto '{error.ProductName}' no tiene stock suficiente. " +
+                   $"(Solicitado: {error.RequestedQuantity}, Disponible: {error.AvailableStock})";
         }
 
         return $"Se encontraron {errors.Count} productos con problemas de stock.";

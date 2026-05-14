@@ -8,9 +8,9 @@ public interface ICustomerRepository
     Task<Customer?> GetByIdAsync(int id);
     Task<Customer> GetByIdCardAsync(string IDCard);
 
-    Task<IEnumerable<Customer>> SearchAsync(string term, string searchBY);
+    Task<IEnumerable<Customer>> SearchAsync(string term, string searchBy);
 
-    Task<PagedResponse<Customer>> ListAsyncPaginatedClients(
+    Task<PagedResponse<Customer>> GetPagedAsync(
         int pageNumber, 
         int pageSize, 
         string? term = null,

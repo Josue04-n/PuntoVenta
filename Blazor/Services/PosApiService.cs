@@ -51,7 +51,7 @@ public class PosApiService
     }
 
     // 4. BUSCAR VENTAS
-    public async Task<List<SaleResponseDto>> SearchSalesAsync(string term, string searchBy = "numero")
+    public async Task<List<SaleResponseDto>> SearchSalesAsync(string term, string searchBy = "number")
     {
         try
         {
@@ -64,11 +64,11 @@ public class PosApiService
         }
     }
 
-    public async Task<PagedResponse<ProductModel>?> GetProductosPaginadosAsync(int page, int size, string? term, string searchBy)
+    public async Task<PagedResponse<ProductModel>?> GetPagedProductsAsync(int page, int size, string? term, string searchBy)
     {
         try
         {
-            var url = $"api/Products/paginado?pageNumber={page}&pageSize={size}&searchBy={searchBy}";
+            var url = $"api/Products/paged?pageNumber={page}&pageSize={size}&searchBy={searchBy}";
             if (!string.IsNullOrWhiteSpace(term))
             {
                 url += $"&term={Uri.EscapeDataString(term)}";

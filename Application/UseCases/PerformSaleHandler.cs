@@ -5,13 +5,13 @@ using Domain.Exceptions;
 
 namespace Application.UseCases;
 
-public class PerformSaleUseCase
+public class PerformSaleHandler
 {
     private readonly ISaleRepository _saleRepository;
     private readonly IProductRepository _productRepository;
     private readonly ICustomerRepository _customerRepository;
 
-    public PerformSaleUseCase(
+    public PerformSaleHandler(
         ISaleRepository saleRepository,
         IProductRepository productRepository,
         ICustomerRepository customerRepository)
@@ -30,7 +30,7 @@ public class PerformSaleUseCase
         var customer = await _customerRepository.GetByIdAsync(request.CustomerId)
             ?? throw new KeyNotFoundException("El cliente no existe.");
 
-        var errorsStock = new List<StockValidationError>();
+        var stockErrors = new List<StockValidationError>();
         var deletedProducts = new List<DeletedProductInfo>(); 
         var validatedProducts = new List<(Product product, int amount)>();
 
@@ -46,7 +46,7 @@ public class PerformSaleUseCase
 
             if (product.Stock < item.Amount)
             {
-                errorsStock.Add(new StockValidationError(product.Id, product.Name, item.Amount, product.Stock));
+                stockErrors.Add(new StockValidationError(product.Id, product.Name, item.Amount, product.Stock));
             }
             else
             {
@@ -55,7 +55,7 @@ public class PerformSaleUseCase
         }
 
         if (deletedProducts.Any()) throw new ProductDeletedException(deletedProducts);
-        if (errorsStock.Any()) throw new BulkStockException(errorsStock);
+        if (stockErrors.Any()) throw new BulkStockException(stockErrors);
 
         string invoiceNumber = await _saleRepository.GenerateInvoiceNumberAsync();
         var sale = new Sale(invoiceNumber, request.CustomerId);

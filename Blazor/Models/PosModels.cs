@@ -64,10 +64,10 @@ public class ProductDeletedErrorResponse
 
 public class StockValidationErrorModel
 {
-    public int IdProducto { get; set; }
-    public string NombreProducto { get; set; } = string.Empty;
-    public int CantidadSolicitada { get; set; }
-    public int StockDisponible { get; set; }
+    public int ProductId { get; set; }
+    public string ProductName { get; set; } = string.Empty;
+    public int RequestedQuantity { get; set; }
+    public int AvailableStock { get; set; }
 }
 
 public class DeletedProductInfoModel
@@ -92,10 +92,10 @@ public class CartItemModel
 public class SalesRegistryModel 
 {
     public int? CustomerID { get; set; }
-    public string CustomerName { get; set; } = "Consumidor Final";
+    public string CustomerName { get; set; } = "Final Consumer";
     public List<CartItemModel> Items { get; set; } = new();
     public decimal Subtotal { get; set; }
-    public decimal Iva { get; set; }
+    public decimal Vat { get; set; }
     public decimal Total { get; set; }
     public bool HasData => Items.Any();
 }

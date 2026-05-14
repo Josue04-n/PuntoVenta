@@ -16,7 +16,7 @@ public class CustomerApiService
         int size = 10)
     {
         var escapedTerm = System.Uri.EscapeDataString(term ?? string.Empty);
-        var url = $"api/Customer/search?termino={escapedTerm}&criterio={criterion}&pagina={page}&tamaño={size}";
+        var url = $"api/Customer/search?term={escapedTerm}&criterion={criterion}&page={page}&size={size}";
         return await _http.GetFromJsonAsync<PagedResponse<CustomerResponseDto>>(url);
     }
 }

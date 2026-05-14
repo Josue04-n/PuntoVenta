@@ -12,19 +12,19 @@ namespace API.Controllers;
 public class ProductsController : ControllerBase
 {
     private readonly IProductRepository _productsRepository;
-    private readonly ProductoUseCases _productoUseCases;
+    private readonly ProductHandlers _productHandlers;
 
-    public ProductsController(IProductRepository productsRepository, ProductoUseCases productoUseCases)
+    public ProductsController(IProductRepository productsRepository, ProductHandlers productHandlers)
     {
         _productsRepository = productsRepository;
-        _productoUseCases = productoUseCases;
+        _productHandlers = productHandlers;
     }
 
     [HttpGet("search")]
     public async Task<IActionResult> Search([FromQuery] string term, [FromQuery] string searchBy = "name")
     {
         if (string.IsNullOrWhiteSpace(term))
-            return BadRequest(new { mensaje = "El término de búsqueda es obligatorio." });
+            return BadRequest(new { message = "Search term is mandatory." });
 
         var results = await _productsRepository.SearchAsync(term, searchBy);
 
@@ -39,17 +39,17 @@ public class ProductsController : ControllerBase
         return Ok(response);
     }
 
-    [HttpGet("paginado")]
-    public async Task<ActionResult<PagedResponse<ProductResponseDto>>> GetPaginado(
+    [HttpGet("paged")]
+    public async Task<ActionResult<PagedResponse<ProductResponseDto>>> GetPaged(
     [FromQuery] int pageNumber = 1,
     [FromQuery] int pageSize = 10,
     [FromQuery] string? term = null,
     [FromQuery] string searchBy = "name")
     {
-        var resultado = await _productsRepository.ListarPaginadoAsync(pageNumber, pageSize, term, searchBy);
+        var result = await _productsRepository.GetPagedAsync(pageNumber, pageSize, term, searchBy);
 
-        // Mapear los productos del dominio a DTOs planos para evitar objetos ValueObjects en la respuesta
-        var itemsDto = resultado.Items.Select(p => new ProductResponseDto
+        // Map domain products to flat DTOs to avoid ValueObjects in response
+        var itemsDto = result.Items.Select(p => new ProductResponseDto
         {
             Id = p.Id,
             Name = p.Name,
@@ -59,9 +59,9 @@ public class ProductsController : ControllerBase
 
         var pagedDto = new PagedResponse<ProductResponseDto>
             (itemsDto, 
-            resultado.TotalCount, 
-            resultado.PageNumber, 
-            resultado.PageSize);
+            result.TotalCount, 
+            result.PageNumber, 
+            result.PageSize);
 
         return Ok(pagedDto);
     }

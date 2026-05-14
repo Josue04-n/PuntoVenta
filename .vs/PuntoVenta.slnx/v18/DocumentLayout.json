@@ -3,6 +3,28 @@
   "WorkspaceRootPath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\blazor\\pages\\sales.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|solutionrelative:blazor\\pages\\sales.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\blazor\\pages\\invoices.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|solutionrelative:blazor\\pages\\invoices.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\blazor\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|solutionrelative:blazor\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\LENOVO\\AppData\\Local\\Temp\\.vsdbgsrc\\d20021878b4dd5602f6a4ef2d20c4e750ce37888350855b8d653bca124c0e772\\StaticAssetsEndpointRouteBuilderExtensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\dotnet\\sdk\\10.0.201\\Sdks\\Microsoft.NET.Sdk.Razor\\targets\\Microsoft.NET.Sdk.Razor.MvcApplicationPartsDiscovery.targets||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\blazor\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|solutionrelative:blazor\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\blazor\\layout\\mainlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|solutionrelative:blazor\\layout\\mainlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
@@ -18,7 +40,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -30,7 +52,85 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Sales.razor",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Sales.razor",
+              "RelativeDocumentMoniker": "Blazor\\Pages\\Sales.razor",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Sales.razor",
+              "RelativeToolTip": "Blazor\\Pages\\Sales.razor",
+              "ViewState": "AgIAAGgEAAAAAAAAAAAAACwCAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-05-14T13:26:30.158Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "Invoices.razor",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Invoices.razor",
+              "RelativeDocumentMoniker": "Blazor\\Pages\\Invoices.razor",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Invoices.razor",
+              "RelativeToolTip": "Blazor\\Pages\\Invoices.razor",
+              "ViewState": "AgIAANQBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-05-14T13:26:16.393Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Home.razor",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Home.razor",
+              "RelativeDocumentMoniker": "Blazor\\Pages\\Home.razor",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Home.razor",
+              "RelativeToolTip": "Blazor\\Pages\\Home.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-05-14T13:26:12.408Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{e1b7d1f8-9b3c-49b1-8f4f-bfc63a88835d}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "StaticAssetsEndpointRouteBuilderExtensions.cs",
+              "DocumentMoniker": "C:\\Users\\LENOVO\\AppData\\Local\\Temp\\.vsdbgsrc\\d20021878b4dd5602f6a4ef2d20c4e750ce37888350855b8d653bca124c0e772\\StaticAssetsEndpointRouteBuilderExtensions.cs",
+              "ToolTip": "C:\\Users\\LENOVO\\AppData\\Local\\Temp\\.vsdbgsrc\\d20021878b4dd5602f6a4ef2d20c4e750ce37888350855b8d653bca124c0e772\\StaticAssetsEndpointRouteBuilderExtensions.cs [Solo lectura]",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAmwAsAAABYAAAAAQAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-14T13:14:54.925Z",
+              "EditorCaption": " [Solo lectura]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Microsoft.NET.Sdk.Razor.MvcApplicationPartsDiscovery.targets",
+              "DocumentMoniker": "C:\\Program Files\\dotnet\\sdk\\10.0.201\\Sdks\\Microsoft.NET.Sdk.Razor\\targets\\Microsoft.NET.Sdk.Razor.MvcApplicationPartsDiscovery.targets",
+              "ToolTip": "C:\\Program Files\\dotnet\\sdk\\10.0.201\\Sdks\\Microsoft.NET.Sdk.Razor\\targets\\Microsoft.NET.Sdk.Razor.MvcApplicationPartsDiscovery.targets",
+              "ViewState": "AgIAADIAAAAAAAAAAAAswDUAAABsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
+              "WhenOpened": "2026-05-14T13:14:04.334Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Program.cs",
+              "RelativeDocumentMoniker": "Blazor\\Program.cs",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Program.cs",
+              "RelativeToolTip": "Blazor\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-13T23:53:12.116Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
               "Title": "MainLayout.razor.css",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Layout\\MainLayout.razor.css",
               "RelativeDocumentMoniker": "Blazor\\Layout\\MainLayout.razor.css",
@@ -42,16 +142,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 6,
               "Title": "MainLayout.razor",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Layout\\MainLayout.razor",
               "RelativeDocumentMoniker": "Blazor\\Layout\\MainLayout.razor",
               "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Layout\\MainLayout.razor",
               "RelativeToolTip": "Blazor\\Layout\\MainLayout.razor",
-              "ViewState": "AgIAAEEAAAAAAAAAAAAwwEoAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-07T03:24:14.703Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-07T03:24:14.703Z"
             }
           ]
         }

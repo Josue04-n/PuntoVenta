@@ -10,26 +10,26 @@ namespace API.Controllers;
 [Route("api/[controller]")]
 public class SalesController : ControllerBase
 {
-    private readonly PerformSaleUseCase _performSaleUseCase;
-    private readonly SearchSalesUseCase _searchSalesUseCase;
+    private readonly PerformSaleHandler _performSaleHandler;
+    private readonly SearchSalesHandler _searchSalesHandler;
 
-    public SalesController(PerformSaleUseCase performSaleUseCase, SearchSalesUseCase searchSalesUseCase)
+    public SalesController(PerformSaleHandler performSaleHandler, SearchSalesHandler searchSalesHandler)
     {
-        _performSaleUseCase = performSaleUseCase;
-        _searchSalesUseCase = searchSalesUseCase;
+        _performSaleHandler = performSaleHandler;
+        _searchSalesHandler = searchSalesHandler;
     }
 
     [HttpGet("search")]
-    public async Task<ActionResult<IEnumerable<SaleResponseDto>>> SearchSales([FromQuery] string term, [FromQuery] string searchBy = "numero")
+    public async Task<ActionResult<IEnumerable<SaleResponseDto>>> SearchSales([FromQuery] string term, [FromQuery] string searchBy = "number")
     {
-        var sales = await _searchSalesUseCase.ExecuteAsync(term, searchBy);
+        var sales = await _searchSalesHandler.ExecuteAsync(term, searchBy);
 
         var responseItems = sales.Select(s => new SaleResponseDto
         {
             Id = s.Id,
             InvoiceNumber = s.InvoiceNumber,
             IssueDate = s.IssueDate,
-            CustomerName = s.Customer != null ? $"{s.Customer.Name} {s.Customer.LastName}" : "Consumidor Final",
+            CustomerName = s.Customer != null ? $"{s.Customer.Name} {s.Customer.LastName}" : "Final Consumer",
             CustomerIDCard = s.Customer?.IDCard ?? "9999999999",
             CustomerPhone = s.Customer?.Phone ?? string.Empty,
             CustomerAddress = s.Customer?.Address ?? string.Empty,
@@ -41,7 +41,7 @@ public class SalesController : ControllerBase
             Details = s.Details.Select(d => new SaleDetailResponseDto
             {
                 ProductId = d.ProductId,
-                ProductName = d.Product?.Name ?? "Producto no especificado",
+                ProductName = d.Product?.Name ?? "Product not specified",
                 Amount = d.Amount,
                 UnitPrice = d.UnitPrice.Worth,
                 SubTotal = d.SubTotal.Worth
@@ -54,22 +54,22 @@ public class SalesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<SaleResponseDto>> RegisterSale([FromBody] CreateSaleRequest request)
     {
-        // Fail Fast: Validación de entrada
+        // Fail Fast: Validation of input
         if (request == null || !request.Details.Any())
-            return BadRequest("La solicitud de venta está vacía o es inválida.");
+            return BadRequest("The sale request is empty or invalid.");
 
         try
         {
-            var result = await _performSaleUseCase.ExecuteAsync(request);
+            var result = await _performSaleHandler.ExecuteAsync(request);
 
-            // Mapeo manual para asegurar que los totales persistidos se envíen correctamente
+            // Manual mapping to ensure persisted totals are sent correctly
             var response = new SaleResponseDto
             {
                 Id = result.Id,
                 InvoiceNumber = result.InvoiceNumber,
                 IssueDate = result.IssueDate,
-                // Datos del cliente para la factura (Eager loading asumido en Use Case)
-                CustomerName = result.Customer != null ? $"{result.Customer.Name} {result.Customer.LastName}" : "Consumidor Final",
+                // Customer data for invoice (Eager loading assumed in Handler)
+                CustomerName = result.Customer != null ? $"{result.Customer.Name} {result.Customer.LastName}" : "Final Consumer",
                 CustomerIDCard = result.Customer?.IDCard ?? "9999999999",
                 CustomerPhone = result.Customer?.Phone ?? string.Empty,
                 CustomerAddress = result.Customer?.Address ?? string.Empty,
@@ -81,7 +81,7 @@ public class SalesController : ControllerBase
                 Details = result.Details.Select(d => new SaleDetailResponseDto
                 {
                     ProductId = d.ProductId,
-                    ProductName = d.Product?.Name ?? "Producto no especificado",
+                    ProductName = d.Product?.Name ?? "Product not specified",
                     Amount = d.Amount,
                     UnitPrice = d.UnitPrice.Worth,
                     SubTotal = d.SubTotal.Worth
@@ -104,21 +104,21 @@ public class SalesController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Ocurrió un error inesperado.", details = ex.Message });
+            return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
         }
     }
 
     [HttpGet("paged")]
     public async Task<ActionResult<PagedResponse<SaleResponseDto>>> GetPagedSales([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] string? term = null, [FromQuery] string? searchBy = null)
     {
-        var (sales, totalCount) = await _searchSalesUseCase.ExecutePagedAsync(pageNumber, pageSize, term, searchBy);
+        var (sales, totalCount) = await _searchSalesHandler.ExecutePagedAsync(pageNumber, pageSize, term, searchBy);
 
         var responseItems = sales.Select(s => new SaleResponseDto
         {
             Id = s.Id,
             InvoiceNumber = s.InvoiceNumber,
             IssueDate = s.IssueDate,
-            CustomerName = s.Customer != null ? $"{s.Customer.Name} {s.Customer.LastName}" : "Consumidor Final",
+            CustomerName = s.Customer != null ? $"{s.Customer.Name} {s.Customer.LastName}" : "Final Consumer",
             CustomerIDCard = s.Customer?.IDCard ?? "9999999999",
             CustomerPhone = s.Customer?.Phone ?? string.Empty,
             CustomerAddress = s.Customer?.Address ?? string.Empty,
@@ -130,7 +130,7 @@ public class SalesController : ControllerBase
             Details = s.Details.Select(d => new SaleDetailResponseDto
             {
                 ProductId = d.ProductId,
-                ProductName = d.Product?.Name ?? "Producto no especificado",
+                ProductName = d.Product?.Name ?? "Product not specified",
                 Amount = d.Amount,
                 UnitPrice = d.UnitPrice.Worth,
                 SubTotal = d.SubTotal.Worth

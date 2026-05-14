@@ -16,7 +16,7 @@ builder.Services.AddCors(options =>
 // 1. Agregar servicios al contenedor (Dependency Injection)
 builder.Services.AddControllers();
 // Inyectar tus dependencias personalizadas
-builder.Services.AddProyectDependencies(builder.Configuration);
+builder.Services.AddProjectDependencies(builder.Configuration);
 // Configuración de Swagger / OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>

@@ -8,7 +8,5 @@ public interface IProductRepository
     Task<Product?> GetByIdAsync(int id);
     Task UpdateRangeAsync(IEnumerable<Product> products);
     Task<IEnumerable<Product>> SearchAsync(string term, string searchBy);
-    Task<PagedResponse<Product>> ListarPaginadoAsync(int pageNumber, int pageSize, string? term = null, string searchBy = "name");
+    Task<PagedResponse<Product>> GetPagedAsync(int pageNumber, int pageSize, string? term = null, string searchBy = "name");
 }
-
-

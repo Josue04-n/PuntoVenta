@@ -3,10 +3,10 @@ using Domain.Entities;
 
 namespace Application.UseCases;
 
-public class SearchSalesUseCase
+public class SearchSalesHandler
 {
     private readonly ISaleRepository _saleRepository;
-    public SearchSalesUseCase(ISaleRepository saleRepository)
+    public SearchSalesHandler(ISaleRepository saleRepository)
     {
         _saleRepository = saleRepository;
     }

@@ -1,6 +1,6 @@
 ﻿namespace Application.DTOs;
 
-public record CreateSaleDetailDTO (int ProductId, int Amount);
-public record CreateSaleDTO(int ClientId, List<CreateSaleDetailDTO> details);
-public record SaleResponseDTO (string InvoiceNumber, decimal SubTotal, decimal VatAmount, decimal Total);
+public record CreateSaleDetailDto (int ProductId, int Amount);
+public record CreateSaleDto(int CustomerId, List<CreateSaleDetailDto> Details);
+public record SaleHeaderResponseDto (string InvoiceNumber, decimal SubTotal, decimal VatAmount, decimal Total);
 

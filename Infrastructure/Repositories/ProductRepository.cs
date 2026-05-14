@@ -31,11 +31,11 @@ public class ProductRepository : IProductRepository
 
         if (searchBy.ToLower() == "id")
         {
-            if (int.TryParse(term, out int idSearch))
+            if (int.TryParse(term, out int searchId))
             {
                 return await _context.Products
                     .AsNoTracking()
-                    .Where(p => p.Id == idSearch)
+                    .Where(p => p.Id == searchId)
                     .Take(1)
                     .ToListAsync();
             }
@@ -51,7 +51,7 @@ public class ProductRepository : IProductRepository
             .ToListAsync();
     }
 
-    public async Task<PagedResponse<Product>> ListarPaginadoAsync(int pageNumber, int pageSize, string? term = null, string searchBy = "name")
+    public async Task<PagedResponse<Product>> GetPagedAsync(int pageNumber, int pageSize, string? term = null, string searchBy = "name")
     {
         IQueryable<Product> query = _context.Products.AsNoTracking();
 

@@ -10,23 +10,23 @@ namespace API.Controllers;
 [Route("api/[controller]")]
 public class CustomerController : ControllerBase
 {
-    private readonly ICustomerRepository _clienteRepository;
+    private readonly ICustomerRepository _customerRepository;
 
-    public CustomerController(ICustomerRepository clienteRepository)
+    public CustomerController(ICustomerRepository customerRepository)
     {
-        _clienteRepository = clienteRepository;
+        _customerRepository = customerRepository;
     }
 
     [HttpGet("search")]
     public async Task<ActionResult<PagedResponse<CustomerResponseDto>>> Search(
-        [FromQuery] string? termino = null,
-        [FromQuery] string criterio = "cedula",
-        [FromQuery] int pagina = 1,
-        [FromQuery] int tamaño = 10)
+        [FromQuery] string? term = null,
+        [FromQuery] string criterion = "card",
+        [FromQuery] int page = 1,
+        [FromQuery] int size = 10)
     {
-        var resultado = await _clienteRepository.ListAsyncPaginatedClients(pagina, tamaño, termino, criterio);
+        var result = await _customerRepository.GetPagedAsync(page, size, term, criterion);
 
-        var itemsDto = resultado.Items.Select(c => new CustomerResponseDto
+        var itemsDto = result.Items.Select(c => new CustomerResponseDto
         {
             Id = c.Id,
             IDCard = c.IDCard,
@@ -37,22 +37,22 @@ public class CustomerController : ControllerBase
             Email = c.Email
         }).ToList();
 
-        return Ok(new PagedResponse<CustomerResponseDto>(itemsDto, resultado.TotalCount, pagina, tamaño));
+        return Ok(new PagedResponse<CustomerResponseDto>(itemsDto, result.TotalCount, page, size));
     }
 
     [HttpGet("{id:int}")]
     public async Task<ActionResult<CustomerResponseDto>> GetById(int id)
     {
-        var cliente = await _clienteRepository.GetByIdAsync(id);
+        var customer = await _customerRepository.GetByIdAsync(id);
 
-        if (cliente == null) return NotFound(new { mensaje = "Cliente no encontrado" });
+        if (customer == null) return NotFound(new { message = "Customer not found" });
 
         return Ok(new CustomerResponseDto
         {
-            Id = cliente.Id,
-            IDCard = cliente.IDCard,
-            Name = cliente.Name,
-            LastName = cliente.LastName
+            Id = customer.Id,
+            IDCard = customer.IDCard,
+            Name = customer.Name,
+            LastName = customer.LastName
         });
     }
 

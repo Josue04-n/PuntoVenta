@@ -27,11 +27,11 @@ public class CustomerRepository : ICustomerRepository
             .FirstOrDefaultAsync(c => c.IDCard == IDCard);
     }
 
-    public async Task<PagedResponse<Customer>> ListAsyncPaginatedClients(
+    public async Task<PagedResponse<Customer>> GetPagedAsync(
         int pageNumber, 
         int pageSize, 
         string? term = null,
-        string searchBy = "cedula")
+        string searchBy = "card")
     {
         IQueryable<Customer> query = _context.Customers.AsNoTracking();
 
@@ -42,8 +42,8 @@ public class CustomerRepository : ICustomerRepository
             query = searchBy.Trim().ToLower() switch
             {
                 "id" => query.Where(c => c.Id.ToString().StartsWith(term)),
-                "cedula" => query.Where(c => c.IDCard.StartsWith(term)),
-                "nombre" => query.Where(c => c.LastName.ToLower().StartsWith(term) || c.Name.ToLower().StartsWith(term)),
+                "card" => query.Where(c => c.IDCard.StartsWith(term)),
+                "name" => query.Where(c => c.LastName.ToLower().StartsWith(term) || c.Name.ToLower().StartsWith(term)),
                 _ => query.Where(c => c.IDCard.StartsWith(term))
             };
         }
@@ -69,18 +69,18 @@ public class CustomerRepository : ICustomerRepository
 
         if (searchBy == "id")
         {
-            if (int.TryParse(term, out int idSearch))
+            if (int.TryParse(term, out int searchId))
             {
                 return await _context.Customers
                  .AsNoTracking()
-                 .Where(c => c.Id == idSearch)
+                 .Where(c => c.Id == searchId)
                  .Take(1) 
                  .ToListAsync();
             }
             return Enumerable.Empty<Customer>();
         }
 
-        if (searchBy == "cedula")
+        if (searchBy == "card")
         {
             return await _context.Customers
              .AsNoTracking()

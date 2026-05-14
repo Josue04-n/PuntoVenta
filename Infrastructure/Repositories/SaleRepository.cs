@@ -53,7 +53,7 @@ public class SaleRepository : ISaleRepository
                 .ToListAsync();
         }
 
-        if (searchBy == "recientes")
+        if (searchBy == "recent")
         {
             return await query
                 .OrderByDescending(s => s.IssueDate)
@@ -61,7 +61,7 @@ public class SaleRepository : ISaleRepository
                 .ToListAsync();
         }
 
-        if (searchBy == "numero")
+        if (searchBy == "number")
         {
             return await query
                 .Where(s => s.InvoiceNumber.ToLower().Contains(term))
@@ -69,7 +69,7 @@ public class SaleRepository : ISaleRepository
                 .Take(30)
                 .ToListAsync();
         }
-        if (searchBy == "cliente")
+        if (searchBy == "customer")
         {
             var customerIds = await _context.Customers
                 .Where(c => c.Name.ToLower().Contains(term) || c.LastName.ToLower().Contains(term))
@@ -96,17 +96,17 @@ public class SaleRepository : ISaleRepository
         if (!string.IsNullOrWhiteSpace(term))
         {
             term = term.Trim().ToLower();
-            searchBy = searchBy?.Trim().ToLower() ?? "numero";
+            searchBy = searchBy?.Trim().ToLower() ?? "number";
 
             if (searchBy == "id" && int.TryParse(term, out int searchId))
             {
                 query = query.Where(s => s.Id == searchId);
             }
-            else if (searchBy == "numero")
+            else if (searchBy == "number")
             {
                 query = query.Where(s => s.InvoiceNumber.ToLower().Contains(term));
             }
-            else if (searchBy == "cliente")
+            else if (searchBy == "customer")
             {
                 query = query.Where(s => s.Customer != null && 
                     (s.Customer.Name.ToLower().Contains(term) || s.Customer.LastName.ToLower().Contains(term)));
