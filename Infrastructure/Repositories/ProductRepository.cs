@@ -20,11 +20,6 @@ public class ProductRepository : IProductRepository
         return await _context.Products.FindAsync(id);
     }
 
-    public Task UpdateRangeAsync(IEnumerable<Product> products)
-    {
-        return Task.CompletedTask;
-    }
-
     public async Task<IEnumerable<Product>> SearchAsync(string term, string searchBy)
     {
         term = term.Trim().ToLower();
@@ -88,5 +83,32 @@ public class ProductRepository : IProductRepository
         return new PagedResponse<Product>(items, totalCount, pageNumber, pageSize);
     }
 
+    public async Task AddAsync(Product product)
+    {
+        await _context.Products.AddAsync(product);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task UpdateAsync(Product product)
+    {
+        _context.Products.Update(product);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(int id)
+    {
+        var product = await _context.Products.FindAsync(id);
+        if (product != null)
+        {
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+        }
+    }
+
+    public async Task UpdateRangeAsync(IEnumerable<Product> products)
+    {
+        _context.Products.UpdateRange(products);
+        await _context.SaveChangesAsync();
+    }
 }
 

@@ -1,9 +1,13 @@
-﻿using Domain.Entities;
+﻿using Domain.Common;
+using Domain.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Infrastructure.Data;
 
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, int>
 {
     public DbSet<Product> Products => Set<Product>();
     public DbSet<Customer> Customers => Set<Customer>();
@@ -12,9 +16,49 @@ public class AppDbContext : DbContext
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var currentUser = "System"; // TODO: Implement real user tracking later
+
+        foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
+        {
+            switch (entry.State)
+            {
+                case EntityState.Added:
+                    entry.Entity.CreatedAt = DateTime.UtcNow;
+                    entry.Entity.CreatedBy = currentUser;
+                    break;
+                case EntityState.Modified:
+                    entry.Entity.UpdatedAt = DateTime.UtcNow;
+                    entry.Entity.UpdatedBy = currentUser;
+                    break;
+                case EntityState.Deleted:
+                    entry.State = EntityState.Modified;
+                    entry.Entity.Deactivate(currentUser);
+                    
+                    foreach (var reference in entry.References.Where(r => r.TargetEntry != null && r.TargetEntry.Metadata.IsOwned()))
+                    {
+                        if (reference.TargetEntry != null)
+                        {
+                            reference.TargetEntry.State = EntityState.Modified;
+                        }
+                    }
+                    break;
+            }
+
+        }
+
+        return base.SaveChangesAsync(cancellationToken);
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        // --- FILTROS GLOBALES PARA AUDITABLE ENTITY ---
+        modelBuilder.Entity<Product>().HasQueryFilter(p => p.IsActive);
+        modelBuilder.Entity<Customer>().HasQueryFilter(c => c.IsActive);
+        modelBuilder.Entity<Sale>().HasQueryFilter(s => s.IsActive);
 
         // --- CONFIGURACIÓN DE PRODUCTOS ---
         modelBuilder.Entity<Product>(entity =>

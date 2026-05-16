@@ -21,6 +21,7 @@ public static class DependencyInjection
         services.AddScoped<PerformSaleHandler>();
         services.AddScoped<SearchSalesHandler>();
         services.AddScoped<ProductHandlers>();
+        services.AddScoped<CustomerHandlers>();
 
         return services;
     }

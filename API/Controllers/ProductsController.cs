@@ -1,4 +1,4 @@
-﻿using Application.DTOs;
+using Application.DTOs;
 using Application.DTOs.Common;
 using Application.Interfaces.Repositories;
 using Application.UseCases;
@@ -33,7 +33,8 @@ public class ProductsController : ControllerBase
             Id = p.Id,
             Name = p.Name,
             UnitPrice = p.UnitPrice.Worth,
-            Stock = p.Stock
+            Stock = p.Stock,
+            IsActive = p.IsActive
         });
 
         return Ok(response);
@@ -48,13 +49,13 @@ public class ProductsController : ControllerBase
     {
         var result = await _productsRepository.GetPagedAsync(pageNumber, pageSize, term, searchBy);
 
-        // Map domain products to flat DTOs to avoid ValueObjects in response
         var itemsDto = result.Items.Select(p => new ProductResponseDto
         {
             Id = p.Id,
             Name = p.Name,
             UnitPrice = p.UnitPrice.Worth,
-            Stock = p.Stock
+            Stock = p.Stock,
+            IsActive = p.IsActive
         }).ToList();
 
         var pagedDto = new PagedResponse<ProductResponseDto>
@@ -66,6 +67,68 @@ public class ProductsController : ControllerBase
         return Ok(pagedDto);
     }
 
- 
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<ProductResponseDto>> GetById(int id)
+    {
+        var product = await _productsRepository.GetByIdAsync(id);
 
+        if (product == null) return NotFound(new { message = "Producto no encontrado" });
+
+        return Ok(new ProductResponseDto
+        {
+            Id = product.Id,
+            Name = product.Name,
+            UnitPrice = product.UnitPrice.Worth,
+            Stock = product.Stock,
+            IsActive = product.IsActive
+        });
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<ProductResponseDto>> Create(CreateProductRequest request)
+    {
+        try
+        {
+            var product = await _productHandlers.CreateProductAsync(request);
+            return CreatedAtAction(nameof(GetById), new { id = product.Id }, new ProductResponseDto
+            {
+                Id = product.Id,
+                Name = product.Name,
+                UnitPrice = product.UnitPrice.Worth,
+                Stock = product.Stock,
+                IsActive = product.IsActive
+            });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Update(int id, UpdateProductRequest request)
+    {
+        if (id != request.Id) return BadRequest(new { message = "ID mismatch" });
+
+        try
+        {
+            await _productHandlers.UpdateProductAsync(request);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _productHandlers.DeleteProductAsync(id);
+        return NoContent();
+    }
 }

@@ -60,6 +60,10 @@ build_metadata.AdditionalFiles.CssScope = b-7zm4x0sqzy
 build_metadata.AdditionalFiles.TargetPath = TGF5b3V0XE5hdk1lbnUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-rn7srv1zoq
 
+[D:/Programacion/QUINTO/PATRONES SOFTWARE/respo/PuntoVenta/Blazor/Pages/Customer.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ3VzdG9tZXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-j8rmqfr3w5
+
 [D:/Programacion/QUINTO/PATRONES SOFTWARE/respo/PuntoVenta/Blazor/Pages/Home.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSG9tZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-6me2utdfn1
@@ -71,6 +75,10 @@ build_metadata.AdditionalFiles.CssScope = b-x5qr9n8pad
 [D:/Programacion/QUINTO/PATRONES SOFTWARE/respo/PuntoVenta/Blazor/Pages/NotFound.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTm90Rm91bmQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-m34o38htt7
+
+[D:/Programacion/QUINTO/PATRONES SOFTWARE/respo/PuntoVenta/Blazor/Pages/Product.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJvZHVjdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-tymx6nno59
 
 [D:/Programacion/QUINTO/PATRONES SOFTWARE/respo/PuntoVenta/Blazor/Pages/Sales.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2FsZXMucmF6b3I=

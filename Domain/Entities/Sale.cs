@@ -1,8 +1,9 @@
-﻿using Domain.ValueObjects;
+﻿using Domain.Common;
+using Domain.ValueObjects;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities;
-public class Sale 
+public class Sale : AuditableEntity
 {
     public int Id { get; private set; }
     public DateTime IssueDate { get; private set; }

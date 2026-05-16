@@ -19,4 +19,29 @@ public class CustomerApiService
         var url = $"api/Customer/search?term={escapedTerm}&criterion={criterion}&page={page}&size={size}";
         return await _http.GetFromJsonAsync<PagedResponse<CustomerResponseDto>>(url);
     }
+
+    public async Task<CustomerResponseDto?> GetCustomerByIdAsync(int id)
+    {
+        return await _http.GetFromJsonAsync<CustomerResponseDto>($"api/Customer/{id}");
+    }
+
+    public async Task<HttpResponseMessage> CreateCustomerAsync(CreateCustomerRequest request)
+    {
+        return await _http.PostAsJsonAsync("api/Customer", request);
+    }
+
+    public async Task<HttpResponseMessage> UpdateCustomerAsync(int id, UpdateCustomerRequest request)
+    {
+        return await _http.PutAsJsonAsync($"api/Customer/{id}", request);
+    }
+
+    public async Task<HttpResponseMessage> ReactivateCustomerAsync(int id, UpdateCustomerRequest request)
+    {
+        return await _http.PutAsJsonAsync($"api/Customer/reactivate/{id}", request);
+    }
+
+    public async Task<HttpResponseMessage> DeleteCustomerAsync(int id)
+    {
+        return await _http.DeleteAsync($"api/Customer/{id}");
+    }
 }
