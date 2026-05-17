@@ -4,6 +4,25 @@
 @inject IJSRuntime JS
 @attribute [Authorize]
 
+@if (!string.IsNullOrEmpty(_alertMessage))
+{
+    <div class="uta-toast-wrapper">
+        <div class="uta-toast @(_isError ? "uta-toast--error" : "uta-toast--success")">
+            <div class="uta-toast__icon">
+                <i class="bi @(_isError ? "bi-exclamation-triangle-fill" : "bi-check2-circle")"></i>
+            </div>
+            <div class="uta-toast__body">
+                <div class="uta-toast__title">@(_isError ? "Atención" : "¡Éxito!")</div>
+                <div class="uta-toast__message">@_alertMessage</div>
+            </div>
+            <button class="uta-toast__close" @onclick="() => _alertMessage = string.Empty">
+                <i class="bi bi-x"></i>
+            </button>
+            <div class="uta-toast__progress"></div>
+        </div>
+    </div>
+}
+
 <div class="uta-page">
     <div class="uta-page-header">
         <div class="uta-page-header__left">
@@ -332,6 +351,19 @@
     private bool _showEditProfileModal = false;
     private bool _showPasswordModal = false;
 
+    private string _alertMessage = "";
+    private bool _isError = false;
+
+    private async Task ShowToast(string message, bool isError = false)
+    {
+        _alertMessage = message;
+        _isError = isError;
+        StateHasChanged();
+        await Task.Delay(3000);
+        _alertMessage = string.Empty;
+        StateHasChanged();
+    }
+
     // Password Flags
     private bool HasNoSpaces => !string.IsNullOrEmpty(_passRequest.NewPassword) && !_passRequest.NewPassword.Contains(" ");
     private bool HasLength => !string.IsNullOrEmpty(_passRequest.NewPassword) && _passRequest.NewPassword.Length >= 8 && _passRequest.NewPassword.Length <= 10;
@@ -481,7 +513,7 @@
         if (response.IsSuccessStatusCode)
         {
             _showEditProfileModal = false;
-            await JS.InvokeVoidAsync("Swal.fire", "Éxito", "Perfil actualizado correctamente.", "success");
+            await ShowToast("Perfil actualizado correctamente.");
         }
         else
         {
@@ -508,7 +540,8 @@
         if (response.IsSuccessStatusCode)
         {
             _passRequest = new();
-            await JS.InvokeVoidAsync("Swal.fire", "Éxito", "Contraseña cambiada exitosamente.", "success");
+            _showPasswordModal = false;
+            await ShowToast("Contraseña cambiada exitosamente.");
         }
         else
         {

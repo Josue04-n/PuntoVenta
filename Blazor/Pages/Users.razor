@@ -4,6 +4,25 @@
 @inject IJSRuntime JS
 @attribute [Authorize(Roles = "Administrador")]
 
+@if (!string.IsNullOrEmpty(_alertMessage))
+{
+    <div class="uta-toast-wrapper">
+        <div class="uta-toast @(_isError ? "uta-toast--error" : "uta-toast--success")">
+            <div class="uta-toast__icon">
+                <i class="bi @(_isError ? "bi-exclamation-triangle-fill" : "bi-check2-circle")"></i>
+            </div>
+            <div class="uta-toast__body">
+                <div class="uta-toast__title">@(_isError ? "Atención" : "¡Éxito!")</div>
+                <div class="uta-toast__message">@_alertMessage</div>
+            </div>
+            <button class="uta-toast__close" @onclick="() => _alertMessage = string.Empty">
+                <i class="bi bi-x"></i>
+            </button>
+            <div class="uta-toast__progress"></div>
+        </div>
+    </div>
+}
+
 <div class="uta-page">
     <div class="uta-page-header">
         <div class="uta-page-header__left">
@@ -286,6 +305,19 @@
     private UpdateUserRequest _updateRequest = new();
     private Dictionary<string, string> _errors = new();
 
+    private string _alertMessage = "";
+    private bool _isError = false;
+
+    private async Task ShowToast(string message, bool isError = false)
+    {
+        _alertMessage = message;
+        _isError = isError;
+        StateHasChanged();
+        await Task.Delay(3000);
+        _alertMessage = string.Empty;
+        StateHasChanged();
+    }
+
     // Password Flags
     private bool HasNoSpaces => !_editRequest.Password.Contains(" ");
     private bool HasLength => _editRequest.Password.Length >= 8 && _editRequest.Password.Length <= 10 && HasNoSpaces;
@@ -526,13 +558,13 @@
         {
             _showModal = false;
             await LoadUsers();
-            await JS.InvokeVoidAsync("Swal.fire", "Éxito", "Usuario procesado correctamente", "success");
+            await ShowToast(_isEditMode ? "Usuario actualizado correctamente." : "Usuario guardado exitosamente.");
         }
         else
         {
-            if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+            var errorJson = await response.Content.ReadAsStringAsync();
+            try
             {
-                var errorJson = await response.Content.ReadAsStringAsync();
                 var errorObj = System.Text.Json.JsonDocument.Parse(errorJson);
                 var isInactive = errorObj.RootElement.TryGetProperty("isInactive", out var inactiveProp) && inactiveProp.GetBoolean();
 
@@ -573,10 +605,14 @@
                     }
                     return;
                 }
-            }
 
-            var errorContent = await response.Content.ReadAsStringAsync();
-            await JS.InvokeVoidAsync("Swal.fire", "Error", "Ocurrió un error al procesar la solicitud: " + errorContent, "error");
+                var msg = errorObj.RootElement.TryGetProperty("message", out var msgProp) ? msgProp.GetString() : "Error desconocido";
+                await JS.InvokeVoidAsync("Swal.fire", "Atención", msg, "warning");
+            }
+            catch
+            {
+                await JS.InvokeVoidAsync("Swal.fire", "Error", "Ocurrió un error al procesar la solicitud: " + errorJson, "error");
+            }
         }
     }
 
@@ -601,7 +637,7 @@
             if (response.IsSuccessStatusCode)
             {
                 await LoadUsers();
-                await JS.InvokeVoidAsync("Swal.fire", "Eliminado", "El usuario ha sido inactivado correctamente.", "success");
+                await ShowToast("El usuario ha sido inactivado correctamente.");
             }
         }
     }
