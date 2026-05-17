@@ -39,9 +39,21 @@ public class CustomerRepository : ICustomerRepository
         int pageNumber, 
         int pageSize, 
         string? term = null,
-        string searchBy = "card")
+        string searchBy = "card",
+        string status = "active")
     {
         IQueryable<Customer> query = _context.Customers.AsNoTracking();
+
+        // Aplicar filtro de estado
+        if (status == "inactive")
+        {
+            query = query.IgnoreQueryFilters().Where(c => !c.IsActive);
+        }
+        else if (status == "all")
+        {
+            query = query.IgnoreQueryFilters();
+        }
+        // "active" ya está cubierto por el Global Query Filter por defecto
 
         if (!string.IsNullOrWhiteSpace(term))
         {

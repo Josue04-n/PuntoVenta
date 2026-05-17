@@ -13,10 +13,11 @@ public class CustomerApiService
         string? term,
         string criterion,
         int page,
-        int size = 10)
+        int size = 10,
+        string status = "active")
     {
         var escapedTerm = System.Uri.EscapeDataString(term ?? string.Empty);
-        var url = $"api/Customer/search?term={escapedTerm}&criterion={criterion}&page={page}&size={size}";
+        var url = $"api/Customer/search?term={escapedTerm}&criterion={criterion}&page={page}&size={size}&status={status}";
         return await _http.GetFromJsonAsync<PagedResponse<CustomerResponseDto>>(url);
     }
 

@@ -47,9 +47,16 @@ public class ProductsController : ControllerBase
     [FromQuery] int pageNumber = 1,
     [FromQuery] int pageSize = 10,
     [FromQuery] string? term = null,
-    [FromQuery] string searchBy = "name")
+    [FromQuery] string searchBy = "name",
+    [FromQuery] string status = "active")
     {
-        var result = await _productsRepository.GetPagedAsync(pageNumber, pageSize, term, searchBy);
+        // Seguridad: Solo admin puede ver registros inactivos o todos
+        if (status != "active" && !User.IsInRole("Administrador"))
+        {
+            status = "active";
+        }
+
+        var result = await _productsRepository.GetPagedAsync(pageNumber, pageSize, term, searchBy, status);
 
         var itemsDto = result.Items.Select(p => new ProductResponseDto
         {
@@ -125,6 +132,14 @@ public class ProductsController : ControllerBase
         {
             return BadRequest(new { message = ex.Message });
         }
+    }
+
+    [HttpPut("reactivate/{id:int}")]
+    [Authorize(Roles = "Administrador")]
+    public async Task<IActionResult> Reactivate(int id)
+    {
+        await _productsRepository.ReactivateAsync(id);
+        return NoContent();
     }
 
     [HttpDelete("{id:int}")]

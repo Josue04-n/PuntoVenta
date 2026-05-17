@@ -14,36 +14,6 @@ public class PosApiService
     }
     // IMPLEMENTAR LOS MÉTODOS PARA CONSUMIR LA API
 
-    // 1. OBTENER CLIENTES
-    //public async Task<List<CustomerModel>> SearchCustomersAsync(string term, string searchBy = "cedula")
-    //{
-    //    try
-    //    {
-    //        var response = await _http.GetFromJsonAsync<List<CustomerModel>>($"api/Customer/search?term={term}&searchBy={searchBy}");
-    //        return response ?? new List<CustomerModel>();
-    //    }
-    //    catch
-    //    {
-    //        return new List<CustomerModel>();
-    //    }
-    //}
-
-    // 2. OBTENER PRODUCTOS
-    //public async Task<List<ProductModel>> SearchProductsAsync(string term, string searchBy = "name")
-    //{
-    //    try
-    //    {
-    //        var response = await _http.GetFromJsonAsync<List<ProductModel>>($"api/Products/search?term={term}&searchBy={searchBy}");
-    //        return response ?? new List<ProductModel>();
-    //    }
-    //    catch
-    //    {
-    //        return new List<ProductModel>();
-
-
-    //    }
-    //}
-
     // 3. CREAR VENTA
 
     public async Task<HttpResponseMessage> CreateSaleAsync(Application.DTOs.CreateSaleRequest request)
@@ -65,11 +35,11 @@ public class PosApiService
         }
     }
 
-    public async Task<PagedResponse<ProductResponseDto>?> GetPagedProductsAsync(int page, int size, string? term, string searchBy)
+    public async Task<PagedResponse<ProductResponseDto>?> GetPagedProductsAsync(int page, int size, string? term, string searchBy, string status = "active")
     {
         try
         {
-            var url = $"api/Products/paged?pageNumber={page}&pageSize={size}&searchBy={searchBy}";
+            var url = $"api/Products/paged?pageNumber={page}&pageSize={size}&searchBy={searchBy}&status={status}";
             if (!string.IsNullOrWhiteSpace(term))
             {
                 url += $"&term={Uri.EscapeDataString(term)}";
@@ -116,6 +86,11 @@ public class PosApiService
     public async Task<HttpResponseMessage> UpdateProductAsync(int id, UpdateProductRequest request)
     {
         return await _http.PutAsJsonAsync($"api/Products/{id}", request);
+    }
+
+    public async Task<HttpResponseMessage> ReactivateProductAsync(int id)
+    {
+        return await _http.PutAsync($"api/Products/reactivate/{id}", null);
     }
 
     public async Task<HttpResponseMessage> DeleteProductAsync(int id)

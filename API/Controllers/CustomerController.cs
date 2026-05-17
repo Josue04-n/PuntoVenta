@@ -28,9 +28,16 @@ public class CustomerController : ControllerBase
         [FromQuery] string? term = null,
         [FromQuery] string criterion = "card",
         [FromQuery] int page = 1,
-        [FromQuery] int size = 10)
+        [FromQuery] int size = 10,
+        [FromQuery] string status = "active")
     {
-        var result = await _customerRepository.GetPagedAsync(page, size, term, criterion);
+        // Seguridad: Solo admin puede ver registros inactivos o todos
+        if (status != "active" && !User.IsInRole("Administrador"))
+        {
+            status = "active";
+        }
+
+        var result = await _customerRepository.GetPagedAsync(page, size, term, criterion, status);
 
         var itemsDto = result.Items.Select(c => new CustomerResponseDto
         {

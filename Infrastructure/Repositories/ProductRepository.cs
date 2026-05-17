@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Application.Interfaces.Repositories;
 using Application.DTOs.Common;
 using Domain.Entities;
@@ -17,7 +17,8 @@ public class ProductRepository : IProductRepository
 
     public async Task<Product?> GetByIdAsync(int id) 
     { 
-        return await _context.Products.FindAsync(id);
+        // Usar IgnoreQueryFilters para permitir obtener incluso si está inactivo (para reactivación)
+        return await _context.Products.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.Id == id);
     }
 
     public async Task<IEnumerable<Product>> SearchAsync(string term, string searchBy)
@@ -46,9 +47,19 @@ public class ProductRepository : IProductRepository
             .ToListAsync();
     }
 
-    public async Task<PagedResponse<Product>> GetPagedAsync(int pageNumber, int pageSize, string? term = null, string searchBy = "name")
+    public async Task<PagedResponse<Product>> GetPagedAsync(int pageNumber, int pageSize, string? term = null, string searchBy = "name", string status = "active")
     {
         IQueryable<Product> query = _context.Products.AsNoTracking();
+
+        // Aplicar filtro de estado
+        if (status == "inactive")
+        {
+            query = query.IgnoreQueryFilters().Where(p => !p.IsActive);
+        }
+        else if (status == "all")
+        {
+            query = query.IgnoreQueryFilters();
+        }
 
         if (!string.IsNullOrWhiteSpace(term))
         {
@@ -58,23 +69,19 @@ public class ProductRepository : IProductRepository
 
             if (criterion == "id")
             {
-                
                 query = query.Where(p => p.Id.ToString().StartsWith(term));
-
             }
             else 
             {
-
                 query = query.Where(p => p.Name.StartsWith(term));
-
             }
-
         }
 
         var totalCount = await query.CountAsync();
 
         var items = await query
-        .OrderByDescending(p => p.Stock > 0)
+        .OrderByDescending(p => p.IsActive) // Primero activos si es "all"
+        .ThenByDescending(p => p.Stock > 0)
         .ThenBy(p => p.Name)
         .Skip((pageNumber - 1) * pageSize)
         .Take(pageSize)
@@ -100,7 +107,18 @@ public class ProductRepository : IProductRepository
         var product = await _context.Products.FindAsync(id);
         if (product != null)
         {
+            // Soft delete
             _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+        }
+    }
+
+    public async Task ReactivateAsync(int id)
+    {
+        var product = await _context.Products.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.Id == id);
+        if (product != null)
+        {
+            product.Activate();
             await _context.SaveChangesAsync();
         }
     }
@@ -111,4 +129,3 @@ public class ProductRepository : IProductRepository
         await _context.SaveChangesAsync();
     }
 }
-

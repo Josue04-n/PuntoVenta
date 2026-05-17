@@ -1,4 +1,5 @@
 using Application.DTOs;
+using Application.DTOs.Common;
 using System.Net.Http.Json;
 
 namespace Blazor.Services;
@@ -17,6 +18,15 @@ public class UserApiService
         try {
             return await _http.GetFromJsonAsync<List<UserResponseDto>>("api/Users") ?? new();
         } catch { return new(); }
+    }
+
+    public async Task<PagedResponse<UserResponseDto>?> GetPagedAsync(int page, int size, string? term, string searchBy, string status)
+    {
+        try {
+            var url = $"api/Users/paged?pageNumber={page}&pageSize={size}&searchBy={searchBy}&status={status}";
+            if (!string.IsNullOrWhiteSpace(term)) url += $"&term={Uri.EscapeDataString(term)}";
+            return await _http.GetFromJsonAsync<PagedResponse<UserResponseDto>>(url);
+        } catch { return null; }
     }
 
     public async Task<UserResponseDto?> GetByIdAsync(int id)

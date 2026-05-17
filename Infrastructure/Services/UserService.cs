@@ -1,6 +1,7 @@
 using Application.DTOs;
 using Application.Interfaces.Services;
 using Domain.Entities;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,17 +11,20 @@ public class UserService : IUserService
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly RoleManager<ApplicationRole> _roleManager;
+    private readonly AppDbContext _context;
 
-    public UserService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
+    public UserService(
+        UserManager<ApplicationUser> userManager, 
+        RoleManager<ApplicationRole> roleManager,
+        AppDbContext context)
     {
         _userManager = userManager;
         _roleManager = roleManager;
+        _context = context;
     }
 
     public async Task<IEnumerable<UserResponseDto>> GetAllUsersAsync()
     {
-        // NOTA: Ignoramos filtros para que el admin pueda ver bloqueados e inactivos si lo requiere
-        // Pero el controlador o la vista decidirán qué mostrar
         var users = await _userManager.Users.IgnoreQueryFilters().ToListAsync();
         var userDtos = new List<UserResponseDto>();
 
@@ -31,6 +35,61 @@ public class UserService : IUserService
         }
 
         return userDtos;
+    }
+
+    public async Task<(IEnumerable<UserResponseDto> Items, int TotalCount)> GetPagedUsersAsync(
+        int pageNumber, 
+        int pageSize, 
+        string? term = null, 
+        string searchBy = "name", 
+        string status = "active")
+    {
+        var query = _userManager.Users.IgnoreQueryFilters().AsQueryable();
+
+        var now = DateTimeOffset.UtcNow;
+        // 1. Filtro de Estado
+        if (status == "active") query = query.Where(u => u.IsActive && (u.LockoutEnd == null || u.LockoutEnd <= now));
+        else if (status == "inactive") query = query.Where(u => !u.IsActive);
+        else if (status == "bloqueados") query = query.Where(u => u.IsActive && u.LockoutEnd > now);
+
+        // 2. Filtro de Búsqueda
+        if (!string.IsNullOrWhiteSpace(term))
+        {
+            term = term.Trim().ToLower();
+            if (searchBy == "id")
+            {
+                query = query.Where(u => u.Id.ToString().StartsWith(term));
+            }
+            else if (searchBy == "name") // Apellido
+            {
+                query = query.Where(u => u.LastName.ToLower().StartsWith(term));
+            }
+            else if (searchBy == "role")
+            {
+                // Unir con UserRoles y Roles para filtrar por nombre de rol
+                query = from u in query
+                        join ur in _context.UserRoles on u.Id equals ur.UserId
+                        join r in _context.Roles on ur.RoleId equals r.Id
+                        where r.Name.ToLower().StartsWith(term)
+                        select u;
+            }
+        }
+
+        var totalCount = await query.CountAsync();
+        var users = await query
+            .OrderBy(u => u.LastName)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        var userDtos = new List<UserResponseDto>();
+        foreach (var user in users)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
+            userDtos.Add(await MapToDtoAsync(user, roles.FirstOrDefault() ?? "Sin Rol"));
+        }
+
+        return (userDtos, totalCount);
     }
 
     public async Task<UserResponseDto?> GetUserByIdAsync(int id)
@@ -173,7 +232,6 @@ public class UserService : IUserService
         var user = await _userManager.Users.IgnoreQueryFilters().FirstOrDefaultAsync(u => u.Id == userId);
         if (user == null) return false;
 
-        // Resetear contador de fallos y limpiar fecha de bloqueo
         await _userManager.ResetAccessFailedCountAsync(user);
         var result = await _userManager.SetLockoutEndDateAsync(user, null);
         

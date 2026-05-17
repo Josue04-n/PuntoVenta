@@ -1,4 +1,5 @@
 using Application.DTOs;
+using Application.DTOs.Common;
 using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,19 @@ public class UsersController : ControllerBase
     {
         var users = await _userService.GetAllUsersAsync();
         return Ok(users);
+    }
+
+    [HttpGet("paged")]
+    [Authorize(Roles = "Administrador")]
+    public async Task<ActionResult<PagedResponse<UserResponseDto>>> GetPaged(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? term = null,
+        [FromQuery] string searchBy = "name",
+        [FromQuery] string status = "active")
+    {
+        var (items, totalCount) = await _userService.GetPagedUsersAsync(pageNumber, pageSize, term, searchBy, status);
+        return Ok(new PagedResponse<UserResponseDto>(items.ToList(), totalCount, pageNumber, pageSize));
     }
 
     [HttpGet("{id:int}")]

@@ -43,6 +43,23 @@
         </div>
     </div>
 
+    <!-- Filtro de Estado para Administradores -->
+    <AuthorizeView Roles="Administrador">
+        <Authorized>
+            <div class="uta-tabs mb-4">
+                <button class="uta-tab-btn @(_statusFilter == "all" ? "uta-tab-btn--active" : "")" @onclick='() => ChangeStatusFilter("all")'>
+                    <i class="bi bi-box me-2"></i> Todos
+                </button>
+                <button class="uta-tab-btn @(_statusFilter == "active" ? "uta-tab-btn--active" : "")" @onclick='() => ChangeStatusFilter("active")'>
+                    <i class="bi bi-check-circle me-2"></i> Activos
+                </button>
+                <button class="uta-tab-btn @(_statusFilter == "inactive" ? "uta-tab-btn--active" : "")" @onclick='() => ChangeStatusFilter("inactive")'>
+                    <i class="bi bi-x-circle me-2"></i> Inactivos
+                </button>
+            </div>
+        </Authorized>
+    </AuthorizeView>
+
     <div class="uta-card">
         <div class="uta-card__header">
             <div class="uta-card__header-left">
@@ -99,7 +116,7 @@
                         }
                         @foreach (var p in PagedProducts)
                         {
-                            <tr>
+                            <tr style="@(!p.IsActive ? "opacity: 0.6; background-color: #f8f9fa;" : "")">
                                 <td style="text-align:center"><span class="uta-code-badge">@p.Id.ToString("D4")</span></td>
                                 <td class="uta-table__bold">@p.Name</td>
                                 <td style="text-align:right">
@@ -124,12 +141,21 @@
                                     }
                                 </td>
                                 <td style="text-align:center">
-                                    <button class="uta-icon-btn-outline uta-icon-btn-outline--maroon me-1" @onclick="() => OpenEditModal(p)" title="Editar">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </button>
-                                    <button class="uta-icon-btn-outline uta-icon-btn-outline--red" @onclick="() => ConfirmDelete(p.Id)" title="Eliminar">
-                                        <i class="bi bi-trash3-fill"></i>
-                                    </button>
+                                    @if (p.IsActive)
+                                    {
+                                        <button class="uta-icon-btn-outline uta-icon-btn-outline--maroon me-1" @onclick="() => OpenEditModal(p)" title="Editar">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                        <button class="uta-icon-btn-outline uta-icon-btn-outline--red" @onclick="() => ConfirmDelete(p.Id)" title="Eliminar">
+                                            <i class="bi bi-trash3-fill"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button class="uta-icon-btn-outline uta-icon-btn-outline--maroon me-1" @onclick="() => PromptReactivate(p)" title="Reactivar">
+                                            <i class="bi bi-arrow-counterclockwise"></i>
+                                        </button>
+                                    }
                                 </td>
                             </tr>
                         }
@@ -260,6 +286,7 @@
     private string _alertMessage = "";
     private bool _isError = false;
     private Dictionary<string, string> _errors = new();
+    private string _statusFilter = "active"; // "active", "inactive", "all"
 
     private async Task ShowToast(string message, bool isError = false)
     {
@@ -269,6 +296,13 @@
         await Task.Delay(3000);
         _alertMessage = string.Empty;
         StateHasChanged();
+    }
+
+    private async Task ChangeStatusFilter(string filter)
+    {
+        _statusFilter = filter;
+        CurrentPage = 1;
+        await LoadProductsAsync();
     }
 
     private void OnNameInput(ChangeEventArgs e)
@@ -381,7 +415,7 @@
 
     private async Task LoadProductsAsync()
     {
-        var result = await PosApiService.GetPagedProductsAsync(CurrentPage, PageSize, SearchTerm, SearchCriterion);
+        var result = await PosApiService.GetPagedProductsAsync(CurrentPage, PageSize, SearchTerm, SearchCriterion, _statusFilter);
         if (result != null)
         {
             PagedProducts = result.Items.ToList();
@@ -407,8 +441,13 @@
         if (newPage >= 1 && newPage <= TotalPages)
         {
             CurrentPage = newPage;
-            await LoadProductsAsync();
+            await LoadCustomersAsync(); // Wait, this should be LoadProductsAsync
         }
+    }
+
+    private async Task LoadCustomersAsync() // This is actually LoadProductsAsync typo in previous version?
+    {
+        await LoadProductsAsync();
     }
 
     private void OpenCreateModal()
@@ -503,12 +542,42 @@
         }
     }
 
+    private async Task PromptReactivate(ProductResponseDto product)
+    {
+        var confirm = await JS.InvokeAsync<object>("Swal.fire", new
+        {
+            title = "¿Reactivar Producto?",
+            text = $"El producto '{product.Name}' volverá a estar disponible para la venta.",
+            icon = "question",
+            showCancelButton = true,
+            confirmButtonColor = "#28a745",
+            cancelButtonColor = "#6c757d",
+            confirmButtonText = "Sí, reactivar",
+            cancelButtonText = "Cancelar"
+        });
+
+        var jsonConfirm = System.Text.Json.JsonSerializer.Serialize(confirm);
+        if (jsonConfirm.Contains("\"isConfirmed\":true"))
+        {
+            var response = await PosApiService.ReactivateProductAsync(product.Id);
+            if (response.IsSuccessStatusCode)
+            {
+                await LoadProductsAsync();
+                await ShowToast("Producto reactivado exitosamente.");
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("Swal.fire", "Error", "No se pudo reactivar el producto.", "error");
+            }
+        }
+    }
+
     private async Task ConfirmDelete(int id)
     {
         var result = await JS.InvokeAsync<object>("Swal.fire", new
         {
             title = "¿Eliminar producto?",
-            text = "Esta acción no se puede deshacer.",
+            text = "El registro se marcará como inactivo y no aparecerá en ventas.",
             icon = "warning",
             showCancelButton = true,
             confirmButtonColor = "#dc3545",
@@ -524,6 +593,7 @@
             if (response.IsSuccessStatusCode)
             {
                 await LoadProductsAsync();
+                await ShowToast("Producto inactivado correctamente.");
             }
             else
             {

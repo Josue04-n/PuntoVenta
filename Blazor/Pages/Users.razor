@@ -1,5 +1,7 @@
 @page "/usuarios"
 @using Application.DTOs
+@using Application.DTOs.Common
+@using Blazor.Helpers
 @inject UserApiService UserApiService
 @inject IJSRuntime JS
 @attribute [Authorize(Roles = "Administrador")]
@@ -57,7 +59,36 @@
     </div>
 
     <div class="uta-card">
+        <div class="uta-card__header">
+            <div class="uta-card__header-left">
+                <i class="bi bi-search uta-card__header-icon"></i>
+                Búsqueda de Personal
+            </div>
+        </div>
         <div class="uta-card__body">
+            <div class="uta-search-bar" style="max-width: 800px; margin: 0.5rem auto 2rem auto; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                <select class="uta-search-bar__select" @bind="SearchCriterion">
+                    <option value="name">Apellido</option>
+                    <option value="id">ID Interno</option>
+                    <option value="role">Rol</option>
+                </select>
+                <input class="uta-search-bar__input" 
+                       type="text" 
+                       value="@SearchTerm" 
+                       @oninput="OnInputSearch"
+                       placeholder="Buscar usuarios..." />
+                <div class="uta-search-bar__icon-container px-3 d-flex align-items-center bg-light">
+                    <i class="bi bi-search text-muted"></i>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="m-0" style="font-size: 0.85rem; font-weight: 700; color: #495057; text-transform: uppercase; letter-spacing: 0.5px;">
+                    <i class="bi bi-list-ul me-2"></i>Listado de Personal
+                </h6>
+                <span class="uta-badge uta-badge--blue">@_users.Count() de @TotalItems mostrados</span>
+            </div>
+
             <div class="uta-table-wrap uta-table-wrap--bordered">
                 <table class="uta-table">
                     <thead>
@@ -72,18 +103,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if (!FilteredUsers.Any())
+                        @if (!_users.Any())
                         {
                             <tr>
                                 <td colspan="7" class="uta-table__empty">
                                     <div class="uta-empty-state">
                                         <div class="uta-empty-state__icon"><i class="bi bi-people"></i></div>
-                                        <div class="uta-empty-state__text">No hay usuarios @(_activeFilter) registrados</div>
+                                        <div class="uta-empty-state__text">No hay usuarios registrados</div>
                                     </div>
                                 </td>
                             </tr>
                         }
-                        @foreach (var u in FilteredUsers)
+                        @foreach (var u in _users)
                         {
                             <tr>
                                 <td style="text-align:center">@u.Id</td>
@@ -153,6 +184,50 @@
                     </tbody>
                 </table>
             </div>
+
+            @if (TotalItems > 0)
+            {
+                <div class="uta-pagination-footer rounded-bottom mt-3">
+                    <div class="uta-pagination-info">
+                        <span class="small text-muted">
+                            Se muestran <strong class="uta-text-highlight">@From</strong> a <strong class="uta-text-highlight">@To</strong> de <strong class="uta-text-highlight">@TotalItems</strong> usuarios
+                        </span>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="small text-muted">por página</span>
+                        <div class="uta-select-wrapper">
+                            <select class="form-select form-select-sm shadow-none" @onchange="OnPageSizeChanged">
+                                @foreach (var size in new[] { 5, 10, 25, 50 })
+                                {
+                                    <option value="@size" selected="@(PageSize == size)">@size</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-flex overflow-hidden">
+                        @foreach (var p in VisiblePages)
+                        {
+                            if (p == -1)
+                            {
+                                <span class="uta-pagination-btn uta-pagination-btn--ellipsis">...</span>
+                            }
+                            else
+                            {
+                                var pNum = p;
+                                <button class="uta-pagination-btn @(pNum == CurrentPage ? "uta-pagination-btn--active" : "")"
+                                        @onclick="() => ChangePage(pNum)">@pNum</button>
+                            }
+                        }
+                        <button class="uta-pagination-btn @(!HasNextPage ? "disabled" : "")"
+                                @onclick="() => ChangePage(CurrentPage + 1)"
+                                disabled="@(!HasNextPage)">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </div>
@@ -357,11 +432,23 @@
     private RegisterUserRequest _editRequest = new();
     private UpdateUserRequest _updateRequest = new();
     private Dictionary<string, string> _errors = new();
-    private string _activeFilter = "activos"; // activos, bloqueados
+    private string _activeFilter = "activos"; 
     private int _blockedCount = 0;
 
     private string _alertMessage = "";
     private bool _isError = false;
+
+    // Paginación y Búsqueda
+    private string SearchTerm = string.Empty;
+    private string SearchCriterion = "name";
+    private int CurrentPage = 1;
+    private int PageSize = 10;
+    private int TotalItems = 0;
+    private int TotalPages => (int)Math.Ceiling((double)TotalItems / PageSize);
+    private int From => TotalItems == 0 ? 0 : ((CurrentPage - 1) * PageSize) + 1;
+    private int To => Math.Min(CurrentPage * PageSize, TotalItems);
+    private bool HasNextPage => CurrentPage < TotalPages;
+    private List<int> VisiblePages => PaginationHelper.GenerateVisiblePages(CurrentPage, TotalPages);
 
     private async Task ShowToast(string message, bool isError = false)
     {
@@ -372,13 +459,6 @@
         _alertMessage = string.Empty;
         StateHasChanged();
     }
-
-    private IEnumerable<UserResponseDto> FilteredUsers => _activeFilter switch
-    {
-        "bloqueados" => _users.Where(u => u.IsLockedOut && u.IsActive),
-        "inactivos" => _users.Where(u => !u.IsActive),
-        _ => _users.Where(u => !u.IsLockedOut && u.IsActive)
-    };
 
     // Password Flags
     private bool HasNoSpaces => !_editRequest.Password.Contains(" ");
@@ -396,13 +476,51 @@
 
     private async Task LoadUsers()
     {
-        _users = await UserApiService.GetAllAsync();
-        _blockedCount = _users.Count(u => u.IsLockedOut && u.IsActive);
+        var result = await UserApiService.GetPagedAsync(CurrentPage, PageSize, SearchTerm, SearchCriterion, _activeFilter == "activos" ? "active" : (_activeFilter == "bloqueados" ? "bloqueados" : "inactive"));
+        if (result != null)
+        {
+            _users = result.Items;
+            TotalItems = result.TotalCount;
+        }
+
+        // Para el contador de bloqueados, seguimos haciendo una consulta general o el API podría devolverlo
+        var all = await UserApiService.GetAllAsync();
+        _blockedCount = all.Count(u => u.IsLockedOut && u.IsActive);
+        
+        StateHasChanged();
     }
 
-    private void ChangeFilter(string filter)
+    private async Task ChangeFilter(string filter)
     {
         _activeFilter = filter;
+        CurrentPage = 1;
+        await LoadUsers();
+    }
+
+    private async Task OnInputSearch(ChangeEventArgs e)
+    {
+        SearchTerm = e.Value?.ToString() ?? string.Empty;
+        CurrentPage = 1;
+        await LoadUsers();
+    }
+
+    private async Task OnPageSizeChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int newSize))
+        {
+            PageSize = newSize;
+            CurrentPage = 1;
+            await LoadUsers();
+        }
+    }
+
+    private async Task ChangePage(int newPage)
+    {
+        if (newPage >= 1 && newPage <= TotalPages)
+        {
+            CurrentPage = newPage;
+            await LoadUsers();
+        }
     }
 
     private void OnUserNameInput(ChangeEventArgs e)

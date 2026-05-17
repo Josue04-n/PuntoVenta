@@ -1,4 +1,4 @@
-﻿using Application.DTOs.Common;
+using Application.DTOs.Common;
 using Domain.Entities;
 
 namespace Application.Interfaces.Repositories;
@@ -16,7 +16,8 @@ public interface ICustomerRepository
         int pageNumber, 
         int pageSize, 
         string? term = null,
-        string searchBy = "name");
+        string searchBy = "name",
+        string status = "active"); // "active", "inactive", "all"
 
     Task AddAsync(Customer customer);
     Task UpdateAsync(Customer customer);

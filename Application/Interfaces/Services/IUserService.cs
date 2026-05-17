@@ -5,6 +5,7 @@ namespace Application.Interfaces.Services;
 public interface IUserService
 {
     Task<IEnumerable<UserResponseDto>> GetAllUsersAsync();
+    Task<(IEnumerable<UserResponseDto> Items, int TotalCount)> GetPagedUsersAsync(int pageNumber, int pageSize, string? term = null, string searchBy = "name", string status = "active");
     Task<UserResponseDto?> GetUserByIdAsync(int id);
     Task<UserResponseDto?> GetUserByUserNameAsync(string userName);
     Task<(bool IsSuccess, string[] Errors)> CreateUserAsync(RegisterUserRequest request);

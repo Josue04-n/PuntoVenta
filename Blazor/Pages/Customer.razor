@@ -42,6 +42,23 @@
             </button>
         </div>
     </div>
+
+    <!-- Filtro de Estado para Administradores -->
+    <AuthorizeView Roles="Administrador">
+        <Authorized>
+            <div class="uta-tabs mb-4">
+                <button class="uta-tab-btn @(_statusFilter == "all" ? "uta-tab-btn--active" : "")" @onclick='() => ChangeStatusFilter("all")'>
+                    <i class="bi bi-people me-2"></i> Todos
+                </button>
+                <button class="uta-tab-btn @(_statusFilter == "active" ? "uta-tab-btn--active" : "")" @onclick='() => ChangeStatusFilter("active")'>
+                    <i class="bi bi-person-check me-2"></i> Activos
+                </button>
+                <button class="uta-tab-btn @(_statusFilter == "inactive" ? "uta-tab-btn--active" : "")" @onclick='() => ChangeStatusFilter("inactive")'>
+                    <i class="bi bi-person-x me-2"></i> Inactivos
+                </button>
+            </div>
+        </Authorized>
+    </AuthorizeView>
     
     <div class="uta-card">
         <div class="uta-card__header">
@@ -104,7 +121,7 @@
                         }
                         @foreach (var c in PagedCustomers)
                         {
-                            <tr>
+                            <tr style="@(!c.IsActive ? "opacity: 0.6; background-color: #f8f9fa;" : "")">
                                 <td style="text-align:center"><span class="uta-code-badge">@c.Id.ToString("D3")</span></td>
                                 <td class="uta-table__bold">@c.LastName @c.Name</td>
                                 <td style="text-align:center">@c.IDCard</td>
@@ -121,12 +138,21 @@
                                     }
                                 </td>
                                 <td style="text-align:center">
-                                    <button class="uta-icon-btn-outline uta-icon-btn-outline--maroon me-1" @onclick="() => OpenEditModal(c)" title="Editar">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </button>
-                                    <button class="uta-icon-btn-outline uta-icon-btn-outline--red" @onclick="() => ConfirmDelete(c.Id)" title="Eliminar">
-                                        <i class="bi bi-trash3-fill"></i>
-                                    </button>
+                                    @if (c.IsActive)
+                                    {
+                                        <button class="uta-icon-btn-outline uta-icon-btn-outline--maroon me-1" @onclick="() => OpenEditModal(c)" title="Editar">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                        <button class="uta-icon-btn-outline uta-icon-btn-outline--red" @onclick="() => ConfirmDelete(c.Id)" title="Eliminar">
+                                            <i class="bi bi-trash3-fill"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button class="uta-icon-btn-outline uta-icon-btn-outline--maroon me-1" @onclick="() => PromptReactivate(c)" title="Reactivar">
+                                            <i class="bi bi-person-check-fill"></i>
+                                        </button>
+                                    }
                                 </td>
                             </tr>
                         }
@@ -296,6 +322,7 @@
     private string _alertMessage = "";
     private bool _isError = false;
     private Dictionary<string, string> _errors = new();
+    private string _statusFilter = "active"; // "active", "inactive", "all"
 
     private async Task ShowToast(string message, bool isError = false)
     {
@@ -305,6 +332,13 @@
         await Task.Delay(3000);
         _alertMessage = string.Empty;
         StateHasChanged();
+    }
+
+    private async Task ChangeStatusFilter(string filter)
+    {
+        _statusFilter = filter;
+        CurrentPage = 1;
+        await LoadCustomersAsync();
     }
 
     private void OnNameInput(ChangeEventArgs e)
@@ -477,7 +511,7 @@
 
     private async Task LoadCustomersAsync()
     {
-        var result = await CustomerApiService.SearchCustomersAsync(SearchTerm, SearchCriterion, CurrentPage, PageSize);
+        var result = await CustomerApiService.SearchCustomersAsync(SearchTerm, SearchCriterion, CurrentPage, PageSize, _statusFilter);
         if (result != null)
         {
             PagedCustomers = result.Items.ToList();
@@ -657,12 +691,44 @@
         }
     }
 
+    private async Task PromptReactivate(CustomerResponseDto customer)
+    {
+        var confirm = await JS.InvokeAsync<object>("Swal.fire", new
+        {
+            title = "¿Reactivar Cliente?",
+            text = $"El cliente {customer.LastName} {customer.Name} volverá a estar activo.",
+            icon = "question",
+            showCancelButton = true,
+            confirmButtonColor = "#28a745",
+            cancelButtonColor = "#6c757d",
+            confirmButtonText = "Sí, reactivar",
+            cancelButtonText = "Cancelar"
+        });
+
+        var jsonConfirm = System.Text.Json.JsonSerializer.Serialize(confirm);
+        if (jsonConfirm.Contains("\"isConfirmed\":true"))
+        {
+            var updateReq = new UpdateCustomerRequest
+            {
+                Id = customer.Id,
+                IDCard = customer.IDCard,
+                Name = customer.Name,
+                LastName = customer.LastName,
+                Phone = customer.Phone,
+                Address = customer.Address,
+                Email = customer.Email
+            };
+            var response = await CustomerApiService.ReactivateCustomerAsync(customer.Id, updateReq);
+            await HandleSaveResponse(response);
+        }
+    }
+
     private async Task ConfirmDelete(int id)
     {
         var result = await JS.InvokeAsync<object>("Swal.fire", new
         {
             title = "¿Eliminar cliente?",
-            text = "Esta acción no se puede deshacer.",
+            text = "El registro se marcará como inactivo.",
             icon = "warning",
             showCancelButton = true,
             confirmButtonColor = "#dc3545",
@@ -678,11 +744,11 @@
             if (response.IsSuccessStatusCode)
             {
                 await LoadCustomersAsync();
-                await ShowToast("El cliente fue eliminado correctamente.");
+                await ShowToast("El cliente fue inactivado correctamente.");
             }
             else
             {
-                await JS.InvokeVoidAsync("Swal.fire", "Error", "No se pudo eliminar el cliente.", "error");
+                await JS.InvokeVoidAsync("Swal.fire", "Error", "No se pudo inactivar el cliente.", "error");
             }
         }
     }
