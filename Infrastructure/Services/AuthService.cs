@@ -62,7 +62,8 @@ public class AuthService : IAuthService
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim("FirstName", user.FirstName),
-            new Claim("LastName", user.LastName)
+            new Claim("LastName", user.LastName),
+            new Claim("MustChangePassword", user.MustChangePassword.ToString().ToLower())
         };
 
         foreach (var role in roles)

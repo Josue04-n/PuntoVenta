@@ -1,4 +1,4 @@
-﻿using Domain.Common;
+using Domain.Common;
 using Domain.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -78,11 +78,11 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         modelBuilder.Entity<Customer>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.HasIndex(e => e.IDCard).IsUnique(); // Índice para búsquedas masivas rápidas
-            entity.Property(e => e.IDCard).HasMaxLength(13).IsRequired(); // Ajustado a 13 para RUC Ecuador
+            entity.HasIndex(e => e.IDCard).IsUnique(); 
+            entity.Property(e => e.IDCard).HasMaxLength(13).IsRequired(); 
         });
 
-        // --- CONFIGURACIÓN DE VENTAS (EL CORAZÓN) ---
+        // --- CONFIGURACIÓN DE VENTAS ---
         modelBuilder.HasSequence<int>("InvoiceSequence").StartsAt(1).IncrementsBy(1);
 
         modelBuilder.Entity<Sale>(entity =>
@@ -94,16 +94,13 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
 
             entity.ToTable(t => t.HasCheckConstraint("CK_Sale_Total_Consistency", "Total = SubTotal + VatAmount"));
 
-
             entity.HasKey(s => s.Id);
 
-            // Relación con Cliente (DIP & SRP)
             entity.HasOne(s => s.Customer)
                   .WithMany()
                   .HasForeignKey(s => s.CustomerId)
                   .OnDelete(DeleteBehavior.Restrict);
 
-            // Relación con Detalles (Composición)
             entity.HasMany(v => v.Details)
                   .WithOne()
                   .HasForeignKey("SaleId")

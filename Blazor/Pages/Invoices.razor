@@ -4,9 +4,11 @@
 @using Blazor.Helpers
 @using Application.DTOs.Common
 @using Domain.Entities
+@using Microsoft.AspNetCore.Components.Authorization
 @inject PosApiService ApiService
 @inject IJSRuntime JS
 @inject NavigationManager NavManager
+@inject AuthenticationStateProvider AuthStateProvider
 @implements IDisposable
 @* @attribute [Authorize] *@
 
@@ -211,16 +213,19 @@
                         <div style="display: flex; justify-content: space-between; font-size: 0.8rem;">
                             <strong>EMISIÓN:</strong> <span>NORMAL</span>
                         </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed #ccc;">
+                            <strong>VENDEDOR:</strong> <span style="text-transform: uppercase;">@_currentUser</span>
+                        </div>
                     </div>
                 </div>
 
                 <div style="border: 1px solid #e0e0e0; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.85rem;">
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                        <div><strong>Cliente:</strong> @ReorderName(_selectedInvoice.CustomerName)</div>
-                        <div><strong>Identificación:</strong> @_selectedInvoice.CustomerIDCard</div>
-                        <div><strong>Fecha Emisión:</strong> @FormatDate(_selectedInvoice.IssueDate)</div>
-                        <div style="grid-column: span 2;"><strong>Dirección:</strong> @_selectedInvoice.CustomerAddress</div>
-                        <div style="grid-column: span 2;"><strong>Correo:</strong> @_selectedInvoice.CustomerEmail</div>
+                        <div><strong>CLIENTE:</strong> @ReorderName(_selectedInvoice.CustomerName)</div>
+                        <div><strong>IDENTIFICACIÓN:</strong> @_selectedInvoice.CustomerIDCard</div>
+                        <div><strong>TELEFONO:</strong> @_selectedInvoice.CustomerPhone</div>
+                        <div><strong>DIRECCIÓN:</strong> @_selectedInvoice.CustomerAddress</div>
+                        <div><strong>CORREO:</strong> @_selectedInvoice.CustomerEmail</div>
                     </div>
                 </div>
 
@@ -287,6 +292,7 @@
     private int _currentPage = 1;
     private int _pageSize = 10;
     private CancellationTokenSource _searchCts = new();
+    private string _currentUser = "Usuario";
 
     private int TotalItems => _pagedSalesResponse?.TotalCount ?? 0;
     private int TotalPages => _pagedSalesResponse?.TotalPages ?? 0;
@@ -302,6 +308,8 @@
     protected override async Task OnInitializedAsync()
     {
         _searchCts = new CancellationTokenSource();
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        _currentUser = authState.User.Identity?.Name ?? "Usuario";
     }
 
     protected override async Task OnParametersSetAsync()

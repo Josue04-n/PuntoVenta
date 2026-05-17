@@ -19,8 +19,8 @@ public class UserService : IUserService
 
     public async Task<IEnumerable<UserResponseDto>> GetAllUsersAsync()
     {
-        // Solo usuarios activos (respetando el Global Query Filter y filtro explícito por seguridad)
-        var users = await _userManager.Users.Where(u => u.IsActive).ToListAsync();
+        // Solo usuarios activos (respetando el Global Query Filter)
+        var users = await _userManager.Users.ToListAsync();
         var userDtos = new List<UserResponseDto>();
 
         foreach (var user in users)
@@ -64,24 +64,18 @@ public class UserService : IUserService
             Address = user.Address,
             Role = role,
             IsActive = user.IsActive,
-            LastLogin = user.LastLogin
+            LastLogin = user.LastLogin,
+            MustChangePassword = user.MustChangePassword
         };
     }
 
     public async Task<(bool IsSuccess, string[] Errors)> CreateUserAsync(RegisterUserRequest request)
     {
-        // 1. Verificar si existe un usuario inactivo con ese UserName o Email
-        var existingUser = await _userManager.Users.IgnoreQueryFilters()
-            .FirstOrDefaultAsync(u => u.NormalizedUserName == request.UserName.ToUpper() || u.NormalizedEmail == request.Email.ToUpper());
-
-        if (existingUser != null)
+        // 1. Verificar si existe un usuario inactivo con ese UserName
+        var existingUser = await _userManager.FindByNameAsync(request.UserName);
+        if (existingUser != null && !existingUser.IsActive)
         {
-            if (!existingUser.IsActive)
-            {
-                // Retornamos un error especial que el controlador interpretará
-                return (false, new[] { $"INACTIVE_USER_EXISTS|{existingUser.Id}" });
-            }
-            return (false, new[] { "Ya existe un usuario activo con el mismo nombre de usuario o correo electrónico." });
+            return (false, new[] { $"INACTIVE_USER_EXISTS|{existingUser.Id}" });
         }
 
         var user = new ApplicationUser
@@ -92,7 +86,8 @@ public class UserService : IUserService
             LastName = request.LastName,
             IDCard = request.IDCard,
             Address = request.Address,
-            PhoneNumber = request.PhoneNumber
+            PhoneNumber = request.PhoneNumber,
+            MustChangePassword = true // Obligatorio cambiar en el primer ingreso
         };
 
         user.Activate();
@@ -154,6 +149,9 @@ public class UserService : IUserService
                 {
                     return (false, passResult.Errors.Select(e => e.Description).ToArray());
                 }
+                // Si el admin le cambia la clave manualmente, se le vuelve a pedir el cambio al entrar
+                user.MustChangePassword = true;
+                await _userManager.UpdateAsync(user);
             }
 
             return (true, Array.Empty<string>());
@@ -165,7 +163,7 @@ public class UserService : IUserService
     public async Task<(bool IsSuccess, string[] Errors)> ReactivateUserAsync(int userId, UpdateUserRequest request)
     {
         request.Id = userId;
-        request.IsActive = true; // Forzamos activación
+        request.IsActive = true; 
         return await UpdateUserAsync(request);
     }
 
@@ -177,6 +175,9 @@ public class UserService : IUserService
         var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
         if (result.Succeeded)
         {
+            // El usuario ya cambió su clave por sí mismo
+            user.MustChangePassword = false;
+            await _userManager.UpdateAsync(user);
             return (true, Array.Empty<string>());
         }
 

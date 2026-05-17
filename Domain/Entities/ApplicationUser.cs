@@ -61,6 +61,7 @@ public class ApplicationUser : IdentityUser<int>, IAuditable
     }
 
     public DateTime? LastLogin { get; set; }
+    public bool MustChangePassword { get; set; } = false;
     
     // Propiedades de IAuditable
     public bool IsActive { get;  set; } = true;

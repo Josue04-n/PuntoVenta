@@ -1,7 +1,9 @@
 @inherits LayoutComponentBase
 @using System.Timers
+@using Microsoft.AspNetCore.Components.Authorization
 @implements IDisposable
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JS
 
 <div class="uta-layout">
     <aside class="uta-sidebar">
@@ -23,16 +25,55 @@
                     <span class="uta-clock-time">@_currentTime</span>
                 </div>
 
-                <button class="uta-icon-btn uta-notification-btn" title="Notificaciones" aria-label="Ver notificaciones">
-                    <i class="bi bi-bell"></i>
-                    <span class="uta-notification-badge">3</span>
-                </button>
-
-                <div class="uta-divider-vertical"></div>
-
                 <AuthorizeView>
                     <Authorized>
-                        <div class="uta-user-menu">
+                        @{
+                            var mustChange = context.User.HasClaim(c => c.Type == "MustChangePassword" && c.Value.Equals("true", StringComparison.OrdinalIgnoreCase));
+                        }
+                        <div class="uta-notification-wrapper">
+                            <button class="uta-icon-btn uta-notification-btn" @onclick="ToggleNotifications" title="Notificaciones">
+                                <i class="bi bi-bell"></i>
+                                @if (mustChange)
+                                {
+                                    <span class="uta-notification-badge">1</span>
+                                }
+                            </button>
+
+                            @if (_showNotifications)
+                            {
+                                <div class="uta-notification-dropdown">
+                                    <div class="uta-notification-header">
+                                        <span>Notificaciones</span>
+                                        <button class="btn-close-sm" @onclick="ToggleNotifications"><i class="bi bi-x"></i></button>
+                                    </div>
+                                    <div class="uta-notification-body">
+                                        @if (mustChange)
+                                        {
+                                            <div class="uta-notification-item uta-notification-item--warning" @onclick="GoToProfile">
+                                                <div class="uta-notification-item__icon">
+                                                    <i class="bi bi-shield-lock-fill"></i>
+                                                </div>
+                                                <div class="uta-notification-item__content">
+                                                    <div class="uta-notification-item__title">Seguridad Requerida</div>
+                                                    <div class="uta-notification-item__text">Por favor, cambia tu contraseña temporal por una personal.</div>
+                                                </div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="uta-notification-empty">
+                                                <i class="bi bi-check2-circle"></i>
+                                                <span>No tienes notificaciones pendientes</span>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="uta-divider-vertical"></div>
+
+                        <div class="uta-user-menu" @onclick='() => NavigationManager.NavigateTo("/mi-perfil")' style="cursor:pointer">
                             <div class="uta-user-avatar">
                                 @(context.User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "U")
                             </div>
@@ -67,6 +108,7 @@
 @code {
     private string _currentTime = DateTime.Now.ToString("HH:mm:ss");
     private Timer? _timer;
+    private bool _showNotifications = false;
 
     protected override void OnInitialized()
     {
@@ -80,6 +122,17 @@
     {
         _currentTime = DateTime.Now.ToString("HH:mm:ss");
         InvokeAsync(StateHasChanged);
+    }
+
+    private void ToggleNotifications()
+    {
+        _showNotifications = !_showNotifications;
+    }
+
+    private void GoToProfile()
+    {
+        _showNotifications = false;
+        NavigationManager.NavigateTo("/mi-perfil");
     }
 
     public void Dispose()

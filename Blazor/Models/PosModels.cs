@@ -1,4 +1,4 @@
-﻿namespace Blazor.Models;
+namespace Blazor.Models;
 
 public class PosModels
 {

@@ -23,4 +23,5 @@ public class UserResponseDto
     public string Role { get; set; } = string.Empty;
     public bool IsActive { get; set; }
     public DateTime? LastLogin { get; set; }
+    public bool MustChangePassword { get; set; }
 }
