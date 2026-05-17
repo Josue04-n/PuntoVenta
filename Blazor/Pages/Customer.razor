@@ -6,6 +6,7 @@
 @using Blazor.Services
 @inject CustomerApiService CustomerApiService
 @inject IJSRuntime JS
+@attribute [Authorize]
 
 @if (!string.IsNullOrEmpty(_alertMessage))
 {
@@ -203,7 +204,7 @@
                                    value="@EditingCustomer.IDCard" 
                                    @oninput="OnIDCardInput"
                                    onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-                                   placeholder="Ej. 1700000000" maxlength="10" />
+                                   placeholder="EJ. 1700000000" maxlength="10" />
                         </div>
                         @if (HasError("IDCard"))
                         {
@@ -214,12 +215,25 @@
                         <label class="uta-form-label">Correo Electrónico</label>
                         <div class="uta-input-icon-wrapper">
                             <i class="bi bi-envelope uta-input-icon"></i>
-                            <input class="uta-form-control uta-form-control--with-icon" type="email" value="@EditingCustomer.Email" @oninput="OnEmailInput" placeholder="correo@ejemplo.com" />
+                            <input class="uta-form-control @(HasError("Email") ? "is-invalid" : "")" 
+                                   type="text" 
+                                   value="@EditingCustomer.Email" 
+                                   @oninput="OnEmailInput" 
+                                   placeholder="correo@ejemplo.com" />
                         </div>
+                        @if (HasError("Email"))
+                        {
+                            <div class="text-danger mt-1" style="font-size: 0.75rem;"><i class="bi bi-exclamation-circle"></i> @GetError("Email")</div>
+                        }
                     </div>
                     <div class="uta-form-group">
                         <label class="uta-form-label">Nombre (Uno solo)</label>
-                        <input class="uta-form-control @(HasError("Name") ? "is-invalid" : "")" type="text" value="@EditingCustomer.Name" @oninput="OnNameInput" placeholder="Ej. Josue" />
+                        <input class="uta-form-control @(HasError("Name") ? "is-invalid" : "")" 
+                               type="text" 
+                               value="@EditingCustomer.Name" 
+                               @oninput="OnNameInput" 
+                               onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode == 209 || event.charCode == 241 || event.charCode == 193 || event.charCode == 201 || event.charCode == 205 || event.charCode == 211 || event.charCode == 218 || event.charCode == 225 || event.charCode == 233 || event.charCode == 237 || event.charCode == 243 || event.charCode == 250"
+                               placeholder="EJ. JOSUE" />
                         @if (HasError("Name"))
                         {
                             <div class="text-danger mt-1" style="font-size: 0.75rem;"><i class="bi bi-exclamation-circle"></i> @GetError("Name")</div>
@@ -227,7 +241,12 @@
                     </div>
                     <div class="uta-form-group">
                         <label class="uta-form-label">Apellido (Uno solo)</label>
-                        <input class="uta-form-control @(HasError("LastName") ? "is-invalid" : "")" type="text" value="@EditingCustomer.LastName" @oninput="OnLastNameInput" placeholder="Ej. Llumitasig" />
+                        <input class="uta-form-control @(HasError("LastName") ? "is-invalid" : "")" 
+                               type="text" 
+                               value="@EditingCustomer.LastName" 
+                               @oninput="OnLastNameInput" 
+                               onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode == 209 || event.charCode == 241 || event.charCode == 193 || event.charCode == 201 || event.charCode == 205 || event.charCode == 211 || event.charCode == 218 || event.charCode == 225 || event.charCode == 233 || event.charCode == 237 || event.charCode == 243 || event.charCode == 250"
+                               placeholder="EJ. LLUMITASIG" />
                         @if (HasError("LastName"))
                         {
                             <div class="text-danger mt-1" style="font-size: 0.75rem;"><i class="bi bi-exclamation-circle"></i> @GetError("LastName")</div>
@@ -242,7 +261,7 @@
                                    value="@EditingCustomer.Phone" 
                                    @oninput="OnPhoneInput"
                                    onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-                                   placeholder="Ej. 0999999999" maxlength="10" />
+                                   placeholder="EJ. 0999999999" maxlength="10" />
                         </div>
                         @if (HasError("Phone"))
                         {
@@ -253,7 +272,11 @@
                         <label class="uta-form-label">Dirección</label>
                         <div class="uta-input-icon-wrapper">
                             <i class="bi bi-geo-alt uta-input-icon"></i>
-                            <input class="uta-form-control uta-form-control--with-icon" type="text" value="@EditingCustomer.Address" @oninput="OnAddressInput" placeholder="Dirección completa" />
+                            <input class="uta-form-control uta-form-control--with-icon" 
+                                   type="text" 
+                                   value="@EditingCustomer.Address" 
+                                   @oninput="OnAddressInput" 
+                                   placeholder="DIRECCIÓN COMPLETA" />
                         </div>
                     </div>
                 </div>
@@ -287,15 +310,15 @@
     private void OnNameInput(ChangeEventArgs e)
     {
         string val = e.Value?.ToString() ?? "";
-        val = val.Trim().Replace(" ", ""); 
-        EditingCustomer.Name = ToTitleCase(val);
+        val = val.Trim().Replace(" ", "").ToUpper(); 
+        EditingCustomer.Name = val;
         ValidateField("Name", val, "Nombre");
     }
 
     private void OnIDCardInput(ChangeEventArgs e)
     {
         string val = e.Value?.ToString() ?? "";
-        val = new string(val.Where(char.IsDigit).ToArray());
+        val = new string(val.Where(char.IsDigit).ToArray()).ToUpper();
         EditingCustomer.IDCard = val;
         ValidateField("IDCard", val, "Cédula");
     }
@@ -303,7 +326,7 @@
     private void OnPhoneInput(ChangeEventArgs e)
     {
         string val = e.Value?.ToString() ?? "";
-        val = new string(val.Where(char.IsDigit).ToArray());
+        val = new string(val.Where(char.IsDigit).ToArray()).ToUpper();
         EditingCustomer.Phone = val;
         ValidateField("Phone", val, "Teléfono");
     }
@@ -311,17 +334,24 @@
     private void OnLastNameInput(ChangeEventArgs e)
     {
         string val = e.Value?.ToString() ?? "";
-        val = val.Trim().Replace(" ", "");
-        EditingCustomer.LastName = ToTitleCase(val);
+        val = val.Trim().Replace(" ", "").ToUpper();
+        EditingCustomer.LastName = val;
         ValidateField("LastName", val, "Apellido");
     }
 
-    private string ToTitleCase(string val)
+    private void OnAddressInput(ChangeEventArgs e)
     {
-        if (string.IsNullOrWhiteSpace(val)) return "";
-        val = val.ToLower();
-        if (val.Length <= 1) return val.ToUpper();
-        return char.ToUpper(val[0]) + val.Substring(1);
+        string val = e.Value?.ToString() ?? "";
+        val = System.Text.RegularExpressions.Regex.Replace(val, @"^\s+", "");
+        val = System.Text.RegularExpressions.Regex.Replace(val, @"\s{2,}", " ");
+        EditingCustomer.Address = val.ToUpper();
+    }
+
+    private void OnEmailInput(ChangeEventArgs e)
+    {
+        string val = e.Value?.ToString()?.Trim() ?? "";
+        EditingCustomer.Email = val;
+        ValidateField("Email", val, "Correo");
     }
 
     private void ValidateField(string field, string val, string label)
@@ -356,37 +386,37 @@
             return;
         }
 
-        // 1. Sin símbolos ni números
-        if (!System.Text.RegularExpressions.Regex.IsMatch(val, @"^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$"))
+        if (field == "Email" && !IsValidEmail(val))
         {
-            _errors[field] = $"{label} solo debe contener letras, sin números ni símbolos.";
+            _errors[field] = "Formato de correo no válido.";
             return;
         }
 
-        // 2. Mínimo 2 letras seguidas
-        if (val.Length < 2)
+        if ((field == "Name" || field == "LastName") && !System.Text.RegularExpressions.Regex.IsMatch(val, @"^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$"))
+        {
+            _errors[field] = $"{label} solo debe contener letras.";
+            return;
+        }
+
+        if ((field == "Name" || field == "LastName") && val.Length < 2)
         {
             _errors[field] = $"{label} debe tener al menos 2 letras.";
             return;
         }
     }
 
+    private bool IsValidEmail(string email)
+    {
+        try
+        {
+            var addr = new System.Net.Mail.MailAddress(email);
+            return addr.Address.Equals(email, StringComparison.OrdinalIgnoreCase);
+        }
+        catch { return false; }
+    }
+
     private bool HasError(string field) => _errors.ContainsKey(field);
     private string GetError(string field) => _errors.TryGetValue(field, out var error) ? error : "";
-
-    private void OnAddressInput(ChangeEventArgs e)
-    {
-        string val = e.Value?.ToString() ?? "";
-        val = System.Text.RegularExpressions.Regex.Replace(val, @"^\s+", "");
-        val = System.Text.RegularExpressions.Regex.Replace(val, @"\s{2,}", " ");
-        EditingCustomer.Address = val.ToUpper();
-    }
-
-    private void OnEmailInput(ChangeEventArgs e)
-    {
-        string val = e.Value?.ToString() ?? "";
-        EditingCustomer.Email = val.Trim().ToLower();
-    }
 
     private string _searchCriterion = "card";
     private string SearchCriterion
@@ -536,6 +566,7 @@
         ValidateField("Phone", EditingCustomer.Phone, "Teléfono");
         ValidateField("Name", EditingCustomer.Name, "Nombre");
         ValidateField("LastName", EditingCustomer.LastName, "Apellido");
+        ValidateField("Email", EditingCustomer.Email, "Correo");
         
         if (_errors.Any())
         {

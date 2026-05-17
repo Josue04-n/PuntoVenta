@@ -1,11 +1,12 @@
 @inherits LayoutComponentBase
 @using System.Timers
 @implements IDisposable
+@inject NavigationManager NavigationManager
 
-<div class="page uta-layout">
-    <div class="sidebar uta-sidebar">
+<div class="uta-layout">
+    <aside class="uta-sidebar">
         <NavMenu />
-    </div>
+    </aside>
 
     <main class="uta-main">
         <header class="uta-top-bar">
@@ -17,38 +18,51 @@
             </div>
 
             <div class="uta-top-bar__right">
-                <div class="uta-clock-pill">
+                <div class="uta-clock-pill" title="Hora actual del sistema">
                     <i class="bi bi-clock text-primary"></i>
                     <span class="uta-clock-time">@_currentTime</span>
                 </div>
 
-                <button class="uta-icon-btn uta-notification-btn" title="Notificaciones">
+                <button class="uta-icon-btn uta-notification-btn" title="Notificaciones" aria-label="Ver notificaciones">
                     <i class="bi bi-bell"></i>
                     <span class="uta-notification-badge">3</span>
                 </button>
 
                 <div class="uta-divider-vertical"></div>
 
-                <div class="uta-user-menu">
-                    <div class="uta-user-avatar">
-                        UD
-                    </div>
-                    <div class="uta-user-info">
-                        <span class="uta-user-name">Usuario Demo</span>
-                        <span class="uta-user-role">Administrador</span>
-                    </div>
-                    <i class="bi bi-chevron-down uta-user-chevron"></i>
-                </div>
+                <AuthorizeView>
+                    <Authorized>
+                        <div class="uta-user-menu">
+                            <div class="uta-user-avatar">
+                                @(context.User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "U")
+                            </div>
+                            <div class="uta-user-info">
+                                <span class="uta-user-name">@context.User.Identity?.Name</span>
+                                <span class="uta-user-role">
+                                    @(context.User.IsInRole("Administrador") ? "Administrador" : "Vendedor")
+                                </span>
+                            </div>
+                            <i class="bi bi-person-bounding-box uta-user-chevron"></i>
+                        </div>
+                    </Authorized>
+                    <NotAuthorized>
+                        <div class="uta-user-menu" @onclick='() => NavigationManager.NavigateTo("/login")' style="cursor:pointer">
+                            <div class="uta-user-avatar">?</div>
+                            <div class="uta-user-info">
+                                <span class="uta-user-name">Invitado</span>
+                                <span class="uta-user-role">Iniciar sesión</span>
+                            </div>
+                        </div>
+                    </NotAuthorized>
+                </AuthorizeView>
             </div>
         </header>
 
-        <article class="uta-content">
+        <section class="uta-content">
             @Body
-        </article>
+        </section>
     </main>
 </div>
-
-
 
 @code {
     private string _currentTime = DateTime.Now.ToString("HH:mm:ss");
@@ -70,6 +84,10 @@
 
     public void Dispose()
     {
-        _timer?.Dispose();
+        if (_timer != null)
+        {
+            _timer.Elapsed -= UpdateClock;
+            _timer.Dispose();
+        }
     }
 }

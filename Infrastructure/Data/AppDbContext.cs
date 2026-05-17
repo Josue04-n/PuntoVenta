@@ -20,7 +20,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     {
         var currentUser = "System"; // TODO: Implement real user tracking later
 
-        foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
+        foreach (var entry in ChangeTracker.Entries<IAuditable>())
         {
             switch (entry.State)
             {
@@ -55,10 +55,11 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     {
         base.OnModelCreating(modelBuilder);
 
-        // --- FILTROS GLOBALES PARA AUDITABLE ENTITY ---
+        // --- FILTROS GLOBALES PARA ENTIDADES AUDITABLES ---
         modelBuilder.Entity<Product>().HasQueryFilter(p => p.IsActive);
         modelBuilder.Entity<Customer>().HasQueryFilter(c => c.IsActive);
         modelBuilder.Entity<Sale>().HasQueryFilter(s => s.IsActive);
+        modelBuilder.Entity<ApplicationUser>().HasQueryFilter(u => u.IsActive);
 
         // --- CONFIGURACIÓN DE PRODUCTOS ---
         modelBuilder.Entity<Product>(entity =>

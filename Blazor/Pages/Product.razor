@@ -6,6 +6,7 @@
 @using System.Timers
 @inject PosApiService PosApiService
 @inject IJSRuntime JS
+@attribute [Authorize]
 
 @if (!string.IsNullOrEmpty(_alertMessage))
 {
@@ -205,7 +206,7 @@
                                    type="text" 
                                    value="@EditingProduct.Name" 
                                    @oninput="OnNameInput"
-                                   placeholder="Nombre descriptivo del producto" />
+                                   placeholder="NOMBRE DESCRIPTIVO DEL PRODUCTO" />
                         </div>
                         @if (HasError("Name"))
                         {
@@ -235,7 +236,7 @@
                                    type="number" step="1" 
                                    value="@EditingProduct.Stock" 
                                    @oninput="OnStockInput"
-                                   placeholder="Cant." />
+                                   placeholder="CANT." />
                         </div>
                         @if (HasError("Stock"))
                         {
@@ -275,7 +276,7 @@
         string val = e.Value?.ToString() ?? "";
         val = System.Text.RegularExpressions.Regex.Replace(val, @"^\s+", "");
         val = System.Text.RegularExpressions.Regex.Replace(val, @"\s{2,}", " ");
-        EditingProduct.Name = ToTitleCase(val);
+        EditingProduct.Name = val.ToUpper();
         ValidateField("Name", EditingProduct.Name, "Descripción");
     }
 
@@ -295,14 +296,6 @@
             EditingProduct.Stock = val;
             ValidateField("Stock", val.ToString(), "Stock");
         }
-    }
-
-    private string ToTitleCase(string text)
-    {
-        if (string.IsNullOrWhiteSpace(text)) return string.Empty;
-        text = text.ToLower();
-        if (text.Length <= 1) return text.ToUpper();
-        return char.ToUpper(text[0]) + text.Substring(1);
     }
 
     private void ValidateField(string field, string val, string label)

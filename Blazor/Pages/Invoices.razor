@@ -8,6 +8,7 @@
 @inject IJSRuntime JS
 @inject NavigationManager NavManager
 @implements IDisposable
+@* @attribute [Authorize] *@
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
@@ -45,10 +46,10 @@
                     <option value="number">N° de Factura</option>
                     <option value="customer">Apellido del Cliente</option>
                 </select>
-                <input class="uta-search-bar__input" 
-                       type="text" 
-                       value="@_searchTerm" 
-                       @oninput="OnInputSearch" 
+                <input class="uta-search-bar__input"
+                       type="text"
+                       value="@_searchTerm"
+                       @oninput="OnInputSearch"
                        placeholder="Buscar por N° de Factura o Apellido de Cliente..." />
                 <div class="uta-search-bar__icon-container px-3 d-flex align-items-center bg-light">
                     <i class="bi bi-search text-muted"></i>
@@ -138,7 +139,9 @@
                             {
                                 var pNum = p;
                                 <button class="uta-pagination-btn @(pNum == _currentPage ? "uta-pagination-btn--active" : "")"
-                                        @onclick="() => ChangePage(pNum)">@pNum</button>
+                                        @onclick="() => ChangePage(pNum)">
+                                    @pNum
+                                </button>
                             }
                         }
                         <button class="uta-pagination-btn @(!HasNext ? "disabled" : "")"
@@ -349,8 +352,8 @@
 
     private async Task OnSearchCriteriaChanged()
     {
-        _searchTerm = ""; 
-        _pagedSalesResponse = null; 
+        _searchTerm = "";
+        _pagedSalesResponse = null;
         _currentPage = 1;
     }
 
@@ -364,11 +367,11 @@
 
     private async Task TriggerSearch()
     {
-        _currentPage = 1; 
-        _searchCts.Cancel(); 
+        _currentPage = 1;
+        _searchCts.Cancel();
         _searchCts = new CancellationTokenSource();
 
-        try 
+        try
         {
             await Task.Delay(300, _searchCts.Token);
             await FetchInvoices(_currentPage);
@@ -379,7 +382,7 @@
     // Method to handle the search button click, which should also trigger search
     private async Task SearchInvoices()
     {
-       await TriggerSearch();
+        await TriggerSearch();
     }
 
     private async Task OnPageSizeChanged(ChangeEventArgs e)
@@ -419,8 +422,8 @@
         StateHasChanged();
         await Task.Delay(200);
 
-        string safeDate = DateTime.TryParse(_selectedInvoice.IssueDate, out DateTime f) 
-            ? f.ToString("dd-MM-yyyy_HH-mm-ss") 
+        string safeDate = DateTime.TryParse(_selectedInvoice.IssueDate, out DateTime f)
+            ? f.ToString("dd-MM-yyyy_HH-mm-ss")
             : _selectedInvoice.IssueDate.Replace(":", "-");
         string documentName = $"{_selectedInvoice.InvoiceNumber}_{safeDate}.pdf";
 

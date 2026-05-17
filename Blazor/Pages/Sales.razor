@@ -10,6 +10,7 @@
 @inject PosApiService ApiService
 @inject CustomerApiService CustomerApiService
 @inject NavigationManager NavManager
+@* @attribute [Authorize] *@
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
@@ -21,7 +22,7 @@
                 <i class="bi @(_isError ? "bi-exclamation-triangle-fill" : "bi-check2-circle")"></i>
             </div>
             <div class="uta-toast__body">
-                <div class="uta-toast__title">@(_isError ? "Atención" : "¡Éxito!")</div>
+                <div class="uta-toast__title">@(_isError ? "Atención" : "Exito!")</div>
                 <div class="uta-toast__message">@_alertMessage</div>
             </div>
             <button class="uta-toast__close" @onclick="() => _alertMessage = string.Empty">
@@ -37,7 +38,7 @@
         <div class="uta-page-header__left">
             <div class="uta-breadcrumb">
                 <span>Panel Principal</span>
-                <span class="uta-breadcrumb__sep">›</span>
+                <span class="uta-breadcrumb__sep"></span>
                 <span class="uta-breadcrumb__active">Punto de Venta</span>
             </div>
             <h1 class="uta-page-title">
@@ -142,19 +143,19 @@
                     <div class="uta-client-data-grid">
                         <div class="uta-data-item">
                             <span class="uta-data-item__label">Cédula </span>
-                            <span class="uta-data-item__value">@(_selectedCustomerEntity != null ? _selectedCustomerEntity.IDCard : "—")</span>
+                            <span class="uta-data-item__value">@(_selectedCustomerEntity != null ? _selectedCustomerEntity.IDCard : "-")</span>
                         </div>
                         <div class="uta-data-item">
                             <span class="uta-data-item__label">Teléfono</span>
-                            <span class="uta-data-item__value">@(_selectedCustomerEntity != null && !string.IsNullOrEmpty(_selectedCustomerEntity.Phone) ? _selectedCustomerEntity.Phone : "—")</span>
+                            <span class="uta-data-item__value">@(_selectedCustomerEntity != null && !string.IsNullOrEmpty(_selectedCustomerEntity.Phone) ? _selectedCustomerEntity.Phone : "-")</span>
                         </div>
                         <div class="uta-data-item">
                             <span class="uta-data-item__label">Correo Electrónico</span>
-                            <span class="uta-data-item__value">@(_selectedCustomerEntity != null && !string.IsNullOrEmpty(_selectedCustomerEntity.Email) ? _selectedCustomerEntity.Email : "—")</span>
+                            <span class="uta-data-item__value">@(_selectedCustomerEntity != null && !string.IsNullOrEmpty(_selectedCustomerEntity.Email) ? _selectedCustomerEntity.Email : "-")</span>
                         </div>
                         <div class="uta-data-item uta-data-item--full">
                             <span class="uta-data-item__label">Dirección Completa</span>
-                            <span class="uta-data-item__value">@(_selectedCustomerEntity != null && !string.IsNullOrEmpty(_selectedCustomerEntity.Address) ? _selectedCustomerEntity.Address : "—")</span>
+                            <span class="uta-data-item__value">@(_selectedCustomerEntity != null && !string.IsNullOrEmpty(_selectedCustomerEntity.Address) ? _selectedCustomerEntity.Address : "-")</span>
                         </div>
                     </div>
                 </div>
@@ -371,14 +372,14 @@
                     <div class="d-print-none" style="margin-top: 1.5rem">
                         @if (!_saleCompleted)
                         {
-                            <!-- Botón Primario: Más grande y llamativo -->
+                            <!-- Bot�n Primario: M�s grande y llamativo -->
                             <button class="uta-btn uta-btn--primary uta-btn--lg" 
                                     @onclick="FinalizeSale" 
                                     disabled="@(!CanFinalize)">
                                 <i class="bi bi-check2-all"></i> PROCESAR VENTA
                             </button>
 
-                            <!-- Botón Secundario: Outline para indicar que es una acción de retroceso -->
+                            <!-- Bot�n Secundario: Outline para indicar que es una acci�n de retroceso -->
                             <button type="button" 
                                     class="uta-btn-pos uta-btn-pos--cancel" 
                                     @onclick="CancelSale">
@@ -459,7 +460,7 @@
                         <table class="uta-table">
                             <thead>
                                 <tr>
-                                    <th style="width: 80px; text-align: center;">Código (ID)</th>
+                                    <th style="width: 80px; text-align: center;">C�digo (ID)</th>
                                     <th>Nombre Completo</th>
                                     <th style="text-align:center">Cédula</th>
                                     <th style="text-align:center">Teléfono</th>
@@ -486,9 +487,9 @@
                                         <td style="text-align:center"><span class="uta-code-badge">@c.Id.ToString("D3")</span></td>
                                         <td class="uta-table__bold"> @c.LastName @c.Name</td>
                                         <td style="text-align:center"><span class="uta-code-badge">@c.IDCard</span></td>
-                                        <td style="text-align:center;color:#666">@(string.IsNullOrEmpty(c.Phone) ? "—" : c.Phone)</td>
-                                        <td style="color:#666">@(string.IsNullOrEmpty(c.Address) ? "—" : c.Address)</td>
-                                        <td style="color:#666">@(string.IsNullOrEmpty(c.Email) ? "—" : c.Email)</td>
+                                        <td style="text-align:center;color:#666">@(string.IsNullOrEmpty(c.Phone) ? "-" : c.Phone)</td>
+                                        <td style="color:#666">@(string.IsNullOrEmpty(c.Address) ? "-" : c.Address)</td>
+                                        <td style="color:#666">@(string.IsNullOrEmpty(c.Email) ? "-" : c.Email)</td>
                                         <td style="text-align:center">
                                             <button class="uta-btn uta-btn--sm uta-btn--success" @onclick="() => SelectCustomer(c)">
                                                 <i class="bi bi-check2"></i> Seleccionar
@@ -512,7 +513,7 @@
         </span>
     </div>
 
-    @* Selector de tamaño de página para Clientes *@
+    @* Selector de tama�o de p�gina para Clientes *@
     <div class="d-flex align-items-center gap-2">
         <span class="small text-muted">por página</span>
         <div class="uta-select-wrapper">
@@ -526,7 +527,7 @@
         </div>
     </div>
 
-    @* Navegación con Ellipsis usando tu PaginationHelper *@
+    @* Navegaci�n con Ellipsis usando tu PaginationHelper *@
     <div class="d-flex overflow-hidden">
         @foreach (var p in VisiblePagesCustomer)
         {
@@ -553,7 +554,7 @@
         </div>
     }
 
-@* Catálogo de Productos Paginado *@
+@* Cat�logo de Productos Paginado *@
 @if (_showProductModal)
 {
     <div class="uta-overlay" @onclick="CloseProductModal">
@@ -567,11 +568,11 @@
             </div>
 
             <div class="uta-modal__body">
-                @* Barra de Búsqueda Proactiva *@
+                @* Barra de B�squeda Proactiva *@
                 <div class="uta-search-bar mb-3">
                     <select class="uta-search-bar__select" @bind="ProductSearchCriterion">
                         <option value="name">Descripción</option> @* 'name' para el default *@
-                        <option value="id">Código ID</option>     @* 'id' para el filtro numérico *@
+                        <option value="id">Código ID</option>     @* 'id' para el filtro num�rico *@
                     </select>
                     <input class="uta-search-bar__input" 
                            type="text" 
@@ -589,7 +590,7 @@
                         <thead>
                             <tr>
                                 <th style="width: 100px;">Código (ID)</th>
-                                <th>Descripción</th>
+                                <th>Descripci�n</th>
                                 <th style="text-align:right">Precio</th>
                                 <th style="text-align:center">Stock Disp.</th>
                                 <th style="text-align:center">Acción</th>
@@ -599,7 +600,7 @@
                             @foreach (var p in _productResults)
                             {
                                 <tr @key="p.Id">
-                                    @* Resaltamos el ID para facilitar la búsqueda visual *@
+                                    @* Resaltamos el ID para facilitar la b�squeda visual *@
                                     <td><span class="uta-code-badge">@p.Id.ToString("D4")</span></td>
                                     <td class="uta-table__bold">@p.Name</td>
                                     <td style="text-align:right">
@@ -614,7 +615,7 @@
                                         </span>
                                     </td>
                                     <td style="text-align:center">
-                                        @* El botón solo añade 1 unidad por defecto. SRP: La edición va en la grilla principal *@
+                                        @* El bot�n solo a�ade 1 unidad por defecto. SRP: La edici�n va en la grilla principal *@
                                         <button class="uta-btn uta-btn--sm uta-btn--primary" 
                                                 @onclick="() => AddSimpleProduct(p)" 
                                                 disabled="@(p.Stock <= 0)">
@@ -628,19 +629,19 @@
                 </div>
             </div>
 
-            @* Footer: Paginación Basada en Servidor (Fase C & E) *@
+            @* Footer: Paginaci�n Basada en Servidor (Fase C & E) *@
             @if (_totalItems > 0)
             {
                 <div class="uta-pagination-footer rounded-bottom">
         
-                    @* Info: Uso de clases semánticas para evitar hardcoding *@
+                    @* Info: Uso de clases sem�nticas para evitar hardcoding *@
                     <div class="uta-pagination-info">
                         <span class="small text-muted">
                             Se muestran <strong class="uta-text-highlight">@From</strong> a <strong class="uta-text-highlight">@To</strong> de <strong class="uta-text-highlight">@_totalItems</strong> resultados
                         </span>
                     </div>
 
-                    @* Tamaño de página: Estructura corregida para legibilidad en el selector *@
+                    @* Tama�o de p�gina: Estructura corregida para legibilidad en el selector *@
                     <div class="d-flex align-items-center gap-2">
                         <span class="small text-muted">por página</span>
                         <div class="uta-select-wrapper">
@@ -654,7 +655,7 @@
                         </div>
                     </div>
 
-                    @* Controles con ellipsis: Lógica delegada al Helper *@
+                    @* Controles con ellipsis: L�gica delegada al Helper *@
                     <div class="d-flex overflow-hidden">
                         @foreach (var p in GenerateVisiblePages)
                         {
@@ -796,7 +797,7 @@
     {
         var result = await JS.InvokeAsync<object>("Swal.fire", new
         {
-            title = "¿Cancelar venta?",
+            title = "Cancelar venta?",
             text = "Se perderán todos los productos cargados en el carrito.",
             icon = "warning",
             showCancelButton = true,
@@ -1161,7 +1162,7 @@ private async Task AddProduct(ProductUI prod)
             AvailableStock = prod.Stock,
             Product = new ProductModel { Id = prod.Id, Name = prod.Name, UnitPrice = prod.UnitPrice, Stock = prod.Stock }
         });
-        // Ir a la última página para ver el producto recién añadido
+        // Ir a la �ltima p�gina para ver el producto reci�n a�adido
         _currentCartPage = TotalCartPages;
         await ShowNotification($"{prod.Name} añadido al carrito.");
     }
@@ -1175,8 +1176,8 @@ private async Task AddProduct(ProductUI prod)
     {
         var result = await JS.InvokeAsync<object>("Swal.fire", new
         {
-            title = "¿Quitar producto?",
-            text = $"¿Estás seguro de eliminar '{item.Product.Name}' del carrito?",
+            title = "Quitar producto?",
+            text = $"Estás seguro de eliminar '{item.Product.Name}' del carrito?",
             icon = "warning",
             showCancelButton = true,
             confirmButtonColor = "#6B1A33",
@@ -1189,7 +1190,7 @@ private async Task AddProduct(ProductUI prod)
         {
             _cart.Remove(item);
 
-            // Ajustar página actual si queda vacía
+            // Ajustar p�gina actual si queda vac�a
             if (_currentCartPage > TotalCartPages && TotalCartPages > 0)
             {
                 _currentCartPage = TotalCartPages;
@@ -1299,7 +1300,7 @@ private async Task AddProduct(ProductUI prod)
                     _invoiceNumber = invoiceProp.GetString() ?? "AUTHORIZED";
                 }
 
-                await ShowNotification("¡Venta procesada y stock actualizado exitosamente!");
+                await ShowNotification("Venta procesada y stock actualizado exitosamente!");
                 _saleCompleted = true;
                 StateHasChanged();
             }

@@ -2,12 +2,14 @@ using Application.DTOs;
 using Application.DTOs.Common;
 using Application.UseCases;
 using Domain.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class SalesController : ControllerBase
 {
     private readonly PerformSaleHandler _performSaleHandler;

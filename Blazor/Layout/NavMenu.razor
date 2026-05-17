@@ -1,33 +1,62 @@
-    <div class="top-row ps-3 navbar navbar-dark uta-brand-header">
-        <div class="container-fluid">
-            <a class="navbar-brand uta-brand-text" href="">
-                <i class="bi bi-shop uta-brand-icon text-warning"></i> MI NEGOCIO
-            </a>
-            <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>
+@using Microsoft.AspNetCore.Components.Authorization
+@using Blazor.Security
+@inject CustomAuthStateProvider AuthStateProvider
+@inject NavigationManager NavManager
+
+<div class="top-row ps-3 navbar navbar-dark uta-brand-header">
+    <div class="container-fluid">
+        <a class="navbar-brand uta-brand-text" href="">
+            <i class="bi bi-shop uta-brand-icon text-warning"></i> MI NEGOCIO
+        </a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
     </div>
+</div>
 
 <div class="@NavMenuCssClass nav-scrollable uta-sidebar-menu" @onclick="ToggleNavMenu">
     <nav class="nav flex-column uta-nav">
         
-        @foreach (var grupo in _menuOptions.GroupBy(m => m.Section))
-        {
-            <div class="uta-nav-section">@grupo.Key</div>
-            
-            @foreach (var item in grupo)
-            {
-                <div class="nav-item">
-                    <NavLink class="nav-link uta-nav-link" href="@item.Url" Match="@item.Match">
-                        <div class="uta-menu-icon">
-                            <i class="@item.Icon"></i>
+        <AuthorizeView>
+            <Authorized>
+                @foreach (var grupo in GetFilteredMenu(context).GroupBy(m => m.Section))
+                {
+                    <div class="uta-nav-section">@grupo.Key</div>
+                    
+                    @foreach (var item in grupo)
+                    {
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link uta-nav-link" href="@item.Url" Match="@item.Match">
+                                <div class="uta-menu-icon">
+                                    <i class="@item.Icon"></i>
+                                </div>
+                                <div class="uta-menu-text">@item.Title</div>
+                            </NavLink>
                         </div>
-                        <div class="uta-menu-text">@item.Title</div>
+                    }
+                }
+
+                <div class="uta-nav-section">CUENTA</div>
+                <div class="nav-item px-3">
+                    <button class="nav-link uta-nav-link border-0 bg-transparent w-100 text-start" @onclick="HandleLogout">
+                        <div class="uta-menu-icon">
+                            <i class="bi bi-box-arrow-left text-danger"></i>
+                        </div>
+                        <div class="uta-menu-text">Cerrar Sesión</div>
+                    </button>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <div class="nav-item px-3 mt-4">
+                    <NavLink class="nav-link uta-nav-link" href="login">
+                        <div class="uta-menu-icon">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                        </div>
+                        <div class="uta-menu-text">Iniciar Sesión</div>
                     </NavLink>
                 </div>
-            }
-        }
+            </NotAuthorized>
+        </AuthorizeView>
 
     </nav>
 </div>
@@ -41,23 +70,40 @@
     {
         collapseNavMenu = !collapseNavMenu;
     }
+
+    private async Task HandleLogout()
+    {
+        await AuthStateProvider.NotifyUserLogout();
+        NavManager.NavigateTo("login");
+    }
+
+    private IEnumerable<MenuOption> GetFilteredMenu(AuthenticationState context)
+    {
+        return _menuOptions.Where(m => string.IsNullOrEmpty(m.Role) || context.User.IsInRole(m.Role));
+    }
+
     private class MenuOption
     {
         public string Title { get; set; } = string.Empty;
         public string Icon { get; set; } = string.Empty;
         public string Url { get; set; } = string.Empty;
         public string Section { get; set; } = string.Empty;
+        public string? Role { get; set; }
         public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
     }
 
     private List<MenuOption> _menuOptions = new()
     {
+        new MenuOption { Section = "MI INFORMACIÓN", Title = "Mi Perfil", Icon = "bi bi-person-badge", Url = "mi-perfil" },
+
         new MenuOption { Section = "PRINCIPAL", Title = "Panel de Control", Icon = "bi bi-house-door", Url = "", Match = NavLinkMatch.All },
         
         new MenuOption { Section = "OPERACIONES", Title = "Punto de Venta", Icon = "bi bi-cart3", Url = "ventas" },
         new MenuOption { Section = "OPERACIONES", Title = "Facturación", Icon = "bi bi-receipt", Url = "facturas" },
         
         new MenuOption { Section = "CATÁLOGOS", Title = "Productos", Icon = "bi bi-box-seam", Url = "productos" },
-        new MenuOption { Section = "CATÁLOGOS", Title = "Clientes", Icon = "bi bi-people", Url = "clientes" }
+        new MenuOption { Section = "CATÁLOGOS", Title = "Clientes", Icon = "bi bi-people", Url = "clientes" },
+
+        new MenuOption { Section = "SISTEMA", Title = "Usuarios", Icon = "bi bi-person-gear", Url = "usuarios", Role = "Administrador" }
     };
 }

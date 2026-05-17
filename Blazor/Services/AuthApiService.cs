@@ -1,0 +1,44 @@
+using Application.DTOs;
+using System.Net.Http.Json;
+
+namespace Blazor.Services;
+
+public class AuthApiService
+{
+    private readonly HttpClient _http;
+
+    public AuthApiService(HttpClient http)
+    {
+        _http = http;
+    }
+
+    public async Task<AuthResponseDto> LoginAsync(LoginRequest request)
+    {
+        try
+        {
+            var response = await _http.PostAsJsonAsync("api/Auth/login", request);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<AuthResponseDto>() 
+                       ?? new AuthResponseDto { IsSuccess = false, Message = "Respuesta vacía del servidor." };
+            }
+
+            var errorContent = await response.Content.ReadAsStringAsync();
+            try 
+            {
+                var errorObj = System.Text.Json.JsonDocument.Parse(errorContent);
+                var msg = errorObj.RootElement.TryGetProperty("message", out var m) ? m.GetString() : errorContent;
+                return new AuthResponseDto { IsSuccess = false, Message = msg };
+            }
+            catch 
+            {
+                return new AuthResponseDto { IsSuccess = false, Message = "Credenciales inválidas o error en el servidor." };
+            }
+        }
+        catch (Exception ex)
+        {
+            return new AuthResponseDto { IsSuccess = false, Message = "Error de conexión: " + ex.Message };
+        }
+    }
+}

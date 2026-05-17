@@ -1,4 +1,4 @@
-﻿using Domain.Common;
+using Domain.Common;
 
 namespace Domain.Entities;
 
@@ -24,11 +24,11 @@ public class Customer : AuditableEntity
         if (string.IsNullOrWhiteSpace(idCard))
             throw new ArgumentException("La cédula es requerida.");
 
-        string sanitizedIdCard = idCard.Trim().Replace(" ", "");
+        string sanitizedIdCard = idCard.Trim().Replace(" ", "").ToUpper();
         if (sanitizedIdCard.Length != 10 || !sanitizedIdCard.All(char.IsDigit))
             throw new ArgumentException("La cédula debe tener exactamente 10 dígitos numéricos.");
 
-        string sanitizedPhone = (phone ?? "").Trim().Replace(" ", "");
+        string sanitizedPhone = (phone ?? "").Trim().Replace(" ", "").ToUpper();
         if (sanitizedPhone.Length != 10 || !sanitizedPhone.All(char.IsDigit) || !sanitizedPhone.StartsWith("09"))
             throw new ArgumentException("El teléfono debe tener 10 dígitos numéricos y empezar con '09'.");
 
@@ -40,19 +40,11 @@ public class Customer : AuditableEntity
         ValidateNamePart(lastName, "Apellido");
 
         IDCard = sanitizedIdCard;
-        Name = ToTitleCase(name);
-        LastName = ToTitleCase(lastName);
+        Name = name.Trim().ToUpper();
+        LastName = lastName.Trim().ToUpper();
         Phone = sanitizedPhone;
-        Address = address?.Trim() ?? "";
-        Email = email?.Trim().ToLower() ?? "";
-    }
-
-    private string ToTitleCase(string text)
-    {
-        if (string.IsNullOrWhiteSpace(text)) return string.Empty;
-        text = text.Trim().ToLower();
-        if (text.Length <= 1) return text.ToUpper();
-        return char.ToUpper(text[0]) + text.Substring(1);
+        Address = address?.Trim().ToUpper() ?? "";
+        Email = email?.Trim() ?? "";
     }
 
     private void ValidateNamePart(string part, string fieldName)
@@ -63,16 +55,12 @@ public class Customer : AuditableEntity
         string trimmed = part.Trim();
 
         // 1. No symbols or numbers
-        if (!System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$"))
+        if (!System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$"))
             throw new ArgumentException($"{fieldName} solo debe contener letras, sin números ni símbolos.");
 
         // 2. Minimum 2 letters
         if (trimmed.Length < 2)
             throw new ArgumentException($"{fieldName} debe tener al menos 2 letras.");
-
-        // 3. No spaces between letters (already covered by regex ^[a-zA-Z]+$ but good to be explicit about "single word")
-        if (trimmed.Contains(" "))
-            throw new ArgumentException($"{fieldName} debe ser una sola palabra, sin espacios.");
     }
 
     private bool IsValidEmail(string email)
@@ -80,7 +68,7 @@ public class Customer : AuditableEntity
         try
         {
             var addr = new System.Net.Mail.MailAddress(email);
-            return addr.Address == email;
+            return addr.Address.Equals(email, StringComparison.OrdinalIgnoreCase);
         }
         catch
         {

@@ -1,6 +1,6 @@
 namespace Domain.Common;
 
-public abstract class AuditableEntity
+public abstract class AuditableEntity : IAuditable
 {
     public bool IsActive { get; protected set; } = true;
     public DateTime CreatedAt { get; set; }

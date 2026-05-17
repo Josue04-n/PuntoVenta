@@ -1,4 +1,4 @@
-﻿using Domain.Common;
+using Domain.Common;
 using Domain.ValueObjects;
 
 namespace Domain.Entities;
@@ -25,17 +25,9 @@ public class Product : AuditableEntity
         if (stock < 0)
             throw new ArgumentException("El stock no puede ser negativo.");
 
-        Name = ToTitleCase(name);
+        Name = name.Trim().ToUpper();
         UnitPrice = unitPrice;
         Stock = stock;
-    }
-
-    private string ToTitleCase(string text)
-    {
-        if (string.IsNullOrWhiteSpace(text)) return string.Empty;
-        text = text.Trim();
-        if (text.Length <= 1) return text.ToUpper();
-        return char.ToUpper(text[0]) + text.Substring(1).ToLower();
     }
 
     public void DecreaseStock (int amount)
