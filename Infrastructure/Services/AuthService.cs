@@ -30,12 +30,43 @@ public class AuthService : IAuthService
             return new AuthResponseDto { IsSuccess = false, Message = "Usuario no encontrado o inactivo." };
         }
 
+        // 1. Verificar si la cuenta está bloqueada antes de intentar nada
+        if (await _userManager.IsLockedOutAsync(user))
+        {
+            return new AuthResponseDto 
+            { 
+                IsSuccess = false, 
+                Message = "Tu cuenta ha sido bloqueada por seguridad. Contacta al administrador." 
+            };
+        }
+
         var isPasswordValid = await _userManager.CheckPasswordAsync(user, request.Password);
 
         if (!isPasswordValid)
         {
+            // 2. Incrementar contador de fallos si no es la cuenta de admin
+            if (user.UserName?.ToLower() != "admin")
+            {
+                await _userManager.AccessFailedAsync(user);
+                
+                var failedCount = await _userManager.GetAccessFailedCountAsync(user);
+                var remaining = 3 - failedCount;
+                
+                if (remaining > 0)
+                {
+                    return new AuthResponseDto { IsSuccess = false, Message = $"Contraseña incorrecta. Le quedan {remaining} intentos antes de bloquear su cuenta." };
+                }
+                else
+                {
+                    return new AuthResponseDto { IsSuccess = false, Message = "Ha superado el límite de intentos. Su cuenta ha sido bloqueada." };
+                }
+            }
+            
             return new AuthResponseDto { IsSuccess = false, Message = "Contraseña incorrecta." };
         }
+
+        // 3. Login exitoso -> Resetear contador de fallos
+        await _userManager.ResetAccessFailedCountAsync(user);
 
         var roles = await _userManager.GetRolesAsync(user);
         var token = GenerateJwtToken(user, roles);

@@ -30,8 +30,9 @@ public static class DependencyInjection
             options.Password.RequiredUniqueChars = 1;
 
             // Lockout settings
-            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-            options.Lockout.MaxFailedAccessAttempts = 5;
+            // Un bloqueo permanente de unos 100 años (o puedes usar un valor fijo grande)
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromDays(36500);
+            options.Lockout.MaxFailedAccessAttempts = 3;
             options.Lockout.AllowedForNewUsers = true;
 
             // User settings

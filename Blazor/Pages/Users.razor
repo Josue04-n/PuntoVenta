@@ -39,6 +39,23 @@
         </div>
     </div>
 
+    <!-- Filtros por Pestañas (HCI) -->
+    <div class="uta-tabs mb-4">
+        <button class="uta-tab-btn @(_activeFilter == "activos" ? "uta-tab-btn--active" : "")" @onclick='() => ChangeFilter("activos")'>
+            <i class="bi bi-person-check me-2"></i> Activos
+        </button>
+        <button class="uta-tab-btn @(_activeFilter == "bloqueados" ? "uta-tab-btn--active" : "")" @onclick='() => ChangeFilter("bloqueados")'>
+            <i class="bi bi-person-lock me-2"></i> Bloqueados
+            @if (_blockedCount > 0)
+            {
+                <span class="uta-badge uta-badge--red ms-2">@_blockedCount</span>
+            }
+        </button>
+        <button class="uta-tab-btn @(_activeFilter == "inactivos" ? "uta-tab-btn--active" : "")" @onclick='() => ChangeFilter("inactivos")'>
+            <i class="bi bi-person-x me-2"></i> Inactivos
+        </button>
+    </div>
+
     <div class="uta-card">
         <div class="uta-card__body">
             <div class="uta-table-wrap uta-table-wrap--bordered">
@@ -49,23 +66,24 @@
                             <th>Nombre Completo</th>
                             <th>Usuario</th>
                             <th style="text-align:center">Rol</th>
+                            <th style="text-align:center">Estado</th>
                             <th style="text-align:center">Última Conexión</th>
                             <th style="text-align:center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @if (!_users.Any())
+                        @if (!FilteredUsers.Any())
                         {
                             <tr>
-                                <td colspan="6" class="uta-table__empty">
+                                <td colspan="7" class="uta-table__empty">
                                     <div class="uta-empty-state">
                                         <div class="uta-empty-state__icon"><i class="bi bi-people"></i></div>
-                                        <div class="uta-empty-state__text">No hay usuarios activos registrados</div>
+                                        <div class="uta-empty-state__text">No hay usuarios @(_activeFilter) registrados</div>
                                     </div>
                                 </td>
                             </tr>
                         }
-                        @foreach (var u in _users)
+                        @foreach (var u in FilteredUsers)
                         {
                             <tr>
                                 <td style="text-align:center">@u.Id</td>
@@ -75,6 +93,26 @@
                                     <span class="uta-badge @(u.Role == "Administrador" ? "uta-badge--blue" : "uta-badge--green")">
                                         @u.Role
                                     </span>
+                                </td>
+                                <td style="text-align:center">
+                                    @if (!u.IsActive)
+                                    {
+                                        <span class="uta-badge" style="background-color: #e2e3e5; color: #383d41;">
+                                            <i class="bi bi-person-x me-1"></i> Inactivo
+                                        </span>
+                                    }
+                                    else if (u.IsLockedOut)
+                                    {
+                                        <span class="uta-badge uta-badge--red" title="Bloqueado hasta @u.LockoutEnd?.ToLocalTime()">
+                                            <i class="bi bi-lock-fill me-1"></i> Bloqueado
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="uta-badge uta-badge--blue">
+                                            Activo
+                                        </span>
+                                    }
                                 </td>
                                 <td style="text-align:center; font-size: 0.85rem; color: #666;">
                                     @if (u.LastLogin.HasValue)
@@ -88,12 +126,27 @@
                                     }
                                 </td>
                                 <td style="text-align:center">
-                                    <button class="uta-icon-btn-outline uta-icon-btn-outline--maroon me-1" @onclick="() => OpenEditModal(u)" title="Editar">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </button>
-                                    <button class="uta-icon-btn-outline uta-icon-btn-outline--red" @onclick="() => ConfirmDelete(u.Id)" title="Eliminar">
-                                        <i class="bi bi-trash3-fill"></i>
-                                    </button>
+                                    @if (!u.IsActive)
+                                    {
+                                        <button class="uta-icon-btn-outline uta-icon-btn-outline--green me-1" @onclick="() => ConfirmActivate(u)" title="Activar">
+                                            <i class="bi bi-person-up"></i>
+                                        </button>
+                                    }
+                                    else if (u.IsLockedOut)
+                                    {
+                                        <button class="uta-icon-btn-outline uta-icon-btn-outline--green me-1" @onclick="() => ConfirmUnlock(u)" title="Desbloquear">
+                                            <i class="bi bi-unlock-fill"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button class="uta-icon-btn-outline uta-icon-btn-outline--maroon me-1" @onclick="() => OpenEditModal(u)" title="Editar">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                        <button class="uta-icon-btn-outline uta-icon-btn-outline--red" @onclick="() => ConfirmDelete(u.Id)" title="Eliminar">
+                                            <i class="bi bi-trash3-fill"></i>
+                                        </button>
+                                    }
                                 </td>
                             </tr>
                         }
@@ -304,6 +357,8 @@
     private RegisterUserRequest _editRequest = new();
     private UpdateUserRequest _updateRequest = new();
     private Dictionary<string, string> _errors = new();
+    private string _activeFilter = "activos"; // activos, bloqueados
+    private int _blockedCount = 0;
 
     private string _alertMessage = "";
     private bool _isError = false;
@@ -317,6 +372,13 @@
         _alertMessage = string.Empty;
         StateHasChanged();
     }
+
+    private IEnumerable<UserResponseDto> FilteredUsers => _activeFilter switch
+    {
+        "bloqueados" => _users.Where(u => u.IsLockedOut && u.IsActive),
+        "inactivos" => _users.Where(u => !u.IsActive),
+        _ => _users.Where(u => !u.IsLockedOut && u.IsActive)
+    };
 
     // Password Flags
     private bool HasNoSpaces => !_editRequest.Password.Contains(" ");
@@ -335,6 +397,12 @@
     private async Task LoadUsers()
     {
         _users = await UserApiService.GetAllAsync();
+        _blockedCount = _users.Count(u => u.IsLockedOut && u.IsActive);
+    }
+
+    private void ChangeFilter(string filter)
+    {
+        _activeFilter = filter;
     }
 
     private void OnUserNameInput(ChangeEventArgs e)
@@ -511,7 +579,6 @@
 
     private async Task SaveUser()
     {
-        // Validaciones finales
         ValidateField("UserName", _editRequest.UserName, "Usuario");
         ValidateField("Email", _editRequest.Email, "Correo");
         ValidateField("FirstName", _editRequest.FirstName, "Nombre");
@@ -522,20 +589,20 @@
         {
             if (!IsPasswordSecure)
             {
-                await JS.InvokeVoidAsync("Swal.fire", "Contraseña Insegura", "La contraseña no cumple con los requisitos mínimos de seguridad.", "warning");
+                await ShowToast("La contraseña no cumple con los requisitos mínimos de seguridad.", true);
                 return;
             }
 
             if (_editRequest.Password != _editRequest.ConfirmPassword)
             {
-                await JS.InvokeVoidAsync("Swal.fire", "Error", "Las contraseñas no coinciden", "error");
+                await ShowToast("Las contraseñas no coinciden.", true);
                 return;
             }
         }
 
         if (_errors.Any())
         {
-            await JS.InvokeVoidAsync("Swal.fire", "Formulario Inválido", "Por favor corrija los errores.", "warning");
+            await ShowToast("Por favor corrija los errores del formulario.", true);
             return;
         }
 
@@ -562,9 +629,9 @@
         }
         else
         {
-            var errorJson = await response.Content.ReadAsStringAsync();
-            try
+            if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
             {
+                var errorJson = await response.Content.ReadAsStringAsync();
                 var errorObj = System.Text.Json.JsonDocument.Parse(errorJson);
                 var isInactive = errorObj.RootElement.TryGetProperty("isInactive", out var inactiveProp) && inactiveProp.GetBoolean();
 
@@ -605,13 +672,79 @@
                     }
                     return;
                 }
-
-                var msg = errorObj.RootElement.TryGetProperty("message", out var msgProp) ? msgProp.GetString() : "Error desconocido";
-                await JS.InvokeVoidAsync("Swal.fire", "Atención", msg, "warning");
             }
-            catch
+
+            var errorContent = await response.Content.ReadAsStringAsync();
+            await ShowToast(errorContent, true);
+        }
+    }
+
+    private async Task ConfirmUnlock(UserResponseDto user)
+    {
+        var result = await JS.InvokeAsync<object>("Swal.fire", new
+        {
+            title = "¿Desbloquear usuario?",
+            text = $"Se habilitará el acceso para {user.FirstName} {user.LastName}.",
+            icon = "question",
+            showCancelButton = true,
+            confirmButtonColor = "#28a745",
+            cancelButtonColor = "#6c757d",
+            confirmButtonText = "Sí, desbloquear",
+            cancelButtonText = "Cancelar"
+        });
+
+        var json = System.Text.Json.JsonSerializer.Serialize(result);
+        if (json.Contains("\"isConfirmed\":true"))
+        {
+            var response = await UserApiService.UnlockAsync(user.Id);
+            if (response.IsSuccessStatusCode)
             {
-                await JS.InvokeVoidAsync("Swal.fire", "Error", "Ocurrió un error al procesar la solicitud: " + errorJson, "error");
+                await LoadUsers();
+                await ShowToast("El usuario ha sido desbloqueado correctamente.");
+            }
+        }
+    }
+
+    private async Task ConfirmActivate(UserResponseDto user)
+    {
+        var result = await JS.InvokeAsync<object>("Swal.fire", new
+        {
+            title = "¿Activar usuario?",
+            text = $"El usuario {user.FirstName} {user.LastName} volverá a estar activo.",
+            icon = "question",
+            showCancelButton = true,
+            confirmButtonColor = "#28a745",
+            cancelButtonColor = "#6c757d",
+            confirmButtonText = "Sí, activar",
+            cancelButtonText = "Cancelar"
+        });
+
+        var json = System.Text.Json.JsonSerializer.Serialize(result);
+        if (json.Contains("\"isConfirmed\":true"))
+        {
+            var updateRequest = new UpdateUserRequest
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                IDCard = user.IDCard,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Address = user.Address,
+                Role = user.Role,
+                IsActive = true
+            };
+            var response = await UserApiService.ReactivateAsync(user.Id, updateRequest);
+            if (response.IsSuccessStatusCode)
+            {
+                await LoadUsers();
+                await ShowToast("El usuario ha sido reactivado correctamente.");
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                await ShowToast(errorContent, true);
             }
         }
     }

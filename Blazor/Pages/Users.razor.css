@@ -59,6 +59,38 @@
     font-size: 0.95rem;
 }
 
+/* --- TABS IHC --- */
+.uta-tabs {
+    display: flex;
+    gap: 1rem;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 0;
+}
+
+.uta-tab-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.uta-tab-btn:hover {
+    color: var(--wine);
+    background-color: var(--wine-pale);
+}
+
+.uta-tab-btn--active {
+    color: var(--wine);
+    border-bottom-color: var(--wine);
+}
+
 /* --- CARDS --- */
 .uta-card {
     background: #ffffff;
@@ -235,6 +267,12 @@
     border-color: #fbcfe8;
     background-color: #fdf2f8;
     color: var(--wine);
+}
+
+.uta-icon-btn-outline--green:hover:not(:disabled) {
+    border-color: #a7f3d0;
+    background-color: #ecfdf5;
+    color: #059669;
 }
 
 /* --- MODAL PREMIUM --- */

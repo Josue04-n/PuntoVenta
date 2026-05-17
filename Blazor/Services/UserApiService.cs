@@ -39,6 +39,11 @@ public class UserApiService
         return await _http.PutAsJsonAsync($"api/Users/reactivate/{id}", request);
     }
 
+    public async Task<HttpResponseMessage> UnlockAsync(int id)
+    {
+        return await _http.PutAsJsonAsync($"api/Users/unlock/{id}", new { });
+    }
+
     public async Task<HttpResponseMessage> DeleteAsync(int id)
     {
         return await _http.DeleteAsync($"api/Users/{id}");

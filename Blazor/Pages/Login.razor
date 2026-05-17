@@ -86,6 +86,8 @@
     private string? _errorMessage;
     private bool _showPassword = false;
     private bool _shakeForm = false;
+    private int _failedAttempts = 0;
+    private DateTime? _lockoutEnd;
 
     private void TogglePasswordVisibility()
     {
@@ -94,6 +96,21 @@
 
     private async Task HandleLogin()
     {
+        if (_lockoutEnd.HasValue)
+        {
+            if (DateTime.Now < _lockoutEnd.Value)
+            {
+                _errorMessage = $"Cuenta bloqueada por demasiados intentos. Intente nuevamente después de las {_lockoutEnd.Value:HH:mm:ss}.";
+                await TriggerShakeAnimation();
+                return;
+            }
+            else
+            {
+                _lockoutEnd = null;
+                _failedAttempts = 0;
+            }
+        }
+
         if (string.IsNullOrWhiteSpace(_loginRequest.UserName) || string.IsNullOrWhiteSpace(_loginRequest.Password))
         {
             await TriggerShakeAnimation();
@@ -107,12 +124,23 @@
 
         if (result.IsSuccess && !string.IsNullOrEmpty(result.Token))
         {
+            _failedAttempts = 0;
+            _lockoutEnd = null;
             await AuthStateProvider.NotifyUserAuthentication(result.Token);
             Navigation.NavigateTo("/"); 
         }
         else
         {
-            _errorMessage = result.Message;
+            _failedAttempts++;
+            if (_failedAttempts >= 3)
+            {
+                _lockoutEnd = DateTime.Now.AddMinutes(1);
+                _errorMessage = $"Cuenta bloqueada por demasiados intentos. Intente nuevamente después de las {_lockoutEnd.Value:HH:mm:ss}.";
+            }
+            else
+            {
+                _errorMessage = result.Message;
+            }
             await TriggerShakeAnimation();
         }
 

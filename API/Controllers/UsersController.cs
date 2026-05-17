@@ -42,7 +42,6 @@ public class UsersController : ControllerBase
         
         if (result.IsSuccess) return Ok(new { message = "Usuario creado exitosamente" });
 
-        // Capturar caso de usuario inactivo
         var firstError = result.Errors.FirstOrDefault();
         if (firstError != null && firstError.StartsWith("INACTIVE_USER_EXISTS"))
         {
@@ -71,6 +70,15 @@ public class UsersController : ControllerBase
         var result = await _userService.ReactivateUserAsync(id, request);
         if (result.IsSuccess) return Ok(new { message = "Usuario reactivado exitosamente" });
         return BadRequest(new { message = string.Join("\n", result.Errors) });
+    }
+
+    [HttpPut("unlock/{id:int}")]
+    [Authorize(Roles = "Administrador")]
+    public async Task<IActionResult> Unlock(int id)
+    {
+        var result = await _userService.UnlockUserAsync(id);
+        if (result) return Ok(new { message = "Usuario desbloqueado exitosamente" });
+        return BadRequest(new { message = "No se pudo desbloquear al usuario." });
     }
 
     [HttpDelete("{id:int}")]

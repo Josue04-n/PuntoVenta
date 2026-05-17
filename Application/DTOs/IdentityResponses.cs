@@ -24,4 +24,6 @@ public class UserResponseDto
     public bool IsActive { get; set; }
     public DateTime? LastLogin { get; set; }
     public bool MustChangePassword { get; set; }
+    public bool IsLockedOut { get; set; }
+    public DateTimeOffset? LockoutEnd { get; set; }
 }

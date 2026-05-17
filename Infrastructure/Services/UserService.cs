@@ -19,14 +19,15 @@ public class UserService : IUserService
 
     public async Task<IEnumerable<UserResponseDto>> GetAllUsersAsync()
     {
-        // Solo usuarios activos (respetando el Global Query Filter)
-        var users = await _userManager.Users.ToListAsync();
+        // NOTA: Ignoramos filtros para que el admin pueda ver bloqueados e inactivos si lo requiere
+        // Pero el controlador o la vista decidirán qué mostrar
+        var users = await _userManager.Users.IgnoreQueryFilters().ToListAsync();
         var userDtos = new List<UserResponseDto>();
 
         foreach (var user in users)
         {
             var roles = await _userManager.GetRolesAsync(user);
-            userDtos.Add(MapToDto(user, roles.FirstOrDefault() ?? "Sin Rol"));
+            userDtos.Add(await MapToDtoAsync(user, roles.FirstOrDefault() ?? "Sin Rol"));
         }
 
         return userDtos;
@@ -34,23 +35,23 @@ public class UserService : IUserService
 
     public async Task<UserResponseDto?> GetUserByIdAsync(int id)
     {
-        var user = await _userManager.FindByIdAsync(id.ToString());
+        var user = await _userManager.Users.IgnoreQueryFilters().FirstOrDefaultAsync(u => u.Id == id);
         if (user == null) return null;
 
         var roles = await _userManager.GetRolesAsync(user);
-        return MapToDto(user, roles.FirstOrDefault() ?? "Sin Rol");
+        return await MapToDtoAsync(user, roles.FirstOrDefault() ?? "Sin Rol");
     }
 
     public async Task<UserResponseDto?> GetUserByUserNameAsync(string userName)
     {
-        var user = await _userManager.FindByNameAsync(userName);
+        var user = await _userManager.Users.IgnoreQueryFilters().FirstOrDefaultAsync(u => u.UserName == userName);
         if (user == null) return null;
 
         var roles = await _userManager.GetRolesAsync(user);
-        return MapToDto(user, roles.FirstOrDefault() ?? "Sin Rol");
+        return await MapToDtoAsync(user, roles.FirstOrDefault() ?? "Sin Rol");
     }
 
-    private UserResponseDto MapToDto(ApplicationUser user, string role)
+    private async Task<UserResponseDto> MapToDtoAsync(ApplicationUser user, string role)
     {
         return new UserResponseDto
         {
@@ -65,14 +66,15 @@ public class UserService : IUserService
             Role = role,
             IsActive = user.IsActive,
             LastLogin = user.LastLogin,
-            MustChangePassword = user.MustChangePassword
+            MustChangePassword = user.MustChangePassword,
+            IsLockedOut = await _userManager.IsLockedOutAsync(user),
+            LockoutEnd = user.LockoutEnd
         };
     }
 
     public async Task<(bool IsSuccess, string[] Errors)> CreateUserAsync(RegisterUserRequest request)
     {
-        // 1. Verificar si existe un usuario inactivo con ese UserName
-        var existingUser = await _userManager.FindByNameAsync(request.UserName);
+        var existingUser = await _userManager.Users.IgnoreQueryFilters().FirstOrDefaultAsync(u => u.UserName == request.UserName);
         if (existingUser != null && !existingUser.IsActive)
         {
             return (false, new[] { $"INACTIVE_USER_EXISTS|{existingUser.Id}" });
@@ -87,7 +89,7 @@ public class UserService : IUserService
             IDCard = request.IDCard,
             Address = request.Address,
             PhoneNumber = request.PhoneNumber,
-            MustChangePassword = true // Obligatorio cambiar en el primer ingreso
+            MustChangePassword = true 
         };
 
         user.Activate();
@@ -112,7 +114,7 @@ public class UserService : IUserService
 
     public async Task<(bool IsSuccess, string[] Errors)> UpdateUserAsync(UpdateUserRequest request)
     {
-        var user = await _userManager.FindByIdAsync(request.Id.ToString());
+        var user = await _userManager.Users.IgnoreQueryFilters().FirstOrDefaultAsync(u => u.Id == request.Id);
         if (user == null) return (false, new[] { "Usuario no encontrado." });
 
         user.FirstName = request.FirstName;
@@ -149,7 +151,6 @@ public class UserService : IUserService
                 {
                     return (false, passResult.Errors.Select(e => e.Description).ToArray());
                 }
-                // Si el admin le cambia la clave manualmente, se le vuelve a pedir el cambio al entrar
                 user.MustChangePassword = true;
                 await _userManager.UpdateAsync(user);
             }
@@ -167,15 +168,26 @@ public class UserService : IUserService
         return await UpdateUserAsync(request);
     }
 
+    public async Task<bool> UnlockUserAsync(int userId)
+    {
+        var user = await _userManager.Users.IgnoreQueryFilters().FirstOrDefaultAsync(u => u.Id == userId);
+        if (user == null) return false;
+
+        // Resetear contador de fallos y limpiar fecha de bloqueo
+        await _userManager.ResetAccessFailedCountAsync(user);
+        var result = await _userManager.SetLockoutEndDateAsync(user, null);
+        
+        return result.Succeeded;
+    }
+
     public async Task<(bool IsSuccess, string[] Errors)> ChangePasswordAsync(int userId, string currentPassword, string newPassword)
     {
-        var user = await _userManager.FindByIdAsync(userId.ToString());
+        var user = await _userManager.Users.IgnoreQueryFilters().FirstOrDefaultAsync(u => u.Id == userId);
         if (user == null) return (false, new[] { "Usuario no encontrado." });
 
         var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
         if (result.Succeeded)
         {
-            // El usuario ya cambió su clave por sí mismo
             user.MustChangePassword = false;
             await _userManager.UpdateAsync(user);
             return (true, Array.Empty<string>());
@@ -186,7 +198,7 @@ public class UserService : IUserService
 
     public async Task<bool> DeleteUserAsync(int id)
     {
-        var user = await _userManager.FindByIdAsync(id.ToString());
+        var user = await _userManager.Users.IgnoreQueryFilters().FirstOrDefaultAsync(u => u.Id == id);
         if (user == null) return false;
 
         user.Deactivate("System");
