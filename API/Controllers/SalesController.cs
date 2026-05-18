@@ -24,7 +24,10 @@ public class SalesController : ControllerBase
     [HttpGet("search")]
     public async Task<ActionResult<IEnumerable<SaleResponseDto>>> SearchSales([FromQuery] string term, [FromQuery] string searchBy = "number")
     {
-        var sales = await _searchSalesHandler.ExecuteAsync(term, searchBy);
+        // Segregación: El vendedor solo busca sus propias ventas
+        string? sellerNameFilter = User.IsInRole("Administrador") ? null : User.Identity?.Name;
+
+        var sales = await _searchSalesHandler.ExecuteAsync(term, searchBy, sellerNameFilter);
 
         var responseItems = sales.Select(s => new SaleResponseDto
         {
@@ -36,6 +39,7 @@ public class SalesController : ControllerBase
             CustomerPhone = s.Customer?.Phone ?? string.Empty,
             CustomerAddress = s.Customer?.Address ?? string.Empty,
             CustomerEmail = s.Customer?.Email ?? string.Empty,
+            CreatedBy = s.CreatedBy ?? "SYSTEM",
             SubTotal = s.SubTotal,
             VatAmount = s.VatAmount,
             VatPercentage = s.VatPercentage,
@@ -54,9 +58,9 @@ public class SalesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Vendedor")] // Solo los vendedores registran ventas según requerimiento
     public async Task<ActionResult<SaleResponseDto>> RegisterSale([FromBody] CreateSaleRequest request)
     {
-        // Fail Fast: Validation of input
         if (request == null || !request.Details.Any())
             return BadRequest("The sale request is empty or invalid.");
 
@@ -64,18 +68,17 @@ public class SalesController : ControllerBase
         {
             var result = await _performSaleHandler.ExecuteAsync(request);
 
-            // Manual mapping to ensure persisted totals are sent correctly
             var response = new SaleResponseDto
             {
                 Id = result.Id,
                 InvoiceNumber = result.InvoiceNumber,
                 IssueDate = result.IssueDate,
-                // Customer data for invoice (Eager loading assumed in Handler)
                 CustomerName = result.Customer != null ? $"{result.Customer.Name} {result.Customer.LastName}" : "Final Consumer",
                 CustomerIDCard = result.Customer?.IDCard ?? "9999999999",
                 CustomerPhone = result.Customer?.Phone ?? string.Empty,
                 CustomerAddress = result.Customer?.Address ?? string.Empty,
                 CustomerEmail = result.Customer?.Email ?? string.Empty,
+                CreatedBy = result.CreatedBy ?? "SYSTEM",
                 SubTotal = result.SubTotal,
                 VatAmount = result.VatAmount,
                 VatPercentage = result.VatPercentage,
@@ -111,9 +114,16 @@ public class SalesController : ControllerBase
     }
 
     [HttpGet("paged")]
-    public async Task<ActionResult<PagedResponse<SaleResponseDto>>> GetPagedSales([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] string? term = null, [FromQuery] string? searchBy = null)
+    public async Task<ActionResult<PagedResponse<SaleResponseDto>>> GetPagedSales(
+        [FromQuery] int pageNumber = 1, 
+        [FromQuery] int pageSize = 10, 
+        [FromQuery] string? term = null, 
+        [FromQuery] string? searchBy = null)
     {
-        var (sales, totalCount) = await _searchSalesHandler.ExecutePagedAsync(pageNumber, pageSize, term, searchBy);
+        // Segregación: El vendedor solo ve sus propias ventas
+        string? sellerNameFilter = User.IsInRole("Administrador") ? null : User.Identity?.Name;
+
+        var (sales, totalCount) = await _searchSalesHandler.ExecutePagedAsync(pageNumber, pageSize, term, searchBy, sellerNameFilter);
 
         var responseItems = sales.Select(s => new SaleResponseDto
         {
@@ -125,6 +135,7 @@ public class SalesController : ControllerBase
             CustomerPhone = s.Customer?.Phone ?? string.Empty,
             CustomerAddress = s.Customer?.Address ?? string.Empty,
             CustomerEmail = s.Customer?.Email ?? string.Empty,
+            CreatedBy = s.CreatedBy ?? "SYSTEM",
             SubTotal = s.SubTotal,
             VatAmount = s.VatAmount,
             VatPercentage = s.VatPercentage,

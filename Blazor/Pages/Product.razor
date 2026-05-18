@@ -37,9 +37,11 @@
             <p class="uta-page-subtitle">Administre el catálogo de productos registrados en el sistema</p>
         </div>
         <div class="uta-page-header__right">
-            <button class="uta-btn uta-btn--primary" @onclick="OpenCreateModal">
-                <i class="bi bi-plus-lg"></i> &nbsp;Nuevo Producto
-            </button>
+            <AuthorizeView Roles="Administrador">
+                <button class="uta-btn uta-btn--primary" @onclick="OpenCreateModal">
+                    <i class="bi bi-plus-lg"></i> &nbsp;Nuevo Producto
+                </button>
+            </AuthorizeView>
         </div>
     </div>
 
@@ -99,7 +101,9 @@
                             <th style="text-align:right">Precio Unitario</th>
                             <th style="text-align:center">Stock Disponible</th>
                             <th style="text-align:center">Estado</th>
-                            <th style="text-align:center">Acciones</th>
+                            <AuthorizeView Roles="Administrador">
+                                <th style="text-align:center">Acciones</th>
+                            </AuthorizeView>
                         </tr>
                     </thead>
                     <tbody>
@@ -140,23 +144,25 @@
                                         <span class="uta-badge uta-badge--red">Inactivo</span>
                                     }
                                 </td>
-                                <td style="text-align:center">
-                                    @if (p.IsActive)
-                                    {
-                                        <button class="uta-icon-btn-outline uta-icon-btn-outline--maroon me-1" @onclick="() => OpenEditModal(p)" title="Editar">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </button>
-                                        <button class="uta-icon-btn-outline uta-icon-btn-outline--red" @onclick="() => ConfirmDelete(p.Id)" title="Eliminar">
-                                            <i class="bi bi-trash3-fill"></i>
-                                        </button>
-                                    }
-                                    else
-                                    {
-                                        <button class="uta-icon-btn-outline uta-icon-btn-outline--maroon me-1" @onclick="() => PromptReactivate(p)" title="Reactivar">
-                                            <i class="bi bi-arrow-counterclockwise"></i>
-                                        </button>
-                                    }
-                                </td>
+                                <AuthorizeView Roles="Administrador">
+                                    <td style="text-align:center">
+                                        @if (p.IsActive)
+                                        {
+                                            <button class="uta-icon-btn-outline uta-icon-btn-outline--maroon me-1" @onclick="() => OpenEditModal(p)" title="Editar">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </button>
+                                            <button class="uta-icon-btn-outline uta-icon-btn-outline--red" @onclick="() => ConfirmDelete(p.Id)" title="Eliminar">
+                                                <i class="bi bi-trash3-fill"></i>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button class="uta-icon-btn-outline uta-icon-btn-outline--maroon me-1" @onclick="() => PromptReactivate(p)" title="Reactivar">
+                                                <i class="bi bi-arrow-counterclockwise"></i>
+                                            </button>
+                                        }
+                                    </td>
+                                </AuthorizeView>
                             </tr>
                         }
                     </tbody>
@@ -441,13 +447,8 @@
         if (newPage >= 1 && newPage <= TotalPages)
         {
             CurrentPage = newPage;
-            await LoadCustomersAsync(); // Wait, this should be LoadProductsAsync
+            await LoadProductsAsync();
         }
-    }
-
-    private async Task LoadCustomersAsync() // This is actually LoadProductsAsync typo in previous version?
-    {
-        await LoadProductsAsync();
     }
 
     private void OpenCreateModal()

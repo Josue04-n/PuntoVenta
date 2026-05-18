@@ -3,6 +3,7 @@ using Application.DTOs.Common;
 using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers;
 
@@ -113,6 +114,18 @@ public class UsersController : ControllerBase
         var user = await _userService.GetUserByUserNameAsync(userName);
         if (user == null) return NotFound();
         return Ok(user);
+    }
+
+    [HttpGet("profile-stats")]
+    public async Task<ActionResult<ProfileStatsDto>> GetProfileStats()
+    {
+        var userName = User.Identity?.Name;
+        var role = User.FindFirstValue(System.Security.Claims.ClaimTypes.Role) ?? "Vendedor";
+        
+        if (string.IsNullOrEmpty(userName)) return Unauthorized();
+
+        var stats = await _userService.GetProfileStatsAsync(userName, role);
+        return Ok(stats);
     }
 
     [HttpPut("profile")]

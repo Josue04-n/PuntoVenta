@@ -71,6 +71,11 @@ public class UserApiService
         return await _http.GetFromJsonAsync<UserResponseDto>("api/Users/profile");
     }
 
+    public async Task<ProfileStatsDto?> GetProfileStatsAsync()
+    {
+        return await _http.GetFromJsonAsync<ProfileStatsDto>("api/Users/profile-stats");
+    }
+
     public async Task<HttpResponseMessage> UpdateProfileAsync(UpdateUserRequest request)
     {
         return await _http.PutAsJsonAsync("api/Users/profile", request);

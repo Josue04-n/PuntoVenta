@@ -90,69 +90,94 @@
             </div>
         </div>
 
-        <!-- Tarjeta de Indicadores de Ventas -->
+        <!-- Tarjeta de Indicadores de Rendimiento Dinámica -->
         <div class="uta-card profile-card">
             <div class="uta-card__header uta-card__header--solid">
-                Indicadores de Rendimiento
+                @(_stats.IsAdmin ? "Indicadores del Negocio" : "Mi Rendimiento del Mes")
             </div>
             <div class="uta-card__body bg-light" style="padding: 1.5rem;">
                 <div class="indicators-grid">
-                    <!-- Fila Superior -->
-                    <div class="indicator-card indicator-card--large">
-                        <div class="indicator-value text-primary">1,245</div>
-                        <div class="indicator-label">Ventas Exitosas Totales</div>
-                        <div class="indicator-meta">
-                            <i class="bi bi-calendar-check text-success"></i> Promedio: 40/mes
-                            <div class="progress mt-2" style="height: 6px;">
-                                <div class="progress-bar bg-primary" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                    @if (_stats.IsAdmin)
+                    {
+                        <!-- VISTA ADMINISTRADOR -->
+                        <div class="indicator-card indicator-card--large">
+                            <div class="indicator-value text-primary">$@_stats.SystemMonthlyRevenue.ToString("N2")</div>
+                            <div class="indicator-label">Ingresos Globales (Mes)</div>
+                            <div class="indicator-meta">
+                                <i class="bi bi-graph-up-arrow text-success"></i> Sumatoria total del sistema
+                                <div class="progress mt-2" style="height: 6px;">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 100%"></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="indicator-card">
-                        <div class="indicator-value text-success">$4.5k</div>
-                        <div class="indicator-label">Ingresos del Mes</div>
-                        <div class="indicator-meta">
-                            Meta: $5,000
-                            <div class="progress mt-2" style="height: 6px;">
-                                <div class="progress-bar bg-success" role="progressbar" style="width: 90%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="indicator-card">
+                            <div class="indicator-value text-danger">@_stats.SystemLowStockCount</div>
+                            <div class="indicator-label">Stock Crítico</div>
+                            <div class="indicator-meta">
+                                Menos de 5 unidades
+                                <div class="progress mt-2" style="height: 6px;">
+                                    <div class="progress-bar bg-danger" role="progressbar" style="width: 100%"></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <!-- Fila Inferior -->
-                    <div class="indicator-card">
-                        <div class="indicator-value text-dark">12</div>
-                        <div class="indicator-label">Clientes Nuevos</div>
-                        <div class="indicator-meta">
-                            Este mes
-                            <div class="progress mt-2" style="height: 4px;">
-                                <div class="progress-bar bg-info" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="indicator-card">
+                            <div class="indicator-value text-dark">@_stats.SystemNewCustomersCount</div>
+                            <div class="indicator-label">Nuevos Clientes</div>
+                            <div class="indicator-meta">Registrados este mes</div>
+                        </div>
+                        <div class="indicator-card">
+                            <div class="indicator-value text-dark">@_stats.SystemActiveUsersCount</div>
+                            <div class="indicator-label">Usuarios Activos</div>
+                            <div class="indicator-meta">Personal en el sistema</div>
+                        </div>
+                        <div class="indicator-card">
+                            <div class="indicator-value text-dark">@DateTime.Now.Day</div>
+                            <div class="indicator-label">Día del Mes</div>
+                            <div class="indicator-meta">Ciclo actual</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- VISTA VENDEDOR -->
+                        <div class="indicator-card indicator-card--large">
+                            <div class="indicator-value text-primary">@_stats.MyMonthlySalesCount</div>
+                            <div class="indicator-label">Mis Ventas del Mes</div>
+                            <div class="indicator-meta">
+                                <i class="bi bi-cart-check-fill text-success"></i> Facturas emitidas por ti
+                                <div class="progress mt-2" style="height: 6px;">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 100%"></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="indicator-card">
-                        <div class="indicator-value text-dark">98%</div>
-                        <div class="indicator-label">Efectividad</div>
-                        <div class="indicator-meta">
-                            Meta: 95%
-                            <div class="progress mt-2" style="height: 4px;">
-                                <div class="progress-bar bg-warning" role="progressbar" style="width: 98%" aria-valuenow="98" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="indicator-card">
+                            <div class="indicator-value text-success">$@_stats.MyDailySalesAmount.ToString("N2")</div>
+                            <div class="indicator-label">Mis Ventas Hoy</div>
+                            <div class="indicator-meta">
+                                Recaudación del día
+                                <div class="progress mt-2" style="height: 6px;">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%"></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="indicator-card">
-                        <div class="indicator-value text-dark">4.8</div>
-                        <div class="indicator-label">Calificación</div>
-                        <div class="indicator-meta">
-                            De 5.0
-                            <div class="progress mt-2" style="height: 4px;">
-                                <div class="progress-bar bg-secondary" role="progressbar" style="width: 96%" aria-valuenow="96" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
+                        <div class="indicator-card">
+                            <div class="indicator-value text-dark">$@_stats.MyMonthlySalesAmount.ToString("N0")</div>
+                            <div class="indicator-label">Total Mes</div>
+                            <div class="indicator-meta">Monto acumulado</div>
                         </div>
-                    </div>
+                        <div class="indicator-card">
+                            <div class="indicator-value text-dark">$@_stats.MyAverageTicket.ToString("N2")</div>
+                            <div class="indicator-label">Ticket Promedio</div>
+                            <div class="indicator-meta">Valor medio factura</div>
+                        </div>
+                        <div class="indicator-card">
+                            <div class="indicator-value text-dark">@((_stats.MyMonthlySalesCount > 50 ? "A" : "B"))</div>
+                            <div class="indicator-label">Nivel</div>
+                            <div class="indicator-meta">Basado en volumen</div>
+                        </div>
+                    }
                 </div>
                 <div class="mt-4">
-                    <button class="uta-btn uta-btn--primary w-100">
+                    <button class="uta-btn uta-btn--primary w-100" @onclick="RefreshStats">
                         <i class="bi bi-arrow-clockwise me-2"></i> Actualizar Indicadores
                     </button>
                 </div>
@@ -346,6 +371,7 @@
 @code {
     private UpdateUserRequest _profileRequest = new();
     private ChangePasswordRequest _passRequest = new();
+    private ProfileStatsDto _stats = new();
     private Dictionary<string, string> _errors = new();
 
     private bool _showEditProfileModal = false;
@@ -375,6 +401,12 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadProfileData();
+        await RefreshStats();
+    }
+
+    private async Task LoadProfileData()
+    {
         var user = await UserApiService.GetProfileAsync();
         if (user != null)
         {
@@ -392,6 +424,16 @@
                 IsActive = user.IsActive
             };
         }
+    }
+
+    private async Task RefreshStats()
+    {
+        var stats = await UserApiService.GetProfileStatsAsync();
+        if (stats != null)
+        {
+            _stats = stats;
+        }
+        StateHasChanged();
     }
 
     private void OnFirstNameInput(ChangeEventArgs e)
@@ -514,6 +556,7 @@
         {
             _showEditProfileModal = false;
             await ShowToast("Perfil actualizado correctamente.");
+            await LoadProfileData();
         }
         else
         {

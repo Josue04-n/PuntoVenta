@@ -94,6 +94,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Administrador")] // Solo el administrador gestiona catálogo
     public async Task<ActionResult<ProductResponseDto>> Create(CreateProductRequest request)
     {
         try
@@ -115,6 +116,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
+    [Authorize(Roles = "Administrador")] // Solo el administrador gestiona catálogo
     public async Task<IActionResult> Update(int id, UpdateProductRequest request)
     {
         if (id != request.Id) return BadRequest(new { message = "ID mismatch" });
@@ -143,6 +145,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Administrador")] // Solo el administrador gestiona catálogo
     public async Task<IActionResult> Delete(int id)
     {
         await _productHandlers.DeleteProductAsync(id);

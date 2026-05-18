@@ -2,6 +2,7 @@ using Domain.Common;
 using Domain.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,16 +10,22 @@ namespace Infrastructure.Data;
 
 public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, int>
 {
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
     public DbSet<Product> Products => Set<Product>();
     public DbSet<Customer> Customers => Set<Customer>();
     public DbSet<Sale> Sales => Set<Sale>();
     public DbSet<SaleDetail> SaleDetails => Set<SaleDetail>();
 
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+    public AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options) 
+    {
+        _httpContextAccessor = httpContextAccessor;
+    }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        var currentUser = "System"; // TODO: Implement real user tracking later
+        // Capturar el nombre del usuario real logueado desde el contexto HTTP
+        var currentUser = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "System";
 
         foreach (var entry in ChangeTracker.Entries<IAuditable>())
         {

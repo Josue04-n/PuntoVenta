@@ -1,4 +1,4 @@
-﻿using Application.Interfaces.Repositories;
+using Application.Interfaces.Repositories;
 using Domain.Entities;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -29,22 +29,24 @@ public class SaleRepository : ISaleRepository
     {
         await _context.Sales.AddAsync(sale);
         await _context.SaveChangesAsync();
-
     }
-    // Implementación de búsqueda por número de factura o fecha
-    public async Task<IEnumerable<Sale>> SearchAsync(string term, string searchBy)
-    {
-        if (string.IsNullOrWhiteSpace(term)) return Enumerable.Empty<Sale>();
 
+    public async Task<IEnumerable<Sale>> SearchAsync(string term, string searchBy, string? sellerName = null)
+    {
         term = term.Trim().ToLower();
         searchBy = searchBy.Trim().ToLower();   
 
-        //ñvar query = _context.Sales
         IQueryable<Sale> query = _context.Sales
             .Include(s => s.Customer)
             .Include(s => s.Details)
                 .ThenInclude(d => d.Product)
             .AsNoTracking();
+
+        // Aplicar filtro de vendedor si se proporciona
+        if (!string.IsNullOrEmpty(sellerName))
+        {
+            query = query.Where(s => s.CreatedBy == sellerName);
+        }
 
         if (searchBy == "id" && int.TryParse(term, out int searchId))
         {
@@ -71,13 +73,8 @@ public class SaleRepository : ISaleRepository
         }
         if (searchBy == "customer")
         {
-            var customerIds = await _context.Customers
-                .Where(c => c.Name.ToLower().Contains(term) || c.LastName.ToLower().Contains(term))
-                .Select(c => c.Id)
-                .ToListAsync();
-
             return await query
-                .Where(s => customerIds.Contains(s.CustomerId))
+                .Where(s => s.Customer != null && (s.Customer.Name.ToLower().Contains(term) || s.Customer.LastName.ToLower().Contains(term)))
                 .OrderByDescending(s => s.IssueDate)
                 .Take(30)   
                 .ToListAsync();
@@ -85,13 +82,24 @@ public class SaleRepository : ISaleRepository
         return Enumerable.Empty<Sale>();
     }
 
-    public async Task<(IEnumerable<Sale> Items, int TotalCount)> GetPagedAsync(int page, int pageSize, string? term = null, string? searchBy = null)
+    public async Task<(IEnumerable<Sale> Items, int TotalCount)> GetPagedAsync(
+        int page, 
+        int pageSize, 
+        string? term = null, 
+        string? searchBy = null, 
+        string? sellerName = null)
     {
         IQueryable<Sale> query = _context.Sales
             .Include(s => s.Customer)
             .Include(s => s.Details)
                 .ThenInclude(d => d.Product)
             .AsNoTracking();
+
+        // Aplicar filtro de vendedor si se proporciona
+        if (!string.IsNullOrEmpty(sellerName))
+        {
+            query = query.Where(s => s.CreatedBy == sellerName);
+        }
 
         if (!string.IsNullOrWhiteSpace(term))
         {

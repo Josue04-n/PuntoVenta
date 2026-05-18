@@ -1,9 +1,12 @@
 @inherits LayoutComponentBase
 @using System.Timers
 @using Microsoft.AspNetCore.Components.Authorization
+@using Application.DTOs
+@using Blazor.Services
 @implements IDisposable
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
+@inject NotificationApiService NotificationApiService
 
 <div class="uta-layout">
     <aside class="uta-sidebar">
@@ -29,13 +32,14 @@
                     <Authorized>
                         @{
                             var mustChange = context.User.HasClaim(c => c.Type == "MustChangePassword" && c.Value.Equals("true", StringComparison.OrdinalIgnoreCase));
+                            var totalNotifs = _notifications.Count + (mustChange ? 1 : 0);
                         }
                         <div class="uta-notification-wrapper">
                             <button class="uta-icon-btn uta-notification-btn" @onclick="ToggleNotifications" title="Notificaciones">
                                 <i class="bi bi-bell"></i>
-                                @if (mustChange)
+                                @if (totalNotifs > 0)
                                 {
-                                    <span class="uta-notification-badge">1</span>
+                                    <span class="uta-notification-badge">@totalNotifs</span>
                                 }
                             </button>
 
@@ -43,13 +47,13 @@
                             {
                                 <div class="uta-notification-dropdown">
                                     <div class="uta-notification-header">
-                                        <span>Notificaciones</span>
+                                        <span>Notificaciones (@totalNotifs)</span>
                                         <button class="btn-close-sm" @onclick="ToggleNotifications"><i class="bi bi-x"></i></button>
                                     </div>
                                     <div class="uta-notification-body">
                                         @if (mustChange)
                                         {
-                                            <div class="uta-notification-item uta-notification-item--warning" @onclick="GoToProfile">
+                                            <div class="uta-notification-item uta-notification-item--warning" @onclick='() => NavigateTo("/mi-perfil")'>
                                                 <div class="uta-notification-item__icon">
                                                     <i class="bi bi-shield-lock-fill"></i>
                                                 </div>
@@ -59,7 +63,22 @@
                                                 </div>
                                             </div>
                                         }
-                                        else
+
+                                        @foreach (var n in _notifications)
+                                        {
+                                            <div class="uta-notification-item uta-notification-item--@(n.Type.ToLower())" @onclick='() => NavigateTo(n.TargetUrl)'>
+                                                <div class="uta-notification-item__icon">
+                                                    <i class="bi @n.Icon"></i>
+                                                </div>
+                                                <div class="uta-notification-item__content">
+                                                    <div class="uta-notification-item__title">@(n.Type == "Warning" ? "Alerta de Stock" : n.Type == "Danger" ? "Stock Agotado" : "Aviso de Venta")</div>
+                                                    <div class="uta-notification-item__text">@n.Message</div>
+                                                    <div class="uta-notification-item__time">@FormatRelativeTime(n.CreatedAt)</div>
+                                                </div>
+                                            </div>
+                                        }
+
+                                        @if (totalNotifs == 0)
                                         {
                                             <div class="uta-notification-empty">
                                                 <i class="bi bi-check2-circle"></i>
@@ -108,14 +127,26 @@
 @code {
     private string _currentTime = DateTime.Now.ToString("HH:mm:ss");
     private Timer? _timer;
+    private Timer? _notifTimer;
     private bool _showNotifications = false;
+    private List<NotificationDto> _notifications = new();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         _timer = new Timer(1000);
         _timer.Elapsed += UpdateClock;
         _timer.AutoReset = true;
         _timer.Enabled = true;
+
+        // Timer para refrescar notificaciones cada 30 segundos
+        _notifTimer = new Timer(30000);
+        _notifTimer.Elapsed += async (s, e) => {
+            await RefreshNotifications();
+        };
+        _notifTimer.AutoReset = true;
+        _notifTimer.Enabled = true;
+
+        await RefreshNotifications();
     }
 
     private void UpdateClock(object? sender, ElapsedEventArgs e)
@@ -124,23 +155,47 @@
         InvokeAsync(StateHasChanged);
     }
 
+    private async Task RefreshNotifications()
+    {
+        try 
+        {
+            _notifications = await NotificationApiService.GetNotificationsAsync();
+            await InvokeAsync(StateHasChanged);
+        }
+        catch 
+        {
+            // Silencioso para el polling de fondo
+        }
+    }
+
     private void ToggleNotifications()
     {
         _showNotifications = !_showNotifications;
+        if (_showNotifications)
+        {
+            _ = RefreshNotifications();
+        }
     }
 
-    private void GoToProfile()
+    private void NavigateTo(string? url)
     {
+        if (string.IsNullOrEmpty(url)) return;
         _showNotifications = false;
-        NavigationManager.NavigateTo("/mi-perfil");
+        NavigationManager.NavigateTo(url);
+    }
+
+    private string FormatRelativeTime(DateTime date)
+    {
+        var span = DateTime.UtcNow - date.ToUniversalTime();
+        if (span.TotalMinutes < 1) return "Ahora mismo";
+        if (span.TotalMinutes < 60) return $"Hace {Math.Floor(span.TotalMinutes)} min";
+        if (span.TotalHours < 24) return $"Hace {Math.Floor(span.TotalHours)} horas";
+        return date.ToString("dd/MM HH:mm");
     }
 
     public void Dispose()
     {
-        if (_timer != null)
-        {
-            _timer.Elapsed -= UpdateClock;
-            _timer.Dispose();
-        }
+        _timer?.Dispose();
+        _notifTimer?.Dispose();
     }
 }

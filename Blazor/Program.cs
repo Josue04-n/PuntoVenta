@@ -27,5 +27,6 @@ builder.Services.AddScoped<AuthApiService>();
 builder.Services.AddScoped<UserApiService>();
 builder.Services.AddScoped<PosApiService>();
 builder.Services.AddScoped<CustomerApiService>();
+builder.Services.AddScoped<NotificationApiService>();
 
 await builder.Build().RunAsync();

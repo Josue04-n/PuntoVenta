@@ -45,13 +45,16 @@ public static class DependencyInjection
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<ISaleRepository, SaleRepository>();
 
-        services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<INotificationService, NotificationService>();
 
         services.AddScoped<PerformSaleHandler>();
         services.AddScoped<SearchSalesHandler>();
         services.AddScoped<ProductHandlers>();
         services.AddScoped<CustomerHandlers>();
+
+        services.AddHttpContextAccessor();
 
         return services;
     }

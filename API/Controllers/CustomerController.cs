@@ -75,6 +75,7 @@ public class CustomerController : ControllerBase
     }
 
     [HttpPost]
+    // Tanto Vendedor como Admin pueden crear clientes
     public async Task<ActionResult<CustomerResponseDto>> Create(CreateCustomerRequest request)
     {
         try
@@ -107,6 +108,7 @@ public class CustomerController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
+    [Authorize(Roles = "Administrador")] // Solo el administrador edita clientes existentes
     public async Task<IActionResult> Update(int id, UpdateCustomerRequest request)
     {
         if (id != request.Id) return BadRequest(new { message = "ID mismatch" });
@@ -135,6 +137,7 @@ public class CustomerController : ControllerBase
     }
 
     [HttpPut("reactivate/{id:int}")]
+    [Authorize(Roles = "Administrador")]
     public async Task<IActionResult> Reactivate(int id, UpdateCustomerRequest request)
     {
         if (id != request.Id) return BadRequest(new { message = "ID mismatch" });
@@ -159,6 +162,7 @@ public class CustomerController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Administrador")] // Solo el administrador inactiva clientes
     public async Task<IActionResult> Delete(int id)
     {
         await _customerHandlers.DeleteCustomerAsync(id);

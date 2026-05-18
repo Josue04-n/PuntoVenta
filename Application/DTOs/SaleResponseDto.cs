@@ -10,6 +10,7 @@ public class SaleResponseDto
     public string CustomerPhone { get; set; } = string.Empty;
     public string CustomerAddress { get; set; } = string.Empty;
     public string CustomerEmail { get; set; } = string.Empty;
+    public string CreatedBy { get; set; } = string.Empty;
     public decimal SubTotal { get; set; }
     public decimal VatPercentage { get; set; }
     public decimal VatAmount { get; set; }

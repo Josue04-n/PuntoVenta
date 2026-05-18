@@ -46,13 +46,10 @@ public class UserService : IUserService
     {
         var query = _userManager.Users.IgnoreQueryFilters().AsQueryable();
 
-        var now = DateTimeOffset.UtcNow;
-        // 1. Filtro de Estado
-        if (status == "active") query = query.Where(u => u.IsActive && (u.LockoutEnd == null || u.LockoutEnd <= now));
+        if (status == "active") query = query.Where(u => u.IsActive);
         else if (status == "inactive") query = query.Where(u => !u.IsActive);
-        else if (status == "bloqueados") query = query.Where(u => u.IsActive && u.LockoutEnd > now);
+        else if (status == "bloqueados") query = query.Where(u => u.IsActive && u.LockoutEnd > DateTimeOffset.UtcNow);
 
-        // 2. Filtro de Búsqueda
         if (!string.IsNullOrWhiteSpace(term))
         {
             term = term.Trim().ToLower();
@@ -60,13 +57,12 @@ public class UserService : IUserService
             {
                 query = query.Where(u => u.Id.ToString().StartsWith(term));
             }
-            else if (searchBy == "name") // Apellido
+            else if (searchBy == "name") 
             {
                 query = query.Where(u => u.LastName.ToLower().StartsWith(term));
             }
             else if (searchBy == "role")
             {
-                // Unir con UserRoles y Roles para filtrar por nombre de rol
                 query = from u in query
                         join ur in _context.UserRoles on u.Id equals ur.UserId
                         join r in _context.Roles on ur.RoleId equals r.Id
@@ -108,6 +104,51 @@ public class UserService : IUserService
 
         var roles = await _userManager.GetRolesAsync(user);
         return await MapToDtoAsync(user, roles.FirstOrDefault() ?? "Sin Rol");
+    }
+
+    public async Task<ProfileStatsDto> GetProfileStatsAsync(string userName, string role)
+    {
+        var stats = new ProfileStatsDto { IsAdmin = (role == "Administrador") };
+        var now = DateTime.UtcNow;
+        var firstDayOfMonth = new DateTime(now.Year, now.Month, 1);
+        var today = now.Date;
+
+        if (stats.IsAdmin)
+        {
+            // Estadísticas Globales (Admin)
+            stats.SystemMonthlyRevenue = await _context.Sales
+                .Where(s => s.IssueDate >= firstDayOfMonth)
+                .SumAsync(s => s.Total);
+
+            stats.SystemLowStockCount = await _context.Products
+                .CountAsync(p => p.IsActive && p.Stock <= 5);
+
+            stats.SystemNewCustomersCount = await _context.Customers
+                .CountAsync(c => c.CreatedAt >= firstDayOfMonth);
+
+            stats.SystemActiveUsersCount = await _userManager.Users
+                .CountAsync(u => u.IsActive);
+        }
+        else
+        {
+            // Estadísticas Personales (Vendedor)
+            var myMonthlySales = await _context.Sales
+                .Where(s => s.CreatedBy == userName && s.IssueDate >= firstDayOfMonth)
+                .ToListAsync();
+
+            stats.MyMonthlySalesCount = myMonthlySales.Count;
+            stats.MyMonthlySalesAmount = myMonthlySales.Sum(s => s.Total);
+            
+            stats.MyDailySalesAmount = await _context.Sales
+                .Where(s => s.CreatedBy == userName && s.IssueDate >= today)
+                .SumAsync(s => s.Total);
+
+            stats.MyAverageTicket = stats.MyMonthlySalesCount > 0 
+                ? stats.MyMonthlySalesAmount / stats.MyMonthlySalesCount 
+                : 0;
+        }
+
+        return stats;
     }
 
     private async Task<UserResponseDto> MapToDtoAsync(ApplicationUser user, string role)
