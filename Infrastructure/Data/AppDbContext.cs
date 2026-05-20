@@ -16,6 +16,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<Customer> Customers => Set<Customer>();
     public DbSet<Sale> Sales => Set<Sale>();
     public DbSet<SaleDetail> SaleDetails => Set<SaleDetail>();
+    public DbSet<InventoryMovement> InventoryMovements => Set<InventoryMovement>();
 
     public AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options) 
     {
@@ -67,6 +68,20 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         modelBuilder.Entity<Customer>().HasQueryFilter(c => c.IsActive);
         modelBuilder.Entity<Sale>().HasQueryFilter(s => s.IsActive);
         modelBuilder.Entity<ApplicationUser>().HasQueryFilter(u => u.IsActive);
+        modelBuilder.Entity<InventoryMovement>().HasQueryFilter(im => im.IsActive);
+
+        // --- CONFIGURACIÓN DE MOVIMIENTOS DE INVENTARIO ---
+        modelBuilder.Entity<InventoryMovement>(entity =>
+        {
+            entity.HasKey(im => im.Id);
+            entity.Property(im => im.UnitCost).HasPrecision(18, 2);
+            entity.Property(im => im.Reference).HasMaxLength(250);
+            
+            entity.HasOne(im => im.Product)
+                  .WithMany()
+                  .HasForeignKey(im => im.ProductId)
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
 
         // --- CONFIGURACIÓN DE PRODUCTOS ---
         modelBuilder.Entity<Product>(entity =>

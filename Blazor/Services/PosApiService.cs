@@ -93,6 +93,20 @@ public class PosApiService
         return await _http.PutAsync($"api/Products/reactivate/{id}", null);
     }
 
+    public async Task<HttpResponseMessage> RestockProductAsync(RestockRequest request)
+    {
+        return await _http.PostAsJsonAsync("api/Inventory/restock", request);
+    }
+
+    public async Task<List<InventoryMovementResponseDto>> GetProductMovementsAsync(int productId)
+    {
+        try
+        {
+            return await _http.GetFromJsonAsync<List<InventoryMovementResponseDto>>($"api/Inventory/movements/{productId}") ?? new();
+        }
+        catch { return new(); }
+    }
+
     public async Task<HttpResponseMessage> DeleteProductAsync(int id)
     {
         return await _http.DeleteAsync($"api/Products/{id}");

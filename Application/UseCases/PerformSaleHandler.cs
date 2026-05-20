@@ -1,6 +1,8 @@
-﻿using Application.DTOs;
+using Application.DTOs;
+using Application.Interfaces;
 using Application.Interfaces.Repositories;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Exceptions;
 
 namespace Application.UseCases;
@@ -10,15 +12,21 @@ public class PerformSaleHandler
     private readonly ISaleRepository _saleRepository;
     private readonly IProductRepository _productRepository;
     private readonly ICustomerRepository _customerRepository;
+    private readonly IInventoryRepository _inventoryRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     public PerformSaleHandler(
         ISaleRepository saleRepository,
         IProductRepository productRepository,
-        ICustomerRepository customerRepository)
+        ICustomerRepository customerRepository,
+        IInventoryRepository inventoryRepository,
+        IUnitOfWork unitOfWork)
     {
         _saleRepository = saleRepository;
         _productRepository = productRepository;
         _customerRepository = customerRepository;
+        _inventoryRepository = inventoryRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<Sale> ExecuteAsync(CreateSaleRequest request)
@@ -57,18 +65,44 @@ public class PerformSaleHandler
         if (deletedProducts.Any()) throw new ProductDeletedException(deletedProducts);
         if (stockErrors.Any()) throw new BulkStockException(stockErrors);
 
-        string invoiceNumber = await _saleRepository.GenerateInvoiceNumberAsync();
-        var sale = new Sale(invoiceNumber, request.CustomerId);
-
-        foreach (var (product, amount) in validatedProducts)
+        await _unitOfWork.BeginTransactionAsync();
+        try
         {
-            sale.AddDetail(product, amount);
-            //product.RemoveStock(amount);
+            string invoiceNumber = await _saleRepository.GenerateInvoiceNumberAsync();
+            var sale = new Sale(invoiceNumber, request.CustomerId);
+
+            foreach (var (product, amount) in validatedProducts)
+            {
+                int previousStock = product.Stock;
+                
+                // 2. Descontar stock (lógica de dominio)
+                sale.AddDetail(product, amount);
+
+                // 3. Registrar movimiento en Kárdex
+                var movement = new InventoryMovement(
+                    product.Id,
+                    MovementType.Sale,
+                    amount,
+                    previousStock,
+                    product.Stock,
+                    $"Factura: {invoiceNumber}"
+                );
+                
+                await _inventoryRepository.AddMovementAsync(movement);
+            }
+
+            // 4. Guardar todo en una sola transacción
+            await _saleRepository.AddAsync(sale);
+            
+            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.CommitTransactionAsync();
+
+            return sale;
         }
-
-        //await _productRepository.UpdateRangeAsync(validatedProducts.Select(p => p.product).ToList());
-        await _saleRepository.AddAsync(sale);
-
-        return sale;
+        catch
+        {
+            await _unitOfWork.RollbackTransactionAsync();
+            throw;
+        }
     }
 }

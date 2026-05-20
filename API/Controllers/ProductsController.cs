@@ -94,7 +94,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Administrador")] // Solo el administrador gestiona catálogo
+    [Authorize(Roles = "Administrador")] 
     public async Task<ActionResult<ProductResponseDto>> Create(CreateProductRequest request)
     {
         try
@@ -113,10 +113,15 @@ public class ProductsController : ControllerBase
         {
             return BadRequest(new { message = ex.Message });
         }
+        catch (InvalidOperationException ex) when (ex.Message.StartsWith("EXISTING_INACTIVE"))
+        {
+            var productId = int.Parse(ex.Message.Split('|')[1]);
+            return Conflict(new { isInactive = true, productId = productId, message = "Ya existe un producto con este nombre pero está inactivo." });
+        }
     }
 
     [HttpPut("{id:int}")]
-    [Authorize(Roles = "Administrador")] // Solo el administrador gestiona catálogo
+    [Authorize(Roles = "Administrador")] 
     public async Task<IActionResult> Update(int id, UpdateProductRequest request)
     {
         if (id != request.Id) return BadRequest(new { message = "ID mismatch" });
@@ -145,7 +150,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
-    [Authorize(Roles = "Administrador")] // Solo el administrador gestiona catálogo
+    [Authorize(Roles = "Administrador")] 
     public async Task<IActionResult> Delete(int id)
     {
         await _productHandlers.DeleteProductAsync(id);

@@ -1,7 +1,11 @@
 @page "/"
 @using System.Globalization
+@using Application.DTOs
+@using Blazor.Services
 @inject NavigationManager NavManager
-@* @attribute [Authorize]*@
+@inject UserApiService UserApiService
+@attribute [Authorize]
+
 <PageTitle>Panel de Control - MI NEGOCIO</PageTitle>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -17,52 +21,101 @@
             </p>
         </div>
         <div class="uta-page-header__right">
-            <button class="uta-btn uta-btn--primary uta-btn--lg" @onclick='() => NavManager.NavigateTo("/ventas")'>
-                <i class="bi bi-cart-plus"></i> &nbsp;Iniciar Nueva Venta
-            </button>
+            <AuthorizeView Roles="Vendedor">
+                <button class="uta-btn uta-btn--primary uta-btn--lg" @onclick='() => NavManager.NavigateTo("/ventas")'>
+                    <i class="bi bi-cart-plus"></i> &nbsp;Iniciar Nueva Venta
+                </button>
+            </AuthorizeView>
         </div>
     </div>
 
     <div class="uta-dashboard-grid">
-        <div class="uta-kpi-card">
-            <div class="uta-kpi-card__icon" style="background-color: #fdf5f7; color: #6B1A33;">
-                <i class="bi bi-cash-stack"></i>
+        @if (_stats.IsAdmin)
+        {
+            <!-- KPIs ADMINISTRADOR -->
+            <div class="uta-kpi-card" @onclick='() => NavManager.NavigateTo("/facturas")' style="cursor:pointer">
+                <div class="uta-kpi-card__icon" style="background-color: #fdf5f7; color: #6B1A33;">
+                    <i class="bi bi-cash-stack"></i>
+                </div>
+                <div class="uta-kpi-card__info">
+                    <span class="uta-kpi-card__label">Recaudación Hoy</span>
+                    <span class="uta-kpi-card__value">$@_stats.SystemDailyRevenue.ToString("N2")</span>
+                </div>
             </div>
-            <div class="uta-kpi-card__info">
-                <span class="uta-kpi-card__label">Ventas del Día</span>
-                <span class="uta-kpi-card__value">$ 450.25</span>
-            </div>
-        </div>
 
-        <div class="uta-kpi-card">
-            <div class="uta-kpi-card__icon" style="background-color: #f0fdf4; color: #16a34a;">
-                <i class="bi bi-receipt"></i>
+            <div class="uta-kpi-card">
+                <div class="uta-kpi-card__icon" style="background-color: #f0fdf4; color: #16a34a;">
+                    <i class="bi bi-receipt"></i>
+                </div>
+                <div class="uta-kpi-card__info">
+                    <span class="uta-kpi-card__label">Facturas Hoy</span>
+                    <span class="uta-kpi-card__value">@_stats.SystemDailySalesCount</span>
+                </div>
             </div>
-            <div class="uta-kpi-card__info">
-                <span class="uta-kpi-card__label">Facturas Emitidas</span>
-                <span class="uta-kpi-card__value">12</span>
-            </div>
-        </div>
 
-        <div class="uta-kpi-card">
-            <div class="uta-kpi-card__icon" style="background-color: #eff6ff; color: #2563eb;">
-                <i class="bi bi-box-seam"></i>
+            <div class="uta-kpi-card" @onclick='() => NavManager.NavigateTo("/productos")' style="cursor:pointer">
+                <div class="uta-kpi-card__icon" style="background-color: #fff1f2; color: #e11d48;">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <div class="uta-kpi-card__info">
+                    <span class="uta-kpi-card__label">Stock Crítico</span>
+                    <span class="uta-kpi-card__value">@_stats.SystemLowStockCount</span>
+                </div>
             </div>
-            <div class="uta-kpi-card__info">
-                <span class="uta-kpi-card__label">Productos en Stock</span>
-                <span class="uta-kpi-card__value">845</span>
-            </div>
-        </div>
 
-        <div class="uta-kpi-card">
-            <div class="uta-kpi-card__icon" style="background-color: #fdf4ff; color: #c026d3;">
-                <i class="bi bi-people-fill"></i>
+            <div class="uta-kpi-card">
+                <div class="uta-kpi-card__icon" style="background-color: #fdf4ff; color: #c026d3;">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <div class="uta-kpi-card__info">
+                    <span class="uta-kpi-card__label">Clientes Activos</span>
+                    <span class="uta-kpi-card__value">@_stats.SystemTotalCustomersCount</span>
+                </div>
             </div>
-            <div class="uta-kpi-card__info">
-                <span class="uta-kpi-card__label">Clientes Registrados</span>
-                <span class="uta-kpi-card__value">156</span>
+        }
+        else
+        {
+            <!-- KPIs VENDEDOR -->
+            <div class="uta-kpi-card">
+                <div class="uta-kpi-card__icon" style="background-color: #fdf5f7; color: #6B1A33;">
+                    <i class="bi bi-cash-coin"></i>
+                </div>
+                <div class="uta-kpi-card__info">
+                    <span class="uta-kpi-card__label">Mis Ventas Hoy</span>
+                    <span class="uta-kpi-card__value">$@_stats.MyDailySalesAmount.ToString("N2")</span>
+                </div>
             </div>
-        </div>
+
+            <div class="uta-kpi-card">
+                <div class="uta-kpi-card__icon" style="background-color: #f0fdf4; color: #16a34a;">
+                    <i class="bi bi-receipt-cutoff"></i>
+                </div>
+                <div class="uta-kpi-card__info">
+                    <span class="uta-kpi-card__label">Mis Facturas Hoy</span>
+                    <span class="uta-kpi-card__value">@_stats.MyDailySalesCount</span>
+                </div>
+            </div>
+
+            <div class="uta-kpi-card">
+                <div class="uta-kpi-card__icon" style="background-color: #eff6ff; color: #2563eb;">
+                    <i class="bi bi-calculator"></i>
+                </div>
+                <div class="uta-kpi-card__info">
+                    <span class="uta-kpi-card__label">Ticket Promedio</span>
+                    <span class="uta-kpi-card__value">$@_stats.MyAverageTicket.ToString("N2")</span>
+                </div>
+            </div>
+
+            <div class="uta-kpi-card">
+                <div class="uta-kpi-card__icon" style="background-color: #fefce8; color: #ca8a04;">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+                <div class="uta-kpi-card__info">
+                    <span class="uta-kpi-card__label">Items Catálogo</span>
+                    <span class="uta-kpi-card__value">@_stats.SystemTotalProductsCount</span>
+                </div>
+            </div>
+        }
     </div>
 
     <div class="uta-card mt-4">
@@ -72,24 +125,58 @@
         </div>
         <div class="uta-card__body">
             <div class="uta-quick-actions">
-                <button class="uta-action-box" @onclick='() => NavManager.NavigateTo("/ventas")'>
-                    <div class="uta-action-box__icon"><i class="bi bi-cart3"></i></div>
-                    <div class="uta-action-box__title">Punto de Venta</div>
-                    <div class="uta-action-box__desc">Facturar productos a clientes</div>
-                </button>
+                <AuthorizeView Roles="Vendedor">
+                    <button class="uta-action-box" @onclick='() => NavManager.NavigateTo("/ventas")'>
+                        <div class="uta-action-box__icon"><i class="bi bi-cart3"></i></div>
+                        <div class="uta-action-box__title">Punto de Venta</div>
+                        <div class="uta-action-box__desc">Facturar productos a clientes</div>
+                    </button>
+                </AuthorizeView>
+
+                <AuthorizeView Roles="Administrador">
+                    <button class="uta-action-box" @onclick='() => NavManager.NavigateTo("/usuarios")'>
+                        <div class="uta-action-box__icon"><i class="bi bi-person-gear"></i></div>
+                        <div class="uta-action-box__title">Gestión de Personal</div>
+                        <div class="uta-action-box__desc">Administrar usuarios y accesos</div>
+                    </button>
+
+                    <button class="uta-action-box" @onclick='() => NavManager.NavigateTo("/productos")'>
+                        <div class="uta-action-box__icon"><i class="bi bi-box-seam"></i></div>
+                        <div class="uta-action-box__title">Inventario</div>
+                        <div class="uta-action-box__desc">Gestionar catálogo de productos</div>
+                    </button>
+
+                    <button class="uta-action-box" @onclick='() => NavManager.NavigateTo("/clientes")'>
+                        <div class="uta-action-box__icon"><i class="bi bi-people"></i></div>
+                        <div class="uta-action-box__title">Clientes</div>
+                        <div class="uta-action-box__desc">Directorio de clientes registrados</div>
+                    </button>
+                </AuthorizeView>
 
                 <button class="uta-action-box" @onclick='() => NavManager.NavigateTo("/facturas")'>
                     <div class="uta-action-box__icon"><i class="bi bi-journal-text"></i></div>
-                    <div class="uta-action-box__title">Historial de Facturas</div>
-                    <div class="uta-action-box__desc">Consultar e imprimir comprobantes</div>
-                </button>
-
-                <button class="uta-action-box uta-action-box--disabled" title="Módulo en construcción">
-                    <div class="uta-action-box__icon"><i class="bi bi-boxes"></i></div>
-                    <div class="uta-action-box__title">Inventario</div>
-                    <div class="uta-action-box__desc">Gestionar catálogo (Próximamente)</div>
+                    <div class="uta-action-box__title">Facturación</div>
+                    <div class="uta-action-box__desc">Consultar historial de ventas</div>
                 </button>
             </div>
         </div>
     </div>
 </div>
+
+@code {
+    private ProfileStatsDto _stats = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDashboardStats();
+    }
+
+    private async Task LoadDashboardStats()
+    {
+        var stats = await UserApiService.GetProfileStatsAsync();
+        if (stats != null)
+        {
+            _stats = stats;
+        }
+    }
+}

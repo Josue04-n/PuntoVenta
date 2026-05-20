@@ -1,4 +1,5 @@
-﻿using Application.Interfaces.Repositories;
+﻿using Application.Interfaces;
+using Application.Interfaces.Repositories;
 using Application.Interfaces.Services;
 using Application.UseCases;
 using Domain.Entities;
@@ -44,6 +45,8 @@ public static class DependencyInjection
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<ISaleRepository, SaleRepository>();
+        services.AddScoped<IInventoryRepository, InventoryRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAuthService, AuthService>();
@@ -53,6 +56,7 @@ public static class DependencyInjection
         services.AddScoped<SearchSalesHandler>();
         services.AddScoped<ProductHandlers>();
         services.AddScoped<CustomerHandlers>();
+        services.AddScoped<InventoryHandlers>();
 
         services.AddHttpContextAccessor();
 

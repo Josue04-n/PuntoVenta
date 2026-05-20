@@ -78,7 +78,7 @@
 .uta-kpi-card[b-6me2utdfn1] {
     background: #fff;
     border-radius: 12px;
-    padding: 1.5rem;
+    padding: 1.25rem 1.5rem;
     display: flex;
     align-items: center;
     gap: 1.2rem;
@@ -93,34 +93,43 @@
     }
 
 .uta-kpi-card__icon[b-6me2utdfn1] {
-    width: 60px;
-    height: 60px;
+    width: 56px;
+    height: 56px;
     border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.8rem;
+    font-size: 1.6rem;
+    flex-shrink: 0;
 }
 
 .uta-kpi-card__info[b-6me2utdfn1] {
     display: flex;
     flex-direction: column;
+    flex: 1;
+    min-width: 0;
 }
 
 .uta-kpi-card__label[b-6me2utdfn1] {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: #6c757d;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.3rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .uta-kpi-card__value[b-6me2utdfn1] {
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     font-weight: 800;
     color: #1a1a1a;
-    line-height: 1;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .uta-card[b-6me2utdfn1] {
@@ -174,9 +183,10 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    width: 100%;
 }
 
-    .uta-action-box:hover:not(.uta-action-box--disabled)[b-6me2utdfn1] {
+    .uta-action-box:hover[b-6me2utdfn1] {
         background: #fff;
         border-color: #6B1A33;
         box-shadow: 0 5px 15px rgba(107, 26, 51, 0.1);
@@ -202,16 +212,7 @@
     line-height: 1.4;
 }
 
-.uta-action-box--disabled[b-6me2utdfn1] {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-    .uta-action-box--disabled .uta-action-box__icon[b-6me2utdfn1] {
-        color: #adb5bd;
-    }
-
-@@media (max-width: 768px) {
+@media (max-width: 768px) {
     .uta-page-header[b-6me2utdfn1] {
         flex-direction: column;
         align-items: flex-start;

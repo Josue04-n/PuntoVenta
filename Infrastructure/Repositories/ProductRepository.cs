@@ -21,6 +21,13 @@ public class ProductRepository : IProductRepository
         return await _context.Products.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.Id == id);
     }
 
+    public async Task<Product?> GetByNameAsync(string name)
+    {
+        return await _context.Products
+            .IgnoreQueryFilters() // Para detectar duplicados incluso en eliminados
+            .FirstOrDefaultAsync(p => p.Name == name.Trim().ToUpper());
+    }
+
     public async Task<IEnumerable<Product>> SearchAsync(string term, string searchBy)
     {
         term = term.Trim().ToLower();

@@ -109,16 +109,28 @@ public class UserService : IUserService
     public async Task<ProfileStatsDto> GetProfileStatsAsync(string userName, string role)
     {
         var stats = new ProfileStatsDto { IsAdmin = (role == "Administrador") };
-        var now = DateTime.UtcNow;
-        var firstDayOfMonth = new DateTime(now.Year, now.Month, 1);
-        var today = now.Date;
+        
+        // Obtenemos las fechas directamente desde .NET para evitar discrepancias de traducción de EF Core
+        var ecuadorTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SA Pacific Standard Time");
+        var nowLocal = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, ecuadorTimeZone);
+        
+        var firstDayOfMonth = new DateTime(nowLocal.Year, nowLocal.Month, 1);
+        var todayStart = nowLocal.Date;
+        var todayEnd = todayStart.AddDays(1).AddTicks(-1);
 
         if (stats.IsAdmin)
         {
-            // Estadísticas Globales (Admin)
-            stats.SystemMonthlyRevenue = await _context.Sales
+            // Traer todas las ventas del mes a memoria para procesamiento seguro (si no son millones, esto es rápido)
+            var monthlySales = await _context.Sales
                 .Where(s => s.IssueDate >= firstDayOfMonth)
-                .SumAsync(s => s.Total);
+                .ToListAsync();
+
+            stats.SystemMonthlyRevenue = monthlySales.Sum(s => s.Total);
+
+            var todaySales = monthlySales.Where(s => s.IssueDate.Date == todayStart).ToList();
+            
+            stats.SystemDailyRevenue = todaySales.Sum(s => s.Total);
+            stats.SystemDailySalesCount = todaySales.Count;
 
             stats.SystemLowStockCount = await _context.Products
                 .CountAsync(p => p.IsActive && p.Stock <= 5);
@@ -128,24 +140,30 @@ public class UserService : IUserService
 
             stats.SystemActiveUsersCount = await _userManager.Users
                 .CountAsync(u => u.IsActive);
+
+            stats.SystemTotalProductsCount = await _context.Products.CountAsync(p => p.IsActive);
+            stats.SystemTotalCustomersCount = await _context.Customers.CountAsync(c => c.IsActive);
         }
         else
         {
-            // Estadísticas Personales (Vendedor)
+            // Usamos EF.Functions.Like para ignorar case sensitivity en SQL Server
             var myMonthlySales = await _context.Sales
-                .Where(s => s.CreatedBy == userName && s.IssueDate >= firstDayOfMonth)
+                .Where(s => EF.Functions.Like(s.CreatedBy, userName) && s.IssueDate >= firstDayOfMonth)
                 .ToListAsync();
 
             stats.MyMonthlySalesCount = myMonthlySales.Count;
             stats.MyMonthlySalesAmount = myMonthlySales.Sum(s => s.Total);
             
-            stats.MyDailySalesAmount = await _context.Sales
-                .Where(s => s.CreatedBy == userName && s.IssueDate >= today)
-                .SumAsync(s => s.Total);
+            var myTodaySales = myMonthlySales.Where(s => s.IssueDate.Date == todayStart).ToList();
+
+            stats.MyDailySalesAmount = myTodaySales.Sum(s => s.Total);
+            stats.MyDailySalesCount = myTodaySales.Count;
 
             stats.MyAverageTicket = stats.MyMonthlySalesCount > 0 
                 ? stats.MyMonthlySalesAmount / stats.MyMonthlySalesCount 
                 : 0;
+
+            stats.SystemTotalProductsCount = await _context.Products.CountAsync(p => p.IsActive);
         }
 
         return stats;

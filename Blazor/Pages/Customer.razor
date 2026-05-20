@@ -6,7 +6,7 @@
 @using Blazor.Services
 @inject CustomerApiService CustomerApiService
 @inject IJSRuntime JS
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Administrador")]
 
 @if (!string.IsNullOrEmpty(_alertMessage))
 {

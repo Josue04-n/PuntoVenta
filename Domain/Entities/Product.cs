@@ -12,47 +12,41 @@ public class Product : AuditableEntity
 
     protected Product() { }
 
-    public Product(string name, Price unitPrice, int stock)
+    public Product(string name, Price unitPrice, int initialStock)
     {
-        Update(name, unitPrice, stock);
+        if (initialStock < 0)
+            throw new ArgumentException("El stock inicial no puede ser negativo.");
+
+        Name = name.Trim().ToUpper();
+        UnitPrice = unitPrice;
+        Stock = initialStock;
     }
 
-    public void Update(string name, Price unitPrice, int stock)
+    public void UpdateInfo(string name, Price unitPrice)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("El nombre del producto es obligatorio.");
         
-        if (stock < 0)
-            throw new ArgumentException("El stock no puede ser negativo.");
-
         Name = name.Trim().ToUpper();
         UnitPrice = unitPrice;
-        Stock = stock;
     }
 
-    public void DecreaseStock (int amount)
+    public void IncreaseStock(int amount)
     {
         if (amount <= 0)
-            throw new ArgumentException("La cantidad a descontar debe ser mayor a cero ");
+            throw new ArgumentException("La cantidad a ingresar debe ser mayor a cero.");
+
+        Stock += amount;
+    }
+
+    public void DecreaseStock(int amount)
+    {
+        if (amount <= 0)
+            throw new ArgumentException("La cantidad a descontar debe ser mayor a cero.");
 
         if (amount > Stock)
             throw new ArgumentException($"Stock insuficiente para el producto '{Name}'. Disponible '{Stock}'. Solicitado '{amount}'.");
 
         Stock -= amount;
-
-
     }
-
-    public void RemoveStock(int amount)
-    {
-        if (amount <= 0)
-            throw new ArgumentException("La cantidad a retirar debe ser mayor a cero."); 
-
-        if (Stock < amount)
-            throw new InvalidOperationException($"Stock insuficiente para {Name}."); 
-
-        // Modificamos el estado internamente (Encapsulación)
-        Stock -= amount;
-    }
-
 }

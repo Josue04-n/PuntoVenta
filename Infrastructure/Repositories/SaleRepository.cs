@@ -2,6 +2,7 @@ using Application.Interfaces.Repositories;
 using Domain.Entities;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Infrastructure.Repositories;
 
@@ -16,13 +17,33 @@ public class SaleRepository : ISaleRepository
     public async Task<string> GenerateInvoiceNumberAsync()
     {
         var connection = _context.Database.GetDbConnection();
-        await connection.OpenAsync();
-        using var command = connection.CreateCommand();
-        command.CommandText = "SELECT NEXT VALUE FOR InvoiceSequence";
+        bool wasClosed = connection.State == System.Data.ConnectionState.Closed;
+        
+        if (wasClosed)
+        {
+            await connection.OpenAsync();
+        }
 
-        var result = await command.ExecuteScalarAsync();
-        int sequential = Convert.ToInt32(result);
-        return $"FAC-{sequential:D7}";
+        try
+        {
+            using var command = connection.CreateCommand();
+            if (_context.Database.CurrentTransaction != null)
+            {
+                command.Transaction = _context.Database.CurrentTransaction.GetDbTransaction();
+            }
+            command.CommandText = "SELECT NEXT VALUE FOR InvoiceSequence";
+
+            var result = await command.ExecuteScalarAsync();
+            int sequential = Convert.ToInt32(result);
+            return $"FAC-{sequential:D7}";
+        }
+        finally
+        {
+            if (wasClosed)
+            {
+                await connection.CloseAsync();
+            }
+        }
     }
 
     public async Task AddAsync(Sale sale)
