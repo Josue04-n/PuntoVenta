@@ -41,4 +41,34 @@ public class AuthApiService
             return new AuthResponseDto { IsSuccess = false, Message = "Error de conexión: " + ex.Message };
         }
     }
+
+    public async Task<AuthResponseDto> MicrosoftLoginAsync(string token)
+    {
+        try
+        {
+            var response = await _http.PostAsJsonAsync("api/Auth/microsoft-login", token);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<AuthResponseDto>() 
+                       ?? new AuthResponseDto { IsSuccess = false, Message = "Respuesta vacía del servidor." };
+            }
+
+            var errorContent = await response.Content.ReadAsStringAsync();
+            try 
+            {
+                var errorObj = System.Text.Json.JsonDocument.Parse(errorContent);
+                var msg = errorObj.RootElement.TryGetProperty("message", out var m) ? m.GetString() : errorContent;
+                return new AuthResponseDto { IsSuccess = false, Message = msg };
+            }
+            catch 
+            {
+                return new AuthResponseDto { IsSuccess = false, Message = "Fallo en la autenticación de Microsoft." };
+            }
+        }
+        catch (Exception ex)
+        {
+            return new AuthResponseDto { IsSuccess = false, Message = "Error de conexión: " + ex.Message };
+        }
+    }
 }

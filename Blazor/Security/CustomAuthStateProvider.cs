@@ -20,22 +20,56 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var token = await _jsRuntime.InvokeAsync<string?>("localStorage.getItem", TokenKey);
-
-        if (string.IsNullOrWhiteSpace(token))
+        try
         {
+            var token = await _jsRuntime.InvokeAsync<string?>("localStorage.getItem", TokenKey);
+
+            if (string.IsNullOrWhiteSpace(token) || token == "undefined" || token == "null")
+            {
+                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+            }
+
+            var claims = ParseClaimsFromJwt(token).ToList();
+
+            // Validar la expiración del token
+            var expClaim = claims.FirstOrDefault(c => c.Type == "exp");
+            if (expClaim != null && long.TryParse(expClaim.Value, out var exp))
+            {
+                var expirationTime = DateTimeOffset.FromUnixTimeSeconds(exp).UtcDateTime;
+                if (expirationTime <= DateTime.UtcNow)
+                {
+                    // El token ha expirado, lo limpiamos de la sesión actual (sin romper el flujo)
+                    await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", TokenKey);
+                    return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+                }
+            }
+            
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt", ClaimTypes.Name, ClaimTypes.Role)));
+        }
+        catch
+        {
+            // Fallback seguro en caso de token corrupto
+            await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", TokenKey);
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
-
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-        return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt", ClaimTypes.Name, ClaimTypes.Role)));
     }
 
-    public async Task NotifyUserAuthentication(string token)
+    public async Task NotifyUserAuthentication(string token, string? forceRole = null)
     {
         await _jsRuntime.InvokeVoidAsync("localStorage.setItem", TokenKey, token);
-        var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt", ClaimTypes.Name, ClaimTypes.Role));
+
+        var claims = ParseClaimsFromJwt(token).ToList();
+
+        if (!string.IsNullOrEmpty(forceRole))
+        {
+            // Remover cualquier rol previo para priorizar el forzado
+            claims.RemoveAll(c => c.Type == ClaimTypes.Role || c.Type == "role");
+            claims.Add(new Claim(ClaimTypes.Role, forceRole));
+        }
+
+        var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt", ClaimTypes.Name, ClaimTypes.Role));
         var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
         NotifyAuthenticationStateChanged(authState);
     }

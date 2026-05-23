@@ -8,8 +8,11 @@ D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\API.pdb
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Azure.Core.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Azure.Identity.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Azure.Security.KeyVault.Certificates.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Azure.Security.KeyVault.Secrets.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Humanizer.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.OpenIdConnect.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.Bcl.AsyncInterfaces.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.Bcl.Cryptography.dll
@@ -27,14 +30,23 @@ D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.EntityFrameworkCore.Relational.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.EntityFrameworkCore.SqlServer.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.Extensions.DependencyModel.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.Identity.Abstractions.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.Identity.Client.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.Identity.Client.Extensions.Msal.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.Identity.Web.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.Identity.Web.Certificate.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.Identity.Web.Certificateless.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.Identity.Web.Diagnostics.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.Identity.Web.TokenAcquisition.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.Identity.Web.TokenCache.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.IdentityModel.Abstractions.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.IdentityModel.JsonWebTokens.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.IdentityModel.Logging.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.IdentityModel.LoggingExtensions.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.IdentityModel.Protocols.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.IdentityModel.Tokens.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.IdentityModel.Validators.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.OpenApi.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.SqlServer.Server.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.VisualStudio.SolutionPersistence.dll
@@ -53,6 +65,7 @@ D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\System.Configuration.ConfigurationManager.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\System.IdentityModel.Tokens.Jwt.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\System.Memory.Data.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\System.Security.Cryptography.Pkcs.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\System.Security.Cryptography.ProtectedData.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\cs\Microsoft.CodeAnalysis.resources.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\de\Microsoft.CodeAnalysis.resources.dll
@@ -137,6 +150,7 @@ D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\runtimes\win\lib\net10.0\System.Security.Cryptography.Pkcs.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Application.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Domain.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Infrastructure.dll
@@ -167,3 +181,4 @@ D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.pdb
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.genruntimeconfig.cache
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\ref\API.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt

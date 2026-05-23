@@ -1,0 +1,60 @@
+@page "/authentication/{action}"
+@layout Blazor.Layout.LoginLayout
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.AspNetCore.Authorization
+@using Blazor.Security
+@using Blazor.Services
+@attribute [AllowAnonymous]
+@inject NavigationManager Navigation
+@inject AuthApiService AuthApiService
+@inject CustomAuthStateProvider AuthStateProvider
+@inject IAccessTokenProvider TokenProvider
+
+<RemoteAuthenticatorView Action="@Action" OnLogInSucceeded="HandleLogInComplete">
+    <LoggingIn>
+        <div class="d-flex flex-column align-items-center justify-content-center" style="height: 80vh;">
+            <div class="spinner-border text-primary" role="status"></div>
+            <h5 class="mt-3">Sincronizando con Microsoft...</h5>
+        </div>
+    </LoggingIn>
+    <CompletingLoggingIn>
+        <div class="d-flex flex-column align-items-center justify-content-center" style="height: 80vh;">
+            <div class="spinner-border text-success" role="status"></div>
+            <h5 class="mt-3">Finalizando intercambio de seguridad...</h5>
+        </div>
+    </CompletingLoggingIn>
+</RemoteAuthenticatorView>
+
+@code {
+    [Parameter] public string? Action { get; set; }
+
+    private async Task HandleLogInComplete()
+    {
+        // 1. MSAL ya hizo su trabajo y el usuario está autenticado en Microsoft
+        // 2. Obtenemos el token que Microsoft nos dio
+        var result = await TokenProvider.RequestAccessToken();
+
+        if (result.TryGetToken(out var token))
+        {
+            // 3. ¡PATRÓN TOKEN EXCHANGE!
+            // Enviamos el token de MS a NUESTRA API para validación y creación automática
+            var authResult = await AuthApiService.MicrosoftLoginAsync(token.Value);
+
+            if (authResult.IsSuccess && !string.IsNullOrEmpty(authResult.Token))
+            {
+                // 4. Guardamos el JWT y forzamos el rol "Vendedor" según requerimiento si es necesario.
+                await AuthStateProvider.NotifyUserAuthentication(authResult.Token);
+                Navigation.NavigateTo("/");
+            }
+            else
+            {
+                // Error en el intercambio
+                Navigation.NavigateTo($"/login?error={Uri.EscapeDataString(authResult.Message ?? "Fallo el intercambio en el backend")}");
+            }
+        }
+        else
+        {
+            Navigation.NavigateTo("/login?error=No%20se%20pudo%20obtener%20el%20token%20de%20Microsoft");
+        }
+    }
+}

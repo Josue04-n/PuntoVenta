@@ -3162,6 +3162,55 @@
     cursor: not-allowed;
 }
 
+.uta-login-divider[b-n3b4hveadi] {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 0.5rem 0;
+    color: #9ca3af;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.uta-login-divider[b-n3b4hveadi]::before,
+.uta-login-divider[b-n3b4hveadi]::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.uta-login-divider:not(:empty)[b-n3b4hveadi]::before {
+    margin-right: .75em;
+}
+
+.uta-login-divider:not(:empty)[b-n3b4hveadi]::after {
+    margin-left: .75em;
+}
+
+.uta-microsoft-btn[b-n3b4hveadi] {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.uta-microsoft-btn:hover:not(:disabled)[b-n3b4hveadi] {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
 .uta-login-footer[b-n3b4hveadi] {
     margin-top: 2rem;
     text-align: center;

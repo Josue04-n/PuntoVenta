@@ -114,4 +114,82 @@ public class AuthService : IAuthService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+
+    public async Task<AuthResponseDto> MicrosoftLoginAsync(string microsoftToken)
+    {
+        try
+        {
+            var handler = new JwtSecurityTokenHandler();
+            
+            if (!handler.CanReadToken(microsoftToken))
+            {
+                return new AuthResponseDto { IsSuccess = false, Message = "Token de Microsoft inválido." };
+            }
+
+            var jwtToken = handler.ReadJwtToken(microsoftToken);
+
+            // 1. Extraer Email (Identity Institucional)
+            var email = jwtToken.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value 
+                     ?? jwtToken.Claims.FirstOrDefault(c => c.Type == "email")?.Value 
+                     ?? jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+            if (string.IsNullOrEmpty(email))
+            {
+                return new AuthResponseDto { IsSuccess = false, Message = "No se pudo obtener el email del token de Microsoft." };
+            }
+
+            // 2. Buscar usuario en base de datos local
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                // AUTOPROVISIÓN: Si no existe, lo creamos automáticamente como Vendedor
+                var nameParts = jwtToken.Claims.FirstOrDefault(c => c.Type == "name")?.Value?.Split(' ') ?? new[] { "Usuario", "Microsoft" };
+                
+                user = new ApplicationUser
+                {
+                    UserName = email.Split('@')[0].ToUpper(), // El nombre de usuario será la primera parte del correo
+                    Email = email,
+                    FirstName = nameParts[0].ToUpper(),
+                    LastName = (nameParts.Length > 1 ? nameParts[1] : "MS").ToUpper(),
+                    IsActive = true,
+                    MustChangePassword = false // Al ser de Microsoft, no manejamos nosotros su clave
+                };
+
+                var createResult = await _userManager.CreateAsync(user);
+                if (!createResult.Succeeded)
+                {
+                    return new AuthResponseDto { IsSuccess = false, Message = "No se pudo crear la cuenta local vinculada." };
+                }
+
+                // Asignar el rol de Vendedor por defecto
+                await _userManager.AddToRoleAsync(user, "Vendedor");
+            }
+
+            if (!user.IsActive)
+            {
+                return new AuthResponseDto { IsSuccess = false, Message = "Su cuenta local se encuentra desactivada." };
+            }
+
+            // 3. Intercambio de Token: Emitimos nuestro propio JWT con nuestros Roles y Lógica
+            var roles = await _userManager.GetRolesAsync(user);
+            var ourToken = GenerateJwtToken(user, roles);
+
+            user.LastLogin = DateTime.UtcNow;
+            await _userManager.UpdateAsync(user);
+
+            return new AuthResponseDto
+            {
+                IsSuccess = true,
+                Token = ourToken,
+                UserName = user.UserName,
+                Role = roles.FirstOrDefault(),
+                Expiration = DateTime.UtcNow.AddHours(8)
+            };
+        }
+        catch (Exception ex)
+        {
+            return new AuthResponseDto { IsSuccess = false, Message = "Fallo en la autenticación externa: " + ex.Message };
+        }
+    }
 }

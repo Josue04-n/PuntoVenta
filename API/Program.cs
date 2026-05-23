@@ -20,6 +20,7 @@ builder.Services.AddCors(options =>
 // 1. Agregar servicios al contenedor (Dependency Injection)
 builder.Services.AddControllers();
 builder.Services.AddProjectDependencies(builder.Configuration);
+builder.Services.AddMicrosoftAuthentication(builder.Configuration);
 
 // --- JWT AUTHENTICATION CONFIGURATION ---
 var jwtConfig = builder.Configuration.GetSection("JWT");

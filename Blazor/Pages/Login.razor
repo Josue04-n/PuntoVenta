@@ -70,6 +70,15 @@
                         <span>Acceder al sistema</span>
                     }
                 </button>
+
+                <div class="uta-login-divider">
+                    <span>o</span>
+                </div>
+
+                <button type="button" class="uta-microsoft-btn" @onclick="HandleMicrosoftLogin" disabled="@_isProcessing">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="MS Logo" width="18" />
+                    <span>Iniciar sesión con Microsoft</span>
+                </button>
             </EditForm>
             
             <div class="uta-login-footer">
@@ -88,6 +97,17 @@
     private bool _shakeForm = false;
     private int _failedAttempts = 0;
     private DateTime? _lockoutEnd;
+
+    [SupplyParameterFromQuery]
+    public string? error { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (!string.IsNullOrEmpty(error))
+        {
+            _errorMessage = error;
+        }
+    }
 
     private void TogglePasswordVisibility()
     {
@@ -157,5 +177,10 @@
         await Task.Delay(400); 
         _shakeForm = false;
         StateHasChanged();
+    }
+
+    private async Task HandleMicrosoftLogin()
+    {
+        Navigation.NavigateTo("authentication/login");
     }
 }

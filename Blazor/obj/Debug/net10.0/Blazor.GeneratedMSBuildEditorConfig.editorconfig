@@ -1,4 +1,10 @@
 is_global = true
+build_property.EnableAotAnalyzer = 
+build_property.EnableSingleFileAnalyzer = 
+build_property.EnableTrimAnalyzer = false
+build_property.IncludeAllContentForSelfExtract = 
+build_property.VerifyReferenceTrimCompatibility = 
+build_property.VerifyReferenceAotCompatibility = 
 build_property.TargetFramework = net10.0
 build_property.TargetFrameworkIdentifier = .NETCoreApp
 build_property.TargetFrameworkVersion = v10.0
@@ -8,12 +14,12 @@ build_property.ProjectTypeGuids =
 build_property.InvariantGlobalization = false
 build_property.PlatformNeutralAssembly = 
 build_property.EnforceExtendedAnalyzerRules = 
-build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property._SupportedPlatformList = browser
 build_property.RootNamespace = Blazor
 build_property.RootNamespace = Blazor
 build_property.ProjectDir = D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\Blazor\
 build_property.EnableComHosting = 
-build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.EnableGeneratedComInterfaceComImportInterop = false
 build_property.RazorLangVersion = 9.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
@@ -28,6 +34,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/Programacion/QUINTO/PATRONES SOFTWARE/respo/PuntoVenta/Blazor/Components/RedirectToLogin.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSZWRpcmVjdFRvTG9naW4ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Programacion/QUINTO/PATRONES SOFTWARE/respo/PuntoVenta/Blazor/Pages/Authentication.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQXV0aGVudGljYXRpb24ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/Programacion/QUINTO/PATRONES SOFTWARE/respo/PuntoVenta/Blazor/_Imports.razor]

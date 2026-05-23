@@ -8,6 +8,7 @@ using Infrastructure.Repositories;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Web;
 
 
 namespace API.Configurations;
@@ -63,4 +64,13 @@ public static class DependencyInjection
         return services;
     }
 
+    public static IServiceCollection AddMicrosoftAuthentication(this IServiceCollection services, IConfiguration configuration)
+    {
+        // Configuramos la autenticación de Microsoft (Azure AD / Entra ID)
+        // Usamos un esquema diferente ("Microsoft") para no colisionar con nuestro JWT predeterminado
+        services.AddAuthentication()
+            .AddMicrosoftIdentityWebApi(configuration, "AzureAd", "Microsoft");
+
+        return services;
+    }
 }

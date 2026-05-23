@@ -3,10 +3,12 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using Application.DTOs
 @using Blazor.Services
+@using Blazor.Security
 @implements IDisposable
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
 @inject NotificationApiService NotificationApiService
+@inject CustomAuthStateProvider AuthStateProvider
 
 <div class="uta-layout">
     <aside class="uta-sidebar">
@@ -159,6 +161,9 @@
     {
         try 
         {
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            if (authState.User.Identity?.IsAuthenticated != true) return;
+
             _notifications = await NotificationApiService.GetNotificationsAsync();
             await InvokeAsync(StateHasChanged);
         }

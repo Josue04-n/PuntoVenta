@@ -168,3 +168,4 @@ public class SaleRepository : ISaleRepository
         return sale.Id;
     }
 }
+ 
