@@ -58,20 +58,27 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
 
     public async Task NotifyUserAuthentication(string token, string? forceRole = null)
     {
-        await _jsRuntime.InvokeVoidAsync("localStorage.setItem", TokenKey, token);
-
-        var claims = ParseClaimsFromJwt(token).ToList();
-
-        if (!string.IsNullOrEmpty(forceRole))
+        try 
         {
-            // Remover cualquier rol previo para priorizar el forzado
-            claims.RemoveAll(c => c.Type == ClaimTypes.Role || c.Type == "role");
-            claims.Add(new Claim(ClaimTypes.Role, forceRole));
-        }
+            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", TokenKey, token);
 
-        var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt", ClaimTypes.Name, ClaimTypes.Role));
-        var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
-        NotifyAuthenticationStateChanged(authState);
+            var claims = ParseClaimsFromJwt(token).ToList();
+
+            if (!string.IsNullOrEmpty(forceRole))
+            {
+                // Remover cualquier rol previo para priorizar el forzado
+                claims.RemoveAll(c => c.Type == ClaimTypes.Role || c.Type == "role");
+                claims.Add(new Claim(ClaimTypes.Role, forceRole));
+            }
+
+            var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt", ClaimTypes.Name, ClaimTypes.Role));
+            var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
+            NotifyAuthenticationStateChanged(authState);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in NotifyUserAuthentication: {ex.Message}");
+        }
     }
 
     public async Task NotifyUserLogout()
@@ -142,6 +149,7 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
 
     private byte[] ParseBase64WithoutPadding(string base64)
     {
+        base64 = base64.Replace('-', '+').Replace('_', '/');
         switch (base64.Length % 4)
         {
             case 2: base64 += "=="; break;

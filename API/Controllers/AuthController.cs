@@ -30,12 +30,17 @@ public class AuthController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("microsoft-login")]
-    public async Task<ActionResult<AuthResponseDto>> MicrosoftLogin([FromBody] string token)
+    public class MicrosoftLoginRequest
     {
-        if (string.IsNullOrEmpty(token)) return BadRequest("Token de Microsoft es requerido.");
+        public string Token { get; set; } = string.Empty;
+    }
 
-        var result = await _authService.MicrosoftLoginAsync(token);
+    [HttpPost("microsoft-login")]
+    public async Task<ActionResult<AuthResponseDto>> MicrosoftLogin([FromBody] MicrosoftLoginRequest request)
+    {
+        if (string.IsNullOrEmpty(request.Token)) return BadRequest("Token de Microsoft es requerido.");
+
+        var result = await _authService.MicrosoftLoginAsync(request.Token);
 
         if (!result.IsSuccess)
         {

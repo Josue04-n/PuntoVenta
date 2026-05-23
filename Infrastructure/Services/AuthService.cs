@@ -30,7 +30,6 @@ public class AuthService : IAuthService
             return new AuthResponseDto { IsSuccess = false, Message = "Usuario no encontrado o inactivo." };
         }
 
-        // 1. Verificar si la cuenta está bloqueada antes de intentar nada
         if (await _userManager.IsLockedOutAsync(user))
         {
             return new AuthResponseDto 
@@ -44,7 +43,6 @@ public class AuthService : IAuthService
 
         if (!isPasswordValid)
         {
-            // 2. Incrementar contador de fallos si no es la cuenta de admin
             if (user.UserName?.ToLower() != "admin")
             {
                 await _userManager.AccessFailedAsync(user);
@@ -123,46 +121,64 @@ public class AuthService : IAuthService
             
             if (!handler.CanReadToken(microsoftToken))
             {
-                return new AuthResponseDto { IsSuccess = false, Message = "Token de Microsoft inválido." };
+                return new AuthResponseDto { IsSuccess = false, Message = "Token de Microsoft inválido o mal formado." };
             }
 
             var jwtToken = handler.ReadJwtToken(microsoftToken);
 
-            // 1. Extraer Email (Identity Institucional)
-            var email = jwtToken.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value 
-                     ?? jwtToken.Claims.FirstOrDefault(c => c.Type == "email")?.Value 
-                     ?? jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            // Priorizar claims que contengan realmente el correo (evitando nombres completos que causan error de formato)
+            var email = jwtToken.Claims.FirstOrDefault(c => c.Type == "email")?.Value
+                     ?? jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value
+                     ?? jwtToken.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value
+                     ?? jwtToken.Claims.FirstOrDefault(c => c.Type == "upn")?.Value
+                     ?? jwtToken.Claims.FirstOrDefault(c => c.Type == "unique_name")?.Value
+                     ?? jwtToken.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
 
-            if (string.IsNullOrEmpty(email))
+            if (string.IsNullOrEmpty(email) || !email.Contains("@"))
             {
-                return new AuthResponseDto { IsSuccess = false, Message = "No se pudo obtener el email del token de Microsoft." };
+                // Si aún no tenemos un email válido, buscamos en cualquier claim que tenga un formato de email
+                email = jwtToken.Claims.FirstOrDefault(c => c.Value.Contains("@"))?.Value;
+                if (string.IsNullOrEmpty(email))
+                {
+                    return new AuthResponseDto { IsSuccess = false, Message = "No se pudo obtener el email válido del token. Revise los Scopes en Blazor." };
+                }
             }
 
-            // 2. Buscar usuario en base de datos local
             var user = await _userManager.FindByEmailAsync(email);
 
             if (user == null)
             {
-                // AUTOPROVISIÓN: Si no existe, lo creamos automáticamente como Vendedor
                 var nameParts = jwtToken.Claims.FirstOrDefault(c => c.Type == "name")?.Value?.Split(' ') ?? new[] { "Usuario", "Microsoft" };
-                
+
+                var firstName = jwtToken.Claims.FirstOrDefault(c => c.Type == "given_name")?.Value
+                             ?? jwtToken.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value
+                             ?? "USUARIO";
+
+                var lastName = jwtToken.Claims.FirstOrDefault(c => c.Type == "family_name")?.Value
+                            ?? jwtToken.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value
+                            ?? "MICROSOFT";
+
                 user = new ApplicationUser
                 {
-                    UserName = email.Split('@')[0].ToUpper(), // El nombre de usuario será la primera parte del correo
+                    UserName = email,
                     Email = email,
-                    FirstName = nameParts[0].ToUpper(),
-                    LastName = (nameParts.Length > 1 ? nameParts[1] : "MS").ToUpper(),
+                    FirstName = firstName.ToUpper(), 
+                    LastName = lastName.ToUpper(),   
                     IsActive = true,
-                    MustChangePassword = false // Al ser de Microsoft, no manejamos nosotros su clave
+                    MustChangePassword = false
                 };
 
-                var createResult = await _userManager.CreateAsync(user);
+                // Generamos una contraseña de entre 8 y 10 caracteres que cumpla las restricciones de Identity
+                var passwordTemporal = Guid.NewGuid().ToString("N").Substring(0, 4) + "Ab1!@";
+
+                var createResult = await _userManager.CreateAsync(user, passwordTemporal);
+
                 if (!createResult.Succeeded)
                 {
-                    return new AuthResponseDto { IsSuccess = false, Message = "No se pudo crear la cuenta local vinculada." };
+                    var errors = string.Join("; ", createResult.Errors.Select(e => e.Description));
+                    return new AuthResponseDto { IsSuccess = false, Message = $"No se pudo crear la cuenta local vinculada: {errors}" };
                 }
 
-                // Asignar el rol de Vendedor por defecto
                 await _userManager.AddToRoleAsync(user, "Vendedor");
             }
 
@@ -171,7 +187,6 @@ public class AuthService : IAuthService
                 return new AuthResponseDto { IsSuccess = false, Message = "Su cuenta local se encuentra desactivada." };
             }
 
-            // 3. Intercambio de Token: Emitimos nuestro propio JWT con nuestros Roles y Lógica
             var roles = await _userManager.GetRolesAsync(user);
             var ourToken = GenerateJwtToken(user, roles);
 

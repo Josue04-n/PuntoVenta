@@ -46,7 +46,7 @@ public class AuthApiService
     {
         try
         {
-            var response = await _http.PostAsJsonAsync("api/Auth/microsoft-login", token);
+            var response = await _http.PostAsJsonAsync("api/Auth/microsoft-login", new { token = token });
             
             if (response.IsSuccessStatusCode)
             {

@@ -13,14 +13,12 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddMsalAuthentication(options =>
 {
     builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
-    // Permisos básicos que necesitamos (OpenId y Profile para el email)
     options.ProviderOptions.DefaultAccessTokenScopes.Add("openid");
     options.ProviderOptions.DefaultAccessTokenScopes.Add("profile");
     options.ProviderOptions.DefaultAccessTokenScopes.Add("email");
 });
 
 // --- REPARACIÓN DE INYECCIÓN DE DEPENDENCIAS PARA MSAL + JWT PROPIO ---
-// Separa el servicio interno de autenticación remota de MSAL para evitar InvalidCastException
 builder.Services.AddScoped<Microsoft.AspNetCore.Components.WebAssembly.Authentication.RemoteAuthenticationService<Microsoft.AspNetCore.Components.WebAssembly.Authentication.RemoteAuthenticationState, Microsoft.AspNetCore.Components.WebAssembly.Authentication.RemoteUserAccount, Microsoft.Authentication.WebAssembly.Msal.Models.MsalProviderOptions>>();
 builder.Services.AddScoped<Microsoft.AspNetCore.Components.WebAssembly.Authentication.IRemoteAuthenticationService<Microsoft.AspNetCore.Components.WebAssembly.Authentication.RemoteAuthenticationState>>(sp => sp.GetRequiredService<Microsoft.AspNetCore.Components.WebAssembly.Authentication.RemoteAuthenticationService<Microsoft.AspNetCore.Components.WebAssembly.Authentication.RemoteAuthenticationState, Microsoft.AspNetCore.Components.WebAssembly.Authentication.RemoteUserAccount, Microsoft.Authentication.WebAssembly.Msal.Models.MsalProviderOptions>>());
 builder.Services.AddScoped<Microsoft.AspNetCore.Components.WebAssembly.Authentication.IAccessTokenProvider>(sp => sp.GetRequiredService<Microsoft.AspNetCore.Components.WebAssembly.Authentication.RemoteAuthenticationService<Microsoft.AspNetCore.Components.WebAssembly.Authentication.RemoteAuthenticationState, Microsoft.AspNetCore.Components.WebAssembly.Authentication.RemoteUserAccount, Microsoft.Authentication.WebAssembly.Msal.Models.MsalProviderOptions>>());
@@ -32,6 +30,7 @@ builder.Services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredServ
 builder.Services.AddTransient<JwtInterceptor>();
 
 // --- CONFIGURACIÓN DE HTTPCLIENT ---
+// CAMBIO CLAVE: Ajustado a localhost:5055 según requerimiento
 builder.Services.AddScoped(sp => 
 {
     var interceptor = sp.GetRequiredService<JwtInterceptor>();

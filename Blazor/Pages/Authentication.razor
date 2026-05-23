@@ -1,5 +1,4 @@
 @page "/authentication/{action}"
-@layout Blazor.Layout.LoginLayout
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using Microsoft.AspNetCore.Authorization
 @using Blazor.Security
@@ -9,52 +8,111 @@
 @inject AuthApiService AuthApiService
 @inject CustomAuthStateProvider AuthStateProvider
 @inject IAccessTokenProvider TokenProvider
+@inject IJSRuntime JS
 
-<RemoteAuthenticatorView Action="@Action" OnLogInSucceeded="HandleLogInComplete">
+<RemoteAuthenticatorView Action="@Action">
     <LoggingIn>
         <div class="d-flex flex-column align-items-center justify-content-center" style="height: 80vh;">
             <div class="spinner-border text-primary" role="status"></div>
-            <h5 class="mt-3">Sincronizando con Microsoft...</h5>
+            <h5 class="mt-3">Conectando con Microsoft Identity...</h5>
         </div>
     </LoggingIn>
     <CompletingLoggingIn>
         <div class="d-flex flex-column align-items-center justify-content-center" style="height: 80vh;">
             <div class="spinner-border text-success" role="status"></div>
-            <h5 class="mt-3">Finalizando intercambio de seguridad...</h5>
+            <h5 class="mt-3">Sincronizando cuenta UTA...</h5>
         </div>
     </CompletingLoggingIn>
 </RemoteAuthenticatorView>
 
 @code {
     [Parameter] public string? Action { get; set; }
+    private bool _isExchanging = false;
 
-    private async Task HandleLogInComplete()
+    protected override void OnInitialized()
     {
-        // 1. MSAL ya hizo su trabajo y el usuario está autenticado en Microsoft
-        // 2. Obtenemos el token que Microsoft nos dio
-        var result = await TokenProvider.RequestAccessToken();
+        _ = RunTokenCheckLoop();
+    }
 
-        if (result.TryGetToken(out var token))
+    private async Task RunTokenCheckLoop()
+    {
+        try 
         {
-            // 3. ¡PATRÓN TOKEN EXCHANGE!
-            // Enviamos el token de MS a NUESTRA API para validación y creación automática
-            var authResult = await AuthApiService.MicrosoftLoginAsync(token.Value);
+            await Task.Delay(800); // Esperar que MSAL inicie
 
-            if (authResult.IsSuccess && !string.IsNullOrEmpty(authResult.Token))
+            // Buscar el token repetidamente si MSAL se queda colgado (silent flow)
+            for(int i = 0; i < 15; i++)
             {
-                // 4. Guardamos el JWT y forzamos el rol "Vendedor" según requerimiento si es necesario.
-                await AuthStateProvider.NotifyUserAuthentication(authResult.Token);
-                Navigation.NavigateTo("/");
+                if (_isExchanging) return;
+
+                var idToken = await GetIdTokenFromStorage();
+                if (!string.IsNullOrEmpty(idToken))
+                {
+                    _isExchanging = true;
+                    await ProcessTokenExchange(idToken);
+                    return;
+                }
+                await Task.Delay(1000);
             }
-            else
+        }
+        catch { }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Action == "login-callback" || Action == "login")
+        {
+            await Task.Delay(1000); // Dar tiempor a MSAL para procesar la redirección
+
+            if (_isExchanging) return;
+
+            var idToken = await GetIdTokenFromStorage();
+            if (!string.IsNullOrEmpty(idToken))
             {
-                // Error en el intercambio
-                Navigation.NavigateTo($"/login?error={Uri.EscapeDataString(authResult.Message ?? "Fallo el intercambio en el backend")}");
+                _isExchanging = true;
+                await ProcessTokenExchange(idToken);
             }
+        }
+    }
+
+    private async Task<string?> GetIdTokenFromStorage()
+    {
+        return await JS.InvokeAsync<string>("eval", @"
+            (function() {
+                function searchStorage(storage) {
+                    for (let i = 0; i < storage.length; i++) {
+                        let key = storage.key(i);
+                        if (key && key.indexOf('idtoken') !== -1) {
+                            try {
+                                let val = JSON.parse(storage.getItem(key));
+                                if (val && val.secret && val.credentialType === 'IdToken') {
+                                    return val.secret;
+                                }
+                            } catch(e) {}
+                        }
+                    }
+                    return null;
+                }
+                return searchStorage(sessionStorage) || searchStorage(localStorage);
+            })()
+        ");
+    }
+
+    private async Task ProcessTokenExchange(string tokenValue)
+    {
+        var authResult = await AuthApiService.MicrosoftLoginAsync(tokenValue);
+
+        if (authResult.IsSuccess && !string.IsNullOrEmpty(authResult.Token))
+        {
+            await AuthStateProvider.NotifyUserAuthentication(authResult.Token);
+            Navigation.NavigateTo("/");
         }
         else
         {
-            Navigation.NavigateTo("/login?error=No%20se%20pudo%20obtener%20el%20token%20de%20Microsoft");
+            _isExchanging = false;
+            // Limpiamos los rastros por si el token expiró o falló
+            await JS.InvokeVoidAsync("sessionStorage.clear");
+            Navigation.NavigateTo($"/login?error={Uri.EscapeDataString(authResult.Message ?? "Error en sincronización institucional")}");
         }
     }
 }

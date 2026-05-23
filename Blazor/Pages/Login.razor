@@ -101,11 +101,17 @@
     [SupplyParameterFromQuery]
     public string? error { get; set; }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         if (!string.IsNullOrEmpty(error))
         {
             _errorMessage = error;
+        }
+
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity?.IsAuthenticated == true)
+        {
+            Navigation.NavigateTo("/");
         }
     }
 
@@ -181,6 +187,6 @@
 
     private async Task HandleMicrosoftLogin()
     {
-        Navigation.NavigateTo("authentication/login");
+        Navigation.NavigateTo("authentication/login?returnUrl=/");
     }
 }
