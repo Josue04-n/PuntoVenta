@@ -109,10 +109,12 @@ public class ProductHandlers
         );
 
         await _productRepository.UpdateAsync(product);
+        await _unitOfWork.SaveChangesAsync();
     }
 
     public async Task DeleteProductAsync(int id)
     {
         await _productRepository.DeleteAsync(id);
+        await _unitOfWork.SaveChangesAsync();
     }
 }

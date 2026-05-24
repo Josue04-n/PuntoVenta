@@ -1,24 +1,35 @@
 using Microsoft.EntityFrameworkCore;
 using Application.Interfaces.Repositories;
 using Application.DTOs.Common;
+using Application.DTOs;
 using Domain.Entities;
 using Infrastructure.Data;
+using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Repositories;
 
 public class ProductRepository : IProductRepository
 {
     private readonly AppDbContext _context;
+    private readonly BusinessSettings _settings;
 
-    public ProductRepository(AppDbContext context)
+    public ProductRepository(AppDbContext context, IOptions<BusinessSettings> settings)
     {
         _context = context;
+        _settings = settings.Value;
     }
 
     public async Task<Product?> GetByIdAsync(int id) 
     { 
         // Usar IgnoreQueryFilters para permitir obtener incluso si está inactivo (para reactivación)
         return await _context.Products.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.Id == id);
+    }
+
+    public async Task<IEnumerable<Product>> GetByIdsAsync(IEnumerable<int> ids)
+    {
+        return await _context.Products
+            .Where(p => ids.Contains(p.Id))
+            .ToListAsync();
     }
 
     public async Task<Product?> GetByNameAsync(string name)
@@ -50,7 +61,7 @@ public class ProductRepository : IProductRepository
             .Where(p => p.Name.ToLower().StartsWith(term))
             .OrderByDescending(p => p.Stock > 0)
             .ThenBy(p => p.Name)
-            .Take(20)
+            .Take(_settings.DefaultPageSize)
             .ToListAsync();
     }
 
@@ -100,13 +111,11 @@ public class ProductRepository : IProductRepository
     public async Task AddAsync(Product product)
     {
         await _context.Products.AddAsync(product);
-        await _context.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(Product product)
     {
         _context.Products.Update(product);
-        await _context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(int id)
@@ -116,7 +125,6 @@ public class ProductRepository : IProductRepository
         {
             // Soft delete
             _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
         }
     }
 
@@ -126,13 +134,11 @@ public class ProductRepository : IProductRepository
         if (product != null)
         {
             product.Activate();
-            await _context.SaveChangesAsync();
         }
     }
 
     public async Task UpdateRangeAsync(IEnumerable<Product> products)
     {
         _context.Products.UpdateRange(products);
-        await _context.SaveChangesAsync();
     }
 }

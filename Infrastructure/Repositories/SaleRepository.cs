@@ -49,7 +49,6 @@ public class SaleRepository : ISaleRepository
     public async Task AddAsync(Sale sale)
     {
         await _context.Sales.AddAsync(sale);
-        await _context.SaveChangesAsync();
     }
 
     public async Task<IEnumerable<Sale>> SearchAsync(string term, string searchBy, string? sellerName = null)
@@ -161,10 +160,17 @@ public class SaleRepository : ISaleRepository
             .FirstOrDefaultAsync(s => s.Id == id);
     }
 
+    public async Task<IEnumerable<Sale>> GetMonthlySalesAsync(DateTime firstDayOfMonth)
+    {
+        return await _context.Sales
+            .Where(s => s.IssueDate >= firstDayOfMonth)
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
     public async Task<int> SaveSaleAsync(Sale sale)
     {
         await _context.Sales.AddAsync(sale);
-        await _context.SaveChangesAsync();
         return sale.Id;
     }
 }

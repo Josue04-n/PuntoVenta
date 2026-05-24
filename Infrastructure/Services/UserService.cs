@@ -1,5 +1,7 @@
 using Application.DTOs;
 using Application.Interfaces.Services;
+using Application.Interfaces.Repositories;
+using Application.Services;
 using Domain.Entities;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
@@ -11,15 +13,18 @@ public class UserService : IUserService
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly RoleManager<ApplicationRole> _roleManager;
+    private readonly ISaleRepository _saleRepository;
     private readonly AppDbContext _context;
 
     public UserService(
         UserManager<ApplicationUser> userManager, 
         RoleManager<ApplicationRole> roleManager,
+        ISaleRepository saleRepository,
         AppDbContext context)
     {
         _userManager = userManager;
         _roleManager = roleManager;
+        _saleRepository = saleRepository;
         _context = context;
     }
 
@@ -108,30 +113,23 @@ public class UserService : IUserService
 
     public async Task<ProfileStatsDto> GetProfileStatsAsync(string userName, string role)
     {
-        var stats = new ProfileStatsDto { IsAdmin = (role == "Administrador") };
+        var isAdmin = (role == "Administrador");
         
-        // Obtenemos las fechas directamente desde .NET para evitar discrepancias de traducción de EF Core
+        // Obtenemos las fechas directamente desde .NET
         var ecuadorTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SA Pacific Standard Time");
         var nowLocal = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, ecuadorTimeZone);
-        
         var firstDayOfMonth = new DateTime(nowLocal.Year, nowLocal.Month, 1);
-        var todayStart = nowLocal.Date;
-        var todayEnd = todayStart.AddDays(1).AddTicks(-1);
 
-        if (stats.IsAdmin)
+        // 1. Obtener datos crudos desde la infraestructura
+        var monthlySales = await _saleRepository.GetMonthlySalesAsync(firstDayOfMonth);
+
+        // 2. Usar la lógica de Aplicación para calcular (Desacoplado)
+        var calculator = new StatisticsCalculator();
+        var stats = calculator.CalculateStats(monthlySales, userName, isAdmin);
+
+        // 3. Rellenar contadores directos que no dependen de lógica compleja de ventas
+        if (isAdmin)
         {
-            // Traer todas las ventas del mes a memoria para procesamiento seguro (si no son millones, esto es rápido)
-            var monthlySales = await _context.Sales
-                .Where(s => s.IssueDate >= firstDayOfMonth)
-                .ToListAsync();
-
-            stats.SystemMonthlyRevenue = monthlySales.Sum(s => s.Total);
-
-            var todaySales = monthlySales.Where(s => s.IssueDate.Date == todayStart).ToList();
-            
-            stats.SystemDailyRevenue = todaySales.Sum(s => s.Total);
-            stats.SystemDailySalesCount = todaySales.Count;
-
             stats.SystemLowStockCount = await _context.Products
                 .CountAsync(p => p.IsActive && p.Stock <= 5);
 
@@ -146,23 +144,6 @@ public class UserService : IUserService
         }
         else
         {
-            // Usamos EF.Functions.Like para ignorar case sensitivity en SQL Server
-            var myMonthlySales = await _context.Sales
-                .Where(s => EF.Functions.Like(s.CreatedBy, userName) && s.IssueDate >= firstDayOfMonth)
-                .ToListAsync();
-
-            stats.MyMonthlySalesCount = myMonthlySales.Count;
-            stats.MyMonthlySalesAmount = myMonthlySales.Sum(s => s.Total);
-            
-            var myTodaySales = myMonthlySales.Where(s => s.IssueDate.Date == todayStart).ToList();
-
-            stats.MyDailySalesAmount = myTodaySales.Sum(s => s.Total);
-            stats.MyDailySalesCount = myTodaySales.Count;
-
-            stats.MyAverageTicket = stats.MyMonthlySalesCount > 0 
-                ? stats.MyMonthlySalesAmount / stats.MyMonthlySalesCount 
-                : 0;
-
             stats.SystemTotalProductsCount = await _context.Products.CountAsync(p => p.IsActive);
         }
 

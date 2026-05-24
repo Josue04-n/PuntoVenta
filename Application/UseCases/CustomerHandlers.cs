@@ -1,5 +1,6 @@
 using Application.DTOs;
 using Application.Exceptions;
+using Application.Interfaces;
 using Application.Interfaces.Repositories;
 using Domain.Entities;
 
@@ -8,10 +9,12 @@ namespace Application.UseCases;
 public class CustomerHandlers
 {
     private readonly ICustomerRepository _customerRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public CustomerHandlers(ICustomerRepository customerRepository)
+    public CustomerHandlers(ICustomerRepository customerRepository, IUnitOfWork unitOfWork)
     {
         _customerRepository = customerRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<Customer> CreateCustomerAsync(CreateCustomerRequest request)
@@ -38,16 +41,13 @@ public class CustomerHandlers
         );
 
         await _customerRepository.AddAsync(customer);
+        await _unitOfWork.SaveChangesAsync();
         return customer;
     }
 
     public async Task ReactivateCustomerAsync(int customerId, UpdateCustomerRequest request)
     {
         // We use GetByIdCardIncludingInactiveAsync to bypass global filter since the customer is inactive
-        // Wait, GetByIdAsync in repo uses FindAsync, which respects global filters by default?
-        // Actually, FindAsync DOES respect global filters. We need to fetch it without filters to reactivate it.
-        // Let's implement a clean way or just update it via repository if the repository's Add/Update bypasses it.
-        // Wait, let's fix FindAsync behavior or use GetByIdCardIncludingInactiveAsync to get it.
         var customer = await _customerRepository.GetByIdCardIncludingInactiveAsync(request.IDCard) 
             ?? throw new KeyNotFoundException("Cliente inactivo no encontrado.");
 
@@ -68,6 +68,7 @@ public class CustomerHandlers
         );
 
         await _customerRepository.UpdateAsync(customer);
+        await _unitOfWork.SaveChangesAsync();
     }
 
     public async Task UpdateCustomerAsync(UpdateCustomerRequest request)
@@ -98,10 +99,12 @@ public class CustomerHandlers
         );
 
         await _customerRepository.UpdateAsync(customer);
+        await _unitOfWork.SaveChangesAsync();
     }
 
     public async Task DeleteCustomerAsync(int id)
     {
         await _customerRepository.DeleteAsync(id);
+        await _unitOfWork.SaveChangesAsync();
     }
 }

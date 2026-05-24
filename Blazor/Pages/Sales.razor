@@ -10,6 +10,7 @@
 @inject PosApiService ApiService
 @inject CustomerApiService CustomerApiService
 @inject NavigationManager NavManager
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 @attribute [Authorize(Roles = "Vendedor")]
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -95,7 +96,7 @@
                         <span class="uta-price__value">@GlobalVat.ToString("N2")</span>
                     </div>
                 </div>
-                <div class="uta-stat-card__label">Impuestos (IVA 15%)</div>
+                <div class="uta-stat-card__label">Impuestos (IVA @(VatRatePercentage)%)</div>
             </div>
         </div>
         <div class="uta-stat-card uta-stat-card--dark">
@@ -354,7 +355,7 @@
                             </span>
                         </div>
                         <div class="uta-totals__row">
-                            <span>IVA 15%</span>
+                            <span>IVA @(VatRatePercentage)%</span>
                             <span class="uta-price uta-price--right">
                                 <span class="uta-price__symbol">$</span>
                                 <span class="uta-price__value">@GlobalVat.ToString("N2")</span>
@@ -776,8 +777,11 @@
     private System.Timers.Timer? _debounceTimer;
     private List<ProductUI> _productResults = new();
 
+    private decimal VatRateMultiplier => Configuration.GetValue<decimal>("BusinessSettings:VatRate") / 100m;
+    private decimal VatRatePercentage => Configuration.GetValue<decimal>("BusinessSettings:VatRate");
+
     private decimal GlobalSubtotal => _cart.Sum(i => i.SubTotal);
-    private decimal GlobalVat => GlobalSubtotal * 0.15m;
+    private decimal GlobalVat => GlobalSubtotal * VatRateMultiplier;
     private decimal FinalTotal => GlobalSubtotal + GlobalVat;
     private bool CanFinalize => _selectedCustomerEntity != null && _cart.Any() && _cart.All(c => c.Amount > 0 && c.Amount <= c.Product.Stock);
 

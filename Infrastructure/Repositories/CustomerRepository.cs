@@ -122,13 +122,11 @@ public class CustomerRepository : ICustomerRepository
     public async Task AddAsync(Customer customer)
     {
         await _context.Customers.AddAsync(customer);
-        await _context.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(Customer customer)
     {
         _context.Customers.Update(customer);
-        await _context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(int id)
@@ -137,7 +135,6 @@ public class CustomerRepository : ICustomerRepository
         if (customer != null)
         {
             _context.Customers.Remove(customer);
-            await _context.SaveChangesAsync();
         }
     }
 }

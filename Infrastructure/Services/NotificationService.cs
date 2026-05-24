@@ -4,16 +4,19 @@ using Application.Interfaces.Services;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.Data;
+using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Services;
 
 public class NotificationService : INotificationService
 {
     private readonly AppDbContext _context;
+    private readonly BusinessSettings _settings;
 
-    public NotificationService(AppDbContext context)
+    public NotificationService(AppDbContext context, IOptions<BusinessSettings> settings)
     {
         _context = context;
+        _settings = settings.Value;
     }
 
     public async Task<IEnumerable<NotificationDto>> GetNotificationsAsync(int? userId, string role)
@@ -23,7 +26,7 @@ public class NotificationService : INotificationService
         // 1. Notificaciones de Bajo Stock (Para todos)
         var lowStockProducts = await _context.Products
             .AsNoTracking()
-            .Where(p => p.IsActive && p.Stock <= 5)
+            .Where(p => p.IsActive && p.Stock <= _settings.LowStockThreshold)
             .Take(10)
             .ToListAsync();
 

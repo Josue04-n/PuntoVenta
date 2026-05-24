@@ -5,6 +5,7 @@ namespace Application.Interfaces.Repositories;
 
 public interface IProductRepository
 {
+    Task<IEnumerable<Product>> GetByIdsAsync(IEnumerable<int> ids);
     Task<Product?> GetByIdAsync(int id);
     Task<Product?> GetByNameAsync(string name);
     Task UpdateRangeAsync(IEnumerable<Product> products);

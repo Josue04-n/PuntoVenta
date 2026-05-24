@@ -89,6 +89,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             entity.ToTable(tb => tb.HasTrigger("TR_PreventNegativeStockAndPrice"));
             entity.HasKey(p => p.Id);
             entity.Property(p => p.Name).HasMaxLength(150).IsRequired();
+            entity.HasIndex(p => p.Name); // Índice para búsquedas por nombre
 
             entity.OwnsOne(p => p.UnitPrice, price =>
             {
@@ -101,6 +102,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         {
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.IDCard).IsUnique(); 
+            entity.HasIndex(e => e.LastName); // Índice para ordenamiento y búsqueda
             entity.Property(e => e.IDCard).HasMaxLength(13).IsRequired(); 
         });
 
@@ -117,6 +119,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             entity.ToTable(t => t.HasCheckConstraint("CK_Sale_Total_Consistency", "Total = SubTotal + VatAmount"));
 
             entity.HasKey(s => s.Id);
+            entity.HasIndex(s => s.InvoiceNumber); // Índice para búsqueda de facturas
+            entity.HasIndex(s => s.IssueDate);     // Índice para reportes y ordenamiento
 
             entity.HasOne(s => s.Customer)
                   .WithMany()
@@ -128,6 +132,12 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
                   .HasForeignKey("SaleId")
                   .IsRequired()
                   .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // --- CONFIGURACIÓN DE USUARIOS ---
+        modelBuilder.Entity<ApplicationUser>(entity =>
+        {
+            entity.HasIndex(u => u.LastName); // Índice para paginación de usuarios
         });
 
         // --- CONFIGURACIÓN DE DETALLES ---
