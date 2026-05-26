@@ -37,14 +37,12 @@ public class PerformSaleHandler
 
     public async Task<Sale> ExecuteAsync(CreateSaleRequest request)
     {
-        // 1. Validaciones iniciales
         if (!request.Details.Any())
             throw new InvalidOperationException("La venta debe contener al menos un producto.");
 
         var customer = await _customerRepository.GetByIdAsync(request.CustomerId)
             ?? throw new KeyNotFoundException("El cliente no existe.");
 
-        // ✅ 1 sola query para todos los productos (Evita N+1)
         var productIds = request.Details.Select(d => d.ProductId).Distinct().ToList();
         var products = await _productRepository.GetByIdsAsync(productIds);
         var productMap = products.ToDictionary(p => p.Id);
@@ -55,7 +53,6 @@ public class PerformSaleHandler
 
         foreach (var item in request.Details)
         {
-            // ✅ Sin query — búsqueda en memoria O(1)
             if (!productMap.TryGetValue(item.ProductId, out var product))
             {
                 deletedProducts.Add(new DeletedProductInfo(item.ProductId, "Producto no encontrado"));
@@ -85,10 +82,8 @@ public class PerformSaleHandler
             {
                 int previousStock = product.Stock;
                 
-                // 2. Descontar stock (lógica de dominio)
                 sale.AddDetail(product, amount);
 
-                // 3. Registrar movimiento en Kárdex
                 var movement = new InventoryMovement(
                     product.Id,
                     MovementType.Sale,
@@ -101,9 +96,7 @@ public class PerformSaleHandler
                 await _inventoryRepository.AddMovementAsync(movement);
             }
 
-            // 4. Guardar todo en una sola transacción
             await _saleRepository.AddAsync(sale);
-            
             await _unitOfWork.SaveChangesAsync();
             await _unitOfWork.CommitTransactionAsync();
 

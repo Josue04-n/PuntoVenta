@@ -42,13 +42,12 @@ public class ProductHandlers
 
     public async Task<Product> CreateProductAsync(CreateProductRequest request)
     {
-        // Validación de Duplicados
         var existingProduct = await _productRepository.GetByNameAsync(request.Name);
         if (existingProduct != null)
         {
             if (existingProduct.IsActive)
             {
-                throw new ArgumentException($"Ya existe un producto activo con el nombre '{request.Name}'.");
+                throw new InvalidOperationException($"EXISTING_ACTIVE|{existingProduct.Id}");
             }
             else
             {

@@ -62,6 +62,10 @@ public class ApplicationUser : IdentityUser<int>, IAuditable
 
     public DateTime? LastLogin { get; set; }
     public bool MustChangePassword { get; set; } = false;
+
+    // Refresh Token para seguridad JWT
+    public string? RefreshToken { get; set; }
+    public DateTime RefreshTokenExpiryTime { get; set; }
     
     // Propiedades de IAuditable
     public bool IsActive { get;  set; } = true;

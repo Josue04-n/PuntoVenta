@@ -51,7 +51,7 @@ public class UserService : IUserService
     {
         var query = _userManager.Users.IgnoreQueryFilters().AsQueryable();
 
-        if (status == "active") query = query.Where(u => u.IsActive);
+        if (status == "active") query = query.Where(u => u.IsActive && (u.LockoutEnd == null || u.LockoutEnd <= DateTimeOffset.UtcNow));
         else if (status == "inactive") query = query.Where(u => !u.IsActive);
         else if (status == "bloqueados") query = query.Where(u => u.IsActive && u.LockoutEnd > DateTimeOffset.UtcNow);
 

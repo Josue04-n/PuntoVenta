@@ -1,4 +1,5 @@
 @page "/authentication/{action}"
+@layout Blazor.Layout.LoginLayout
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using Microsoft.AspNetCore.Authorization
 @using Blazor.Security
@@ -12,17 +13,37 @@
 
 <RemoteAuthenticatorView Action="@Action">
     <LoggingIn>
-        <div class="d-flex flex-column align-items-center justify-content-center" style="height: 80vh;">
-            <div class="spinner-border text-primary" role="status"></div>
-            <h5 class="mt-3">Conectando con Microsoft Identity...</h5>
+        <div class="uta-bg-wrapper d-flex flex-column align-items-center justify-content-center" style="height: 100vh;">
+            <div class="spinner-border" role="status" style="width: 3rem; height: 3rem; color: #8A1538;"></div>
+            <h5 class="mt-4 text-white" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">Conectando con Microsoft Identity...</h5>
         </div>
     </LoggingIn>
     <CompletingLoggingIn>
-        <div class="d-flex flex-column align-items-center justify-content-center" style="height: 80vh;">
-            <div class="spinner-border text-success" role="status"></div>
-            <h5 class="mt-3">Sincronizando cuenta UTA...</h5>
+        <div class="uta-bg-wrapper d-flex flex-column align-items-center justify-content-center" style="height: 100vh;">
+            <div class="spinner-border" role="status" style="width: 3rem; height: 3rem; color: #8A1538;"></div>
+            <h5 class="mt-4 text-white" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">Sincronizando cuenta institucional...</h5>
         </div>
     </CompletingLoggingIn>
+    <LogInFailed>
+        <div class="uta-bg-wrapper d-flex flex-column align-items-center justify-content-center" style="height: 100vh;">
+            <div class="uta-login-container w-100 d-flex justify-content-center">
+                <div class="uta-login-card text-center p-5" style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(107, 26, 51, 0.3); box-shadow: 0 25px 50px -12px rgba(107, 26, 51, 0.2); border-radius: 30px; max-width: 450px;">
+                    <i class="bi bi-wifi-off mb-4 d-inline-block" style="font-size: 5rem; color: #6B1A33; filter: drop-shadow(0 4px 6px rgba(107, 26, 51, 0.2));"></i>
+                    <h2 class="uta-login-title mb-3" style="color: #1a1a1a; font-weight: 800; font-size: 1.8rem; letter-spacing: -0.025em;">Autenticación Fallida</h2>
+                    <p class="mb-4" style="font-size: 1.05rem; color: #4b5563;">
+                        No se pudo completar el proceso con Microsoft, o usted canceló la solicitud. 
+                        <br/><span style="color: #8A1538; font-weight: 600;">Verifique su conexión e intente nuevamente.</span>
+                    </p>
+                    <button class="btn w-100 py-3 mt-2" style="background: linear-gradient(90deg, #8A1538, #6B1A33); color: white; border-radius: 12px; font-weight: 600; border: none; box-shadow: 0 4px 6px rgba(107, 26, 51, 0.2); transition: all 0.3s ease;" @onclick='() => Navigation.NavigateTo("/login")'>
+                        <i class="bi bi-arrow-left me-2"></i>Volver al Inicio de Sesión
+                    </button>
+                    <div class="mt-4" style="color: #6c757d; font-size: 0.85rem;">
+                        <p class="m-0">&copy; @DateTime.Now.Year Sistema UTA POS.<br/>Todos los derechos reservados.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </LogInFailed>
 </RemoteAuthenticatorView>
 
 @code {

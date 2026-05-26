@@ -113,6 +113,11 @@ public class ProductsController : ControllerBase
         {
             return BadRequest(new { message = ex.Message });
         }
+        catch (InvalidOperationException ex) when (ex.Message.StartsWith("EXISTING_ACTIVE"))
+        {
+            var productId = int.Parse(ex.Message.Split('|')[1]);
+            return Conflict(new { isActive = true, productId = productId, message = "Ya existe un producto activo con este nombre." });
+        }
         catch (InvalidOperationException ex) when (ex.Message.StartsWith("EXISTING_INACTIVE"))
         {
             var productId = int.Parse(ex.Message.Split('|')[1]);

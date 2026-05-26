@@ -10,6 +10,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
+using System.Security.Cryptography;
+
 namespace Infrastructure.Services;
 
 public class AuthService : IAuthService
@@ -25,6 +27,7 @@ public class AuthService : IAuthService
 
     public async Task<AuthResponseDto> LoginAsync(LoginRequest request)
     {
+        // ... (existing user search and lockout validation)
         var user = await _userManager.FindByNameAsync(request.UserName);
 
         if (user == null || !user.IsActive)
@@ -32,13 +35,11 @@ public class AuthService : IAuthService
             return new AuthResponseDto { IsSuccess = false, Message = "Usuario no encontrado o inactivo." };
         }
 
-        // 1. Verificar si ya está bloqueado (temporal o permanentemente)
         if (await _userManager.IsLockedOutAsync(user))
         {
             var lockoutEnd = await _userManager.GetLockoutEndDateAsync(user);
             var timeLeft = lockoutEnd.Value - DateTimeOffset.UtcNow;
 
-            // Si el tiempo es muy largo (ej: > 365 días), es un bloqueo permanente
             if (timeLeft.TotalDays > 365)
             {
                  return new AuthResponseDto { IsSuccess = false, Message = "Tu cuenta ha sido bloqueada permanentemente por seguridad. Contacta al administrador." };
@@ -52,55 +53,46 @@ public class AuthService : IAuthService
 
         if (!isPasswordValid)
         {
-            // Registrar el fallo en Identity
             await _userManager.AccessFailedAsync(user);
             var failedCount = await _userManager.GetAccessFailedCountAsync(user);
 
             if (isAdmin)
             {
-                // --- POLÍTICA PARA ADMINISTRADOR (Progresiva) ---
-                if (failedCount <= 3)
-                {
-                    return new AuthResponseDto { IsSuccess = false, Message = "Contraseña incorrecta." };
-                }
+                if (failedCount <= 3) return new AuthResponseDto { IsSuccess = false, Message = "Contraseña incorrecta." };
                 else if (failedCount == 4)
                 {
-                    // Retardo artificial de 10 segundos para mitigar ataques automatizados
                     await Task.Delay(10000);
                     return new AuthResponseDto { IsSuccess = false, Message = "Contraseña incorrecta. Reintento disponible en 10 segundos." };
                 }
-                else // 5 o más intentos
+                else
                 {
-                    // Bloqueo temporal de 15 minutos para evitar DoS (Denegación de Servicio)
                     await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow.AddMinutes(15));
-                    await _userManager.ResetAccessFailedCountAsync(user); // Reiniciar contador para el próximo ciclo
+                    await _userManager.ResetAccessFailedCountAsync(user);
                     return new AuthResponseDto { IsSuccess = false, Message = "Seguridad: Cuenta suspendida por 15 minutos debido a actividad sospechosa." };
                 }
             }
             else
             {
-                // --- POLÍTICA PARA USUARIOS NORMALES (Vendedores) ---
                 var remaining = 3 - failedCount;
-                if (remaining > 0)
-                {
-                    return new AuthResponseDto { IsSuccess = false, Message = $"Contraseña incorrecta. Le quedan {remaining} intentos antes de bloquear su cuenta." };
-                }
+                if (remaining > 0) return new AuthResponseDto { IsSuccess = false, Message = $"Contraseña incorrecta. Le quedan {remaining} intentos antes de bloquear su cuenta." };
                 else
                 {
-                    // Bloqueo permanente (100 años) requiere desbloqueo manual del Admin
                     await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow.AddYears(100));
                     return new AuthResponseDto { IsSuccess = false, Message = "Ha superado el límite de intentos. Su cuenta ha sido bloqueada. Contacte al administrador." };
                 }
             }
         }
 
-        // 3. Login exitoso -> Resetear contador de fallos
         await _userManager.ResetAccessFailedCountAsync(user);
 
         var roles = await _userManager.GetRolesAsync(user);
         var token = GenerateJwtToken(user, roles);
 
-        // Actualizar última conexión
+        // 1. Generar Refresh Token
+        var refreshToken = GenerateRefreshToken();
+        user.RefreshToken = refreshToken;
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7); // Expira en 7 días
+
         user.LastLogin = DateTime.UtcNow;
         await _userManager.UpdateAsync(user);
 
@@ -108,11 +100,75 @@ public class AuthService : IAuthService
         {
             IsSuccess = true,
             Token = token,
+            RefreshToken = refreshToken,
             UserName = user.UserName,
             Role = roles.FirstOrDefault(),
-            Expiration = DateTime.UtcNow.AddHours(8)
+            Expiration = DateTime.UtcNow.AddMinutes(30) // JWT corto (30 min)
         };
     }
+
+    public async Task<AuthResponseDto> RefreshTokenAsync(TokenRequestDto request)
+    {
+        var principal = GetPrincipalFromExpiredToken(request.AccessToken);
+        if (principal == null) return new AuthResponseDto { IsSuccess = false, Message = "Token de acceso inválido." };
+
+        var userName = principal.Identity?.Name;
+        var user = await _userManager.FindByNameAsync(userName!);
+
+        if (user == null || user.RefreshToken != request.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+        {
+            return new AuthResponseDto { IsSuccess = false, Message = "Sesión expirada o Refresh Token inválido." };
+        }
+
+        var roles = await _userManager.GetRolesAsync(user);
+        var newAccessToken = GenerateJwtToken(user, roles);
+        var newRefreshToken = GenerateRefreshToken();
+
+        user.RefreshToken = newRefreshToken;
+        await _userManager.UpdateAsync(user);
+
+        return new AuthResponseDto
+        {
+            IsSuccess = true,
+            Token = newAccessToken,
+            RefreshToken = newRefreshToken,
+            UserName = user.UserName,
+            Role = roles.FirstOrDefault(),
+            Expiration = DateTime.UtcNow.AddMinutes(30)
+        };
+    }
+
+    private string GenerateRefreshToken()
+    {
+        var randomNumber = new byte[64];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomNumber);
+        return Convert.ToBase64String(randomNumber);
+    }
+
+    private ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
+    {
+        var tokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = false,
+            ValidateIssuer = false,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]!)),
+            ValidateLifetime = false 
+        };
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+
+        if (securityToken is not JwtSecurityToken jwtSecurityToken || 
+            !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+        {
+            return null;
+        }
+
+        return principal;
+    }
+
     private string GenerateJwtToken(ApplicationUser user, IList<string> roles)
     {
         var authClaims = new List<Claim>
@@ -135,7 +191,7 @@ public class AuthService : IAuthService
         var token = new JwtSecurityToken(
             issuer: _configuration["JWT:ValidIssuer"],
             audience: _configuration["JWT:ValidAudience"],
-            expires: DateTime.UtcNow.AddHours(8),
+            expires: DateTime.UtcNow.AddMinutes(15), 
             claims: authClaims,
             signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
         );
@@ -151,89 +207,50 @@ public class AuthService : IAuthService
             var clientId = _configuration["AzureAd:ClientId"];
 
             if (string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(clientId))
-            {
-                return new AuthResponseDto { IsSuccess = false, Message = "Configuración de AzureAD incompleta en el servidor." };
-            }
+                return new AuthResponseDto { IsSuccess = false, Message = "Configuración de AzureAD incompleta." };
 
-            // 1. Obtener llaves públicas de Microsoft para validar la firma
             var stsDiscoveryEndpoint = $"https://login.microsoftonline.com/{tenantId}/v2.0/.well-known/openid-configuration";
             var configManager = new ConfigurationManager<OpenIdConnectConfiguration>(stsDiscoveryEndpoint, new OpenIdConnectConfigurationRetriever());
             var config = await configManager.GetConfigurationAsync();
 
             var handler = new JwtSecurityTokenHandler();
-
-            // 2. Parámetros estrictos de validación
             var validationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
                 ValidIssuer = $"https://login.microsoftonline.com/{tenantId}/v2.0",
-
                 ValidateAudience = true,
                 ValidAudience = clientId,
-
                 ValidateLifetime = true,
-
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKeys = config.SigningKeys // Firma real
+                IssuerSigningKeys = config.SigningKeys
             };
 
-            // 3. Valida y extrae (Si la firma, audiencia o emisor no cuadran, esto lanza excepción)
-            var principal = handler.ValidateToken(microsoftToken, validationParameters, out var validatedToken);
+            var principal = handler.ValidateToken(microsoftToken, validationParameters, out _);
+            var email = principal.FindFirst("email")?.Value ?? principal.FindFirst(ClaimTypes.Email)?.Value ?? principal.FindFirst("preferred_username")?.Value;
 
-            // 4. Extracción segura de Claims validados
-            var email = principal.FindFirst("email")?.Value
-                     ?? principal.FindFirst(ClaimTypes.Email)?.Value
-                     ?? principal.FindFirst("preferred_username")?.Value
-                     ?? principal.FindFirst("upn")?.Value;
-
-            if (string.IsNullOrEmpty(email) || !email.Contains("@"))
-            {
-                return new AuthResponseDto { IsSuccess = false, Message = "Token válido, pero no se encontró un email asociado. Revise los Scopes en Blazor." };
-            }
+            if (string.IsNullOrEmpty(email)) return new AuthResponseDto { IsSuccess = false, Message = "No se encontró un email asociado." };
 
             var user = await _userManager.FindByEmailAsync(email);
 
             if (user == null)
             {
-                var firstName = principal.FindFirst("given_name")?.Value
-                             ?? principal.FindFirst(ClaimTypes.GivenName)?.Value
-                             ?? "USUARIO";
+                var firstName = principal.FindFirst("given_name")?.Value ?? principal.FindFirst(ClaimTypes.GivenName)?.Value ?? "USUARIO";
+                var lastName = principal.FindFirst("family_name")?.Value ?? principal.FindFirst(ClaimTypes.Surname)?.Value ?? "MICROSOFT";
 
-                var lastName = principal.FindFirst("family_name")?.Value
-                            ?? principal.FindFirst(ClaimTypes.Surname)?.Value
-                            ?? "MICROSOFT";
-
-                user = new ApplicationUser
-                {
-                    UserName = email,
-                    Email = email,
-                    FirstName = firstName.ToUpper(), 
-                    LastName = lastName.ToUpper(),   
-                    IsActive = true,
-                    MustChangePassword = false
-                };
-
-                // Contraseña temporal fuerte (10 caracteres, letras, números, símbolos)
-                var passwordTemporal = Guid.NewGuid().ToString("N").Substring(0, 8) + "Ab1!@";
-
-                var createResult = await _userManager.CreateAsync(user, passwordTemporal);
-
-                if (!createResult.Succeeded)
-                {
-                    var errors = string.Join("; ", createResult.Errors.Select(e => e.Description));
-                    return new AuthResponseDto { IsSuccess = false, Message = $"No se pudo crear la cuenta local vinculada: {errors}" };
-                }
-
-                await _userManager.AddToRoleAsync(user, "Vendedor");
+                user = new ApplicationUser { UserName = email, Email = email, FirstName = firstName.ToUpper(), LastName = lastName.ToUpper(), IsActive = true };
+                var result = await _userManager.CreateAsync(user, Guid.NewGuid().ToString("N").Substring(0, 8) + "Ab1!@");
+                if (result.Succeeded) await _userManager.AddToRoleAsync(user, "Vendedor");
             }
 
-            if (!user.IsActive)
-            {
-                return new AuthResponseDto { IsSuccess = false, Message = "Su cuenta local se encuentra desactivada." };
-            }
+            if (!user.IsActive) return new AuthResponseDto { IsSuccess = false, Message = "Cuenta desactivada." };
 
+            // GENERAR TOKENS TRAS LOGIN EXITOSO
             var roles = await _userManager.GetRolesAsync(user);
             var ourToken = GenerateJwtToken(user, roles);
+
+            var refreshToken = GenerateRefreshToken();
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(5);
 
             user.LastLogin = DateTime.UtcNow;
             await _userManager.UpdateAsync(user);
@@ -242,26 +259,11 @@ public class AuthService : IAuthService
             {
                 IsSuccess = true,
                 Token = ourToken,
+                RefreshToken = refreshToken,
                 UserName = user.UserName,
                 Role = roles.FirstOrDefault(),
-                Expiration = DateTime.UtcNow.AddHours(8)
+                Expiration = DateTime.UtcNow.AddMinutes(30)
             };
-        }
-        catch (SecurityTokenExpiredException)
-        {
-            return new AuthResponseDto { IsSuccess = false, Message = "El token de Microsoft ha expirado." };
-        }
-        catch (SecurityTokenInvalidSignatureException)
-        {
-            return new AuthResponseDto { IsSuccess = false, Message = "La firma del token es inválida. Posible intento de suplantación." };
-        }
-        catch (SecurityTokenInvalidIssuerException)
-        {
-            return new AuthResponseDto { IsSuccess = false, Message = "Emisor del token inválido. El token no proviene del Tenant esperado." };
-        }
-        catch (SecurityTokenInvalidAudienceException)
-        {
-            return new AuthResponseDto { IsSuccess = false, Message = "Audiencia del token inválida. El token no fue emitido para esta aplicación." };
         }
         catch (Exception ex)
         {

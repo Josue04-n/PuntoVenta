@@ -30,6 +30,19 @@ public class AuthController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPost("refresh")]
+    public async Task<ActionResult<AuthResponseDto>> Refresh([FromBody] TokenRequestDto request)
+    {
+        var result = await _authService.RefreshTokenAsync(request);
+
+        if (!result.IsSuccess)
+        {
+            return BadRequest(new { message = result.Message });
+        }
+
+        return Ok(result);
+    }
+
     public class MicrosoftLoginRequest
     {
         public string Token { get; set; } = string.Empty;

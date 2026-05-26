@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blazor</title>
     <base href="/" />
-    <link href="_framework/dotnet.131zqyxnma.js" rel="preload" as="script" fetchpriority="high" crossorigin="anonymous" integrity="sha256-PeIDeQ8CrUVs5OrxVG9p9UJwcyPek9ih6kJrFgctp2c=" />
+    <link href="_framework/dotnet.7bh1dhhavo.js" rel="preload" as="script" fetchpriority="high" crossorigin="anonymous" integrity="sha256-466Aes32vfZ4LGd5dLuQokLgHK5kZgHWqbuMbgN/Ep8=" />
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/app.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
@@ -18,7 +18,7 @@
   "imports": {
     "./_content/Microsoft.DotNet.HotReload.WebAssembly.Browser/Microsoft.DotNet.HotReload.WebAssembly.Browser.lib.module.js": "./_content/Microsoft.DotNet.HotReload.WebAssembly.Browser/Microsoft.DotNet.HotReload.WebAssembly.Browser.99zm1jdh75.lib.module.js",
     "./_framework/blazor.webassembly.js": "./_framework/blazor.webassembly.66stpp682q.js",
-    "./_framework/dotnet.js": "./_framework/dotnet.131zqyxnma.js",
+    "./_framework/dotnet.js": "./_framework/dotnet.7bh1dhhavo.js",
     "./_framework/dotnet.native.js": "./_framework/dotnet.native.ykrnppwhq2.js",
     "./_framework/dotnet.runtime.js": "./_framework/dotnet.runtime.peu2mfb29t.js",
     "./lib/bootstrap/dist/js/bootstrap.bundle.js": "./lib/bootstrap/dist/js/bootstrap.bundle.0q3zdsi5y1.js",
@@ -36,8 +36,8 @@
     "./_content/Microsoft.DotNet.HotReload.WebAssembly.Browser/Microsoft.DotNet.HotReload.WebAssembly.Browser.lib.module.js": "sha256-A8e6zZwhOqf7lDQqbbCYcAUv4wGE9aQxOo4WyYxR//0=",
     "./_framework/blazor.webassembly.66stpp682q.js": "sha256-3lCWrko3zwspV40aQhs2S/IMkRSarnHRKIdkHhuXIBA=",
     "./_framework/blazor.webassembly.js": "sha256-3lCWrko3zwspV40aQhs2S/IMkRSarnHRKIdkHhuXIBA=",
-    "./_framework/dotnet.131zqyxnma.js": "sha256-PeIDeQ8CrUVs5OrxVG9p9UJwcyPek9ih6kJrFgctp2c=",
-    "./_framework/dotnet.js": "sha256-PeIDeQ8CrUVs5OrxVG9p9UJwcyPek9ih6kJrFgctp2c=",
+    "./_framework/dotnet.7bh1dhhavo.js": "sha256-466Aes32vfZ4LGd5dLuQokLgHK5kZgHWqbuMbgN/Ep8=",
+    "./_framework/dotnet.js": "sha256-466Aes32vfZ4LGd5dLuQokLgHK5kZgHWqbuMbgN/Ep8=",
     "./_framework/dotnet.native.js": "sha256-nheeN4H7Js+avp9nd/sQxdaehbeEx3qriXjiZ3pSw6U=",
     "./_framework/dotnet.native.ykrnppwhq2.js": "sha256-nheeN4H7Js+avp9nd/sQxdaehbeEx3qriXjiZ3pSw6U=",
     "./_framework/dotnet.runtime.js": "sha256-cajUr4vA/MpLPWj3omULUOwEQw3i8CE2n8AmDheqWBM=",
@@ -59,6 +59,24 @@
 </head>
 
 <body>
+    <noscript>
+        <div class="uta-loader-container" style="z-index: 9999; position: fixed; top: 0; left: 0;">
+            <div class="uta-loader-card"
+                style="border: 1px solid rgba(107, 26, 51, 0.3); box-shadow: 0 25px 50px -12px rgba(107, 26, 51, 0.2);">
+                <i class="bi bi-exclamation-triangle-fill"
+                    style="font-size: 4rem; color: #6B1A33; margin-bottom: 1rem; display: inline-block; filter: drop-shadow(0 4px 6px rgba(107, 26, 51, 0.2));"></i>
+                <h1 class="uta-loader-title" style="color: #1a1a1a;">JavaScript Desactivado</h1>
+                <p class="uta-loader-text" style="margin-top: 1rem; margin-bottom: 2rem;">
+                    Este sistema POS requiere <strong>JavaScript</strong> para funcionar correctamente.
+                    <br />Por favor, actívelo en la configuración de su navegador y recargue la página.
+                </p>
+                <a href="." class="btn w-100"
+                    style="background: linear-gradient(90deg, #8A1538, #6B1A33); color: white; border-radius: 12px; padding: 0.8rem; font-weight: 600; border: none; box-shadow: 0 4px 6px rgba(107, 26, 51, 0.2); text-decoration: none; display: block;">
+                    REINTENTAR
+                </a>
+            </div>
+        </div>
+    </noscript>
     <style>
         .uta-loader-container {
             height: 100vh;

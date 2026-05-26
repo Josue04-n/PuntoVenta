@@ -95,16 +95,11 @@
     private List<MenuOption> _menuOptions = new()
     {
         new MenuOption { Section = "MI INFORMACIÓN", Title = "Mi Perfil", Icon = "bi bi-person-badge", Url = "mi-perfil" },
-
         new MenuOption { Section = "PRINCIPAL", Title = "Panel de Control", Icon = "bi bi-house-door", Url = "", Match = NavLinkMatch.All },
-        
-        // El administrador gestiona el negocio pero no vende (según requerimiento)
         new MenuOption { Section = "OPERACIONES", Title = "Punto de Venta", Icon = "bi bi-cart3", Url = "ventas", Role = "Vendedor" },
-        new MenuOption { Section = "OPERACIONES", Title = "Facturación", Icon = "bi bi-receipt", Url = "facturas" }, // Ambos ven facturas (filtradas para vendedor)
-        
+        new MenuOption { Section = "OPERACIONES", Title = "Facturación", Icon = "bi bi-receipt", Url = "facturas" }, 
         new MenuOption { Section = "CATÁLOGOS", Title = "Productos", Icon = "bi bi-box-seam", Url = "productos", Role = "Administrador" },
         new MenuOption { Section = "CATÁLOGOS", Title = "Clientes", Icon = "bi bi-people", Url = "clientes", Role = "Administrador" },
-
         new MenuOption { Section = "SISTEMA", Title = "Usuarios", Icon = "bi bi-person-gear", Url = "usuarios", Role = "Administrador" }
     };
 }

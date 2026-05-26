@@ -681,7 +681,45 @@
             {
                 var errorObj = System.Text.Json.JsonDocument.Parse(errorJson);
                 var isInactive = errorObj.RootElement.TryGetProperty("isInactive", out var inactiveProp) && inactiveProp.GetBoolean();
-                
+                var isActive = errorObj.RootElement.TryGetProperty("isActive", out var activeProp) && activeProp.GetBoolean();
+
+                if (isActive)
+                {
+                    var productId = errorObj.RootElement.GetProperty("productId").GetInt32();
+                    var confirm = await JS.InvokeAsync<object>("Swal.fire", new
+                    {
+                        title = "Producto Existente",
+                        text = "Este producto ya se encuentra registrado y activo. ¿Desea reabastecer su stock en lugar de crear uno nuevo?",
+                        icon = "info",
+                        showCancelButton = true,
+                        confirmButtonColor = "#0d6efd",
+                        cancelButtonColor = "#6c757d",
+                        confirmButtonText = "Sí, reabastecer",
+                        cancelButtonText = "Cancelar"
+                    });
+
+                    var jsonConfirm = System.Text.Json.JsonSerializer.Serialize(confirm);
+                    if (jsonConfirm.Contains("\"isConfirmed\":true"))
+                    {
+                        ShowModal = false;
+
+                        var p = PagedProducts.FirstOrDefault(x => x.Id == productId);
+                        if (p != null)
+                        {
+                            OpenRestockModal(p);
+                        }
+                        else
+                        {
+                            SelectedProductName = EditingProduct.Name;
+                            CurrentStock = 0; 
+                            RestockData = new RestockRequest { ProductId = productId, Quantity = 1, UnitCost = 0 };
+                            ShowRestockModal = true;
+                        }
+                        StateHasChanged();
+                    }
+                    return;
+                }
+
                 if (isInactive)
                 {
                     var productId = errorObj.RootElement.GetProperty("productId").GetInt32();
