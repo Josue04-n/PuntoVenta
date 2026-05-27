@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blazor</title>
     <base href="/" />
-    <link href="_framework/dotnet.7bh1dhhavo.js" rel="preload" as="script" fetchpriority="high" crossorigin="anonymous" integrity="sha256-466Aes32vfZ4LGd5dLuQokLgHK5kZgHWqbuMbgN/Ep8=" />
+    <link href="_framework/dotnet.wz5wdz3rnm.js" rel="preload" as="script" fetchpriority="high" crossorigin="anonymous" integrity="sha256-XG/llqswhTU4RKyTim1g076KhntpI1Oe1jtAc5VO5HE=" />
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/app.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
@@ -18,9 +18,9 @@
   "imports": {
     "./_content/Microsoft.DotNet.HotReload.WebAssembly.Browser/Microsoft.DotNet.HotReload.WebAssembly.Browser.lib.module.js": "./_content/Microsoft.DotNet.HotReload.WebAssembly.Browser/Microsoft.DotNet.HotReload.WebAssembly.Browser.99zm1jdh75.lib.module.js",
     "./_framework/blazor.webassembly.js": "./_framework/blazor.webassembly.66stpp682q.js",
-    "./_framework/dotnet.js": "./_framework/dotnet.7bh1dhhavo.js",
     "./_framework/dotnet.native.js": "./_framework/dotnet.native.ykrnppwhq2.js",
     "./_framework/dotnet.runtime.js": "./_framework/dotnet.runtime.peu2mfb29t.js",
+    "./_framework/dotnet.js": "./_framework/dotnet.wz5wdz3rnm.js",
     "./lib/bootstrap/dist/js/bootstrap.bundle.js": "./lib/bootstrap/dist/js/bootstrap.bundle.0q3zdsi5y1.js",
     "./lib/bootstrap/dist/js/bootstrap.bundle.min.js": "./lib/bootstrap/dist/js/bootstrap.bundle.min.493y06b0oq.js",
     "./lib/bootstrap/dist/js/bootstrap.esm.min.js": "./lib/bootstrap/dist/js/bootstrap.esm.min.jj8uyg4cgr.js",
@@ -36,12 +36,12 @@
     "./_content/Microsoft.DotNet.HotReload.WebAssembly.Browser/Microsoft.DotNet.HotReload.WebAssembly.Browser.lib.module.js": "sha256-A8e6zZwhOqf7lDQqbbCYcAUv4wGE9aQxOo4WyYxR//0=",
     "./_framework/blazor.webassembly.66stpp682q.js": "sha256-3lCWrko3zwspV40aQhs2S/IMkRSarnHRKIdkHhuXIBA=",
     "./_framework/blazor.webassembly.js": "sha256-3lCWrko3zwspV40aQhs2S/IMkRSarnHRKIdkHhuXIBA=",
-    "./_framework/dotnet.7bh1dhhavo.js": "sha256-466Aes32vfZ4LGd5dLuQokLgHK5kZgHWqbuMbgN/Ep8=",
-    "./_framework/dotnet.js": "sha256-466Aes32vfZ4LGd5dLuQokLgHK5kZgHWqbuMbgN/Ep8=",
+    "./_framework/dotnet.js": "sha256-XG/llqswhTU4RKyTim1g076KhntpI1Oe1jtAc5VO5HE=",
     "./_framework/dotnet.native.js": "sha256-nheeN4H7Js+avp9nd/sQxdaehbeEx3qriXjiZ3pSw6U=",
     "./_framework/dotnet.native.ykrnppwhq2.js": "sha256-nheeN4H7Js+avp9nd/sQxdaehbeEx3qriXjiZ3pSw6U=",
     "./_framework/dotnet.runtime.js": "sha256-cajUr4vA/MpLPWj3omULUOwEQw3i8CE2n8AmDheqWBM=",
     "./_framework/dotnet.runtime.peu2mfb29t.js": "sha256-cajUr4vA/MpLPWj3omULUOwEQw3i8CE2n8AmDheqWBM=",
+    "./_framework/dotnet.wz5wdz3rnm.js": "sha256-XG/llqswhTU4RKyTim1g076KhntpI1Oe1jtAc5VO5HE=",
     "./lib/bootstrap/dist/js/bootstrap.bundle.0q3zdsi5y1.js": "sha256-mHrMq0gOFb4mzagVRnIVmx7cjTYKen5ZZDLQ/U/caXc=",
     "./lib/bootstrap/dist/js/bootstrap.bundle.js": "sha256-mHrMq0gOFb4mzagVRnIVmx7cjTYKen5ZZDLQ/U/caXc=",
     "./lib/bootstrap/dist/js/bootstrap.bundle.min.493y06b0oq.js": "sha256-CDOy6cOibCWEdsRiZuaHf8dSGGJRYuBGC+mjoJimHGw=",
@@ -228,6 +228,30 @@
             disable: function () {
                 window.onbeforeunload = null;
             }
+        };
+    </script>
+    <script>
+        var inactivityTimer;
+        window.setupInactivityTimer = (dotNetHelper, timeoutMinutes) => {
+            const timeoutMs = timeoutMinutes * 60 * 1000;
+            
+            function resetTimer() {
+                clearTimeout(inactivityTimer);
+                inactivityTimer = setTimeout(() => {
+                    dotNetHelper.invokeMethodAsync("LogoutUser");
+                }, timeoutMs);
+            }
+
+            // Eventos que reinician el contador
+            window.onload = resetTimer;
+            window.onmousemove = resetTimer;
+            window.onmousedown = resetTimer;
+            window.ontouchstart = resetTimer;
+            window.onclick = resetTimer;
+            window.onkeydown = resetTimer;
+            window.addEventListener('scroll', resetTimer, true);
+            
+            resetTimer(); // Iniciar por primera vez
         };
     </script>
 </body>

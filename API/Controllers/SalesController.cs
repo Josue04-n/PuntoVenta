@@ -14,51 +14,35 @@ public class SalesController : ControllerBase
 {
     private readonly PerformSaleHandler _performSaleHandler;
     private readonly SearchSalesHandler _searchSalesHandler;
+    private readonly ConfirmSaleHandler _confirmSaleHandler;
+    private readonly CancelSaleHandler _cancelSaleHandler;
 
-    public SalesController(PerformSaleHandler performSaleHandler, SearchSalesHandler searchSalesHandler)
+    public SalesController(
+        PerformSaleHandler performSaleHandler, 
+        SearchSalesHandler searchSalesHandler,
+        ConfirmSaleHandler confirmSaleHandler,
+        CancelSaleHandler cancelSaleHandler)
     {
         _performSaleHandler = performSaleHandler;
         _searchSalesHandler = searchSalesHandler;
+        _confirmSaleHandler = confirmSaleHandler;
+        _cancelSaleHandler = cancelSaleHandler;
     }
 
     [HttpGet("search")]
     public async Task<ActionResult<IEnumerable<SaleResponseDto>>> SearchSales([FromQuery] string term, [FromQuery] string searchBy = "number")
     {
-        // Segregación: El vendedor solo busca sus propias ventas
         string? sellerNameFilter = User.IsInRole("Administrador") ? null : User.Identity?.Name;
 
         var sales = await _searchSalesHandler.ExecuteAsync(term, searchBy, sellerNameFilter);
 
-        var responseItems = sales.Select(s => new SaleResponseDto
-        {
-            Id = s.Id,
-            InvoiceNumber = s.InvoiceNumber,
-            IssueDate = s.IssueDate,
-            CustomerName = s.Customer != null ? $"{s.Customer.Name} {s.Customer.LastName}" : "Final Consumer",
-            CustomerIDCard = s.Customer?.IDCard ?? "9999999999",
-            CustomerPhone = s.Customer?.Phone ?? string.Empty,
-            CustomerAddress = s.Customer?.Address ?? string.Empty,
-            CustomerEmail = s.Customer?.Email ?? string.Empty,
-            CreatedBy = s.CreatedBy ?? "SYSTEM",
-            SubTotal = s.SubTotal,
-            VatAmount = s.VatAmount,
-            VatPercentage = s.VatPercentage,
-            Total = s.Total,
-            Details = s.Details.Select(d => new SaleDetailResponseDto
-            {
-                ProductId = d.ProductId,
-                ProductName = d.Product?.Name ?? "Product not specified",
-                Amount = d.Amount,
-                UnitPrice = d.UnitPrice.Worth,
-                SubTotal = d.SubTotal.Worth
-            }).ToList()
-        });
+        var responseItems = sales.Select(s => MapToDto(s));
 
         return Ok(responseItems);
     }
 
     [HttpPost]
-    [Authorize(Roles = "Vendedor")] // Solo los vendedores registran ventas según requerimiento
+    [Authorize(Roles = "Vendedor")]
     public async Task<ActionResult<SaleResponseDto>> RegisterSale([FromBody] CreateSaleRequest request)
     {
         if (request == null || !request.Details.Any())
@@ -67,37 +51,9 @@ public class SalesController : ControllerBase
         try
         {
             var result = await _performSaleHandler.ExecuteAsync(request);
-
-            var response = new SaleResponseDto
-            {
-                Id = result.Id,
-                InvoiceNumber = result.InvoiceNumber,
-                IssueDate = result.IssueDate,
-                CustomerName = result.Customer != null ? $"{result.Customer.Name} {result.Customer.LastName}" : "Final Consumer",
-                CustomerIDCard = result.Customer?.IDCard ?? "9999999999",
-                CustomerPhone = result.Customer?.Phone ?? string.Empty,
-                CustomerAddress = result.Customer?.Address ?? string.Empty,
-                CustomerEmail = result.Customer?.Email ?? string.Empty,
-                CreatedBy = result.CreatedBy ?? "SYSTEM",
-                SubTotal = result.SubTotal,
-                VatAmount = result.VatAmount,
-                VatPercentage = result.VatPercentage,
-                Total = result.Total,
-                Details = result.Details.Select(d => new SaleDetailResponseDto
-                {
-                    ProductId = d.ProductId,
-                    ProductName = d.Product?.Name ?? "Product not specified",
-                    Amount = d.Amount,
-                    UnitPrice = d.UnitPrice.Worth,
-                    SubTotal = d.SubTotal.Worth
-                }).ToList()
-            };
+            var response = MapToDto(result);
 
             return CreatedAtAction(nameof(RegisterSale), new { id = response.Id }, response);
-        }
-        catch (BulkStockException ex)
-        {
-            return Conflict(new { type = "BulkStock", message = ex.Message, errors = ex.Errors });
         }
         catch (ProductDeletedException ex)
         {
@@ -113,6 +69,46 @@ public class SalesController : ControllerBase
         }
     }
 
+    [HttpPut("{id:int}/confirm")]
+    public async Task<IActionResult> ConfirmSale(int id)
+    {
+        try
+        {
+            await _confirmSaleHandler.ExecuteAsync(id);
+            return Ok(new { message = "Venta confirmada y stock actualizado." });
+        }
+        catch (BulkStockException ex)
+        {
+            return Conflict(new { type = "BulkStock", message = ex.Message, errors = ex.Errors });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
+    [HttpPut("{id:int}/cancel")]
+    public async Task<IActionResult> CancelSale(int id)
+    {
+        try
+        {
+            await _cancelSaleHandler.ExecuteAsync(id);
+            return Ok(new { message = "Venta anulada correctamente." });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
     [HttpGet("paged")]
     public async Task<ActionResult<PagedResponse<SaleResponseDto>>> GetPagedSales(
         [FromQuery] int pageNumber = 1, 
@@ -120,12 +116,18 @@ public class SalesController : ControllerBase
         [FromQuery] string? term = null, 
         [FromQuery] string? searchBy = null)
     {
-        // Segregación: El vendedor solo ve sus propias ventas
         string? sellerNameFilter = User.IsInRole("Administrador") ? null : User.Identity?.Name;
 
         var (sales, totalCount) = await _searchSalesHandler.ExecutePagedAsync(pageNumber, pageSize, term, searchBy, sellerNameFilter);
 
-        var responseItems = sales.Select(s => new SaleResponseDto
+        var responseItems = sales.Select(s => MapToDto(s));
+
+        return Ok(new PagedResponse<SaleResponseDto>(responseItems.ToList(), totalCount, pageNumber, pageSize));
+    }
+
+    private static SaleResponseDto MapToDto(Domain.Entities.Sale s)
+    {
+        return new SaleResponseDto
         {
             Id = s.Id,
             InvoiceNumber = s.InvoiceNumber,
@@ -140,6 +142,7 @@ public class SalesController : ControllerBase
             VatAmount = s.VatAmount,
             VatPercentage = s.VatPercentage,
             Total = s.Total,
+            Status = s.Status,
             Details = s.Details.Select(d => new SaleDetailResponseDto
             {
                 ProductId = d.ProductId,
@@ -148,8 +151,6 @@ public class SalesController : ControllerBase
                 UnitPrice = d.UnitPrice.Worth,
                 SubTotal = d.SubTotal.Worth
             }).ToList()
-        });
-
-        return Ok(new PagedResponse<SaleResponseDto>(responseItems.ToList(), totalCount, pageNumber, pageSize));
+        };
     }
 }

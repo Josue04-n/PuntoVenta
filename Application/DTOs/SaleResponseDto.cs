@@ -1,4 +1,6 @@
-﻿namespace Application.DTOs;
+using Domain.Enums;
+
+namespace Application.DTOs;
 
 public class SaleResponseDto
 {
@@ -15,6 +17,14 @@ public class SaleResponseDto
     public decimal VatPercentage { get; set; }
     public decimal VatAmount { get; set; }
     public decimal Total { get; set; }
+    public SaleStatus Status { get; set; }
+    public string StatusName => Status switch
+    {
+        SaleStatus.Draft => "Borrador",
+        SaleStatus.Confirmed => "Confirmada",
+        SaleStatus.Cancelled => "Anulada",
+        _ => "Desconocido"
+    };
     public List<SaleDetailResponseDto> Details { get; set; } = new();
 }
 

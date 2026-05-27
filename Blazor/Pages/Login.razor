@@ -101,6 +101,9 @@
     [SupplyParameterFromQuery]
     public string? error { get; set; }
 
+    [SupplyParameterFromQuery]
+    public string? reason { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         if (!string.IsNullOrEmpty(error))
@@ -108,8 +111,25 @@
             _errorMessage = error;
         }
 
+        if (reason == "idle")
+        {
+            _ = Task.Run(async () => {
+                await Task.Delay(500); // Dar tiempo a que cargue la UI
+                await JS.InvokeVoidAsync("Swal.fire", new {
+                    title = "Sesión Expirada",
+                    text = "Su sesión se ha cerrado automáticamente por falta de actividad.",
+                    icon = "warning",
+                    toast = true,
+                    position = "top-end",
+                    showConfirmButton = false,
+                    timer = 5000,
+                    timerProgressBar = true
+                });
+            });
+        }
+
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        if (authState.User.Identity?.IsAuthenticated == true)
+        if (authState.User.Identity?.IsAuthenticated == true && string.IsNullOrEmpty(reason))
         {
             Navigation.NavigateTo("/");
         }

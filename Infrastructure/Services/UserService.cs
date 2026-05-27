@@ -50,10 +50,11 @@ public class UserService : IUserService
         string status = "active")
     {
         var query = _userManager.Users.IgnoreQueryFilters().AsQueryable();
+        var now = DateTimeOffset.UtcNow;
 
-        if (status == "active") query = query.Where(u => u.IsActive && (u.LockoutEnd == null || u.LockoutEnd <= DateTimeOffset.UtcNow));
+        if (status == "active") query = query.Where(u => u.IsActive && (u.LockoutEnd == null || u.LockoutEnd <= now));
         else if (status == "inactive") query = query.Where(u => !u.IsActive);
-        else if (status == "bloqueados") query = query.Where(u => u.IsActive && u.LockoutEnd > DateTimeOffset.UtcNow);
+        else if (status == "bloqueados") query = query.Where(u => u.IsActive && u.LockoutEnd > now);
 
         if (!string.IsNullOrWhiteSpace(term))
         {

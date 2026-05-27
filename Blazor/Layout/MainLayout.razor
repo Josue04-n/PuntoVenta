@@ -4,11 +4,13 @@
 @using Application.DTOs
 @using Blazor.Services
 @using Blazor.Security
+@using Microsoft.JSInterop
 @implements IDisposable
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
 @inject NotificationApiService NotificationApiService
 @inject CustomAuthStateProvider AuthStateProvider
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 
 <div class="uta-layout">
     <aside class="uta-sidebar">
@@ -132,6 +134,7 @@
     private Timer? _notifTimer;
     private bool _showNotifications = false;
     private List<NotificationDto> _notifications = new();
+    private DotNetObjectReference<MainLayout>? _objRef;
 
     protected override async Task OnInitializedAsync()
     {
@@ -149,6 +152,27 @@
         _notifTimer.Enabled = true;
 
         await RefreshNotifications();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _objRef = DotNetObjectReference.Create(this);
+            var timeout = Configuration.GetValue<int>("BusinessSettings:IdleTimeoutInMinutes", 10);
+            await JS.InvokeVoidAsync("setupInactivityTimer", _objRef, timeout);
+        }
+    }
+
+    [JSInvokable]
+    public async Task LogoutUser()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity?.IsAuthenticated == true)
+        {
+            await AuthStateProvider.NotifyUserLogout();
+            NavigationManager.NavigateTo("/login?reason=idle");
+        }
     }
 
     private void UpdateClock(object? sender, ElapsedEventArgs e)
@@ -202,5 +226,6 @@
     {
         _timer?.Dispose();
         _notifTimer?.Dispose();
+        _objRef?.Dispose();
     }
 }

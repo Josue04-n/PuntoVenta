@@ -2,6 +2,7 @@ using Application.DTOs;
 using Application.Interfaces.Repositories;
 using Application.Interfaces.Services;
 using Domain.Entities;
+using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.Data;
 using Microsoft.Extensions.Options;
@@ -27,15 +28,15 @@ public class NotificationService : INotificationService
         var lowStockProducts = await _context.Products
             .AsNoTracking()
             .Where(p => p.IsActive && p.Stock <= _settings.LowStockThreshold)
-            .Take(10)
+            .Take(5)
             .ToListAsync();
 
         foreach (var p in lowStockProducts)
         {
-            bool isOut = p.Stock == 0;
+            bool isOut = p.Stock <= 0;
             notifications.Add(new NotificationDto
             {
-                Message = isOut ? $"¡Atención! '{p.Name}' se ha agotado por completo (0 unidades)." : $"Stock bajo: '{p.Name}' tiene solo {p.Stock} unidades.",
+                Message = isOut ? $"¡AGOTADO! '{p.Name}' no tiene unidades disponibles." : $"Stock bajo: '{p.Name}' tiene solo {p.Stock} unidades.",
                 Type = isOut ? "Danger" : "Warning",
                 Icon = isOut ? "bi-x-octagon-fill" : "bi-exclamation-triangle-fill",
                 CreatedAt = p.UpdatedAt ?? p.CreatedAt,
@@ -43,13 +44,14 @@ public class NotificationService : INotificationService
             });
         }
 
-        // 2. Notificaciones de Ventas (Solo para Administradores)
+        // 2. Notificaciones de Ventas y Devoluciones (Solo para Administradores)
         if (role == "Administrador")
         {
-            // Tomar las últimas 5 ventas de las últimas 24 horas
+            // --- NUEVAS VENTAS ---
             var recentSales = await _context.Sales
                 .Include(s => s.Customer)
                 .AsNoTracking()
+                .Where(s => s.Status == SaleStatus.Confirmed)
                 .OrderByDescending(s => s.IssueDate)
                 .Take(5)
                 .ToListAsync();
@@ -58,15 +60,35 @@ public class NotificationService : INotificationService
             {
                 notifications.Add(new NotificationDto
                 {
-                    Message = $"Nueva Venta: {s.InvoiceNumber} por ${s.Total:N2} (Cliente: {s.Customer?.LastName ?? "CF"})",
+                    Message = $"Nueva Venta: {s.InvoiceNumber} por ${s.Total:N2}",
                     Type = "Success",
                     Icon = "bi-cart-check-fill",
                     CreatedAt = s.IssueDate,
                     TargetUrl = $"/facturas?numeroFactura={s.InvoiceNumber}"
                 });
             }
+
+            // --- DEVOLUCIONES / ANULACIONES ---
+            var recentCancellations = await _context.Sales
+                .AsNoTracking()
+                .Where(s => s.Status == SaleStatus.Cancelled)
+                .OrderByDescending(s => s.UpdatedAt ?? s.IssueDate)
+                .Take(5)
+                .ToListAsync();
+
+            foreach (var c in recentCancellations)
+            {
+                notifications.Add(new NotificationDto
+                {
+                    Message = $"Venta Anulada: {c.InvoiceNumber} (Total devuelto: ${c.Total:N2})",
+                    Type = "Danger",
+                    Icon = "bi-arrow-counterclockwise",
+                    CreatedAt = c.UpdatedAt ?? c.IssueDate,
+                    TargetUrl = $"/facturas?numeroFactura={c.InvoiceNumber}"
+                });
+            }
         }
 
-        return notifications.OrderByDescending(n => n.CreatedAt);
+        return notifications.OrderByDescending(n => n.CreatedAt).Take(15);
     }
 }

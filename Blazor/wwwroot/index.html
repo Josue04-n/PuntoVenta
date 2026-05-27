@@ -189,6 +189,30 @@
             }
         };
     </script>
+    <script>
+        var inactivityTimer;
+        window.setupInactivityTimer = (dotNetHelper, timeoutMinutes) => {
+            const timeoutMs = timeoutMinutes * 60 * 1000;
+            
+            function resetTimer() {
+                clearTimeout(inactivityTimer);
+                inactivityTimer = setTimeout(() => {
+                    dotNetHelper.invokeMethodAsync("LogoutUser");
+                }, timeoutMs);
+            }
+
+            // Eventos que reinician el contador
+            window.onload = resetTimer;
+            window.onmousemove = resetTimer;
+            window.onmousedown = resetTimer;
+            window.ontouchstart = resetTimer;
+            window.onclick = resetTimer;
+            window.onkeydown = resetTimer;
+            window.addEventListener('scroll', resetTimer, true);
+            
+            resetTimer(); // Iniciar por primera vez
+        };
+    </script>
 </body>
 
 </html>

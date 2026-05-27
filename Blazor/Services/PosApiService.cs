@@ -21,6 +21,16 @@ public class PosApiService
         return await _http.PostAsJsonAsync("api/Sales", request);
     }
 
+    public async Task<HttpResponseMessage> ConfirmSaleAsync(int saleId)
+    {
+        return await _http.PutAsync($"api/Sales/{saleId}/confirm", null);
+    }
+
+    public async Task<HttpResponseMessage> CancelSaleAsync(int saleId)
+    {
+        return await _http.PutAsync($"api/Sales/{saleId}/cancel", null);
+    }
+
     // 4. BUSCAR VENTAS
     public async Task<List<Blazor.Models.SaleResponseDto>> SearchSalesAsync(string term, string searchBy = "number")
     {

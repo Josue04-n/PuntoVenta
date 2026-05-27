@@ -216,6 +216,84 @@
     font-weight: 600;
 }
 
+.uta-badge[b-x5qr9n8pad] {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.uta-badge--green[b-x5qr9n8pad] {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.uta-badge--red[b-x5qr9n8pad] {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.uta-badge--yellow[b-x5qr9n8pad] {
+    background: #fef9c3;
+    color: #a16207;
+}
+
+.uta-badge--light[b-x5qr9n8pad] {
+    background: #f1f3f5;
+    color: #6c757d;
+}
+
+.uta-icon-btn-outline[b-x5qr9n8pad] {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    border: 1px solid #ced4da;
+    color: #495057;
+}
+
+.uta-icon-btn-outline:hover[b-x5qr9n8pad] {
+    background: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.uta-icon-btn-outline--blue[b-x5qr9n8pad] {
+    color: #3b82f6;
+    border-color: #bfdbfe;
+}
+.uta-icon-btn-outline--blue:hover[b-x5qr9n8pad] {
+    background: #eff6ff;
+    border-color: #3b82f6;
+}
+
+.uta-icon-btn-outline--green[b-x5qr9n8pad] {
+    color: #16a34a;
+    border-color: #bbf7d0;
+}
+.uta-icon-btn-outline--green:hover[b-x5qr9n8pad] {
+    background: #f0fdf4;
+    border-color: #16a34a;
+}
+
+.uta-icon-btn-outline--red[b-x5qr9n8pad] {
+    color: #dc2626;
+    border-color: #fecaca;
+}
+.uta-icon-btn-outline--red:hover[b-x5qr9n8pad] {
+    background: #fef2f2;
+    border-color: #dc2626;
+}
+
 .uta-table__empty[b-x5qr9n8pad] {
     text-align: center;
     padding: 3rem !important;
@@ -443,4 +521,146 @@
 
 @keyframes spin-b-x5qr9n8pad { 
     100% { transform: rotate(360deg); } 
+}
+
+/* ====================================================
+   NOTIFICACIONES TOAST 
+   ==================================================== */
+.uta-toast-wrapper[b-x5qr9n8pad] {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    z-index: 10000;
+    pointer-events: none;
+}
+
+.uta-toast[b-x5qr9n8pad] {
+    pointer-events: auto;
+    min-width: 320px;
+    max-width: 400px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 1.25rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    position: relative;
+    overflow: hidden;
+    animation: toastEnter-b-x5qr9n8pad 0.5s cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+
+@keyframes toastEnter-b-x5qr9n8pad {
+    from {
+        transform: translateX(100%) scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+    }
+}
+
+.uta-toast__icon[b-x5qr9n8pad] {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    background: #f8f9fa;
+}
+
+.uta-toast--success .uta-toast__icon[b-x5qr9n8pad] {
+    background: #ecfdf5;
+    color: #10b981;
+}
+
+.uta-toast--error .uta-toast__icon[b-x5qr9n8pad] {
+    background: #fef2f2;
+    color: #ef4444;
+}
+
+.uta-toast__body[b-x5qr9n8pad] {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding-top: 2px;
+}
+
+.uta-toast__title[b-x5qr9n8pad] {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #1a1a1a;
+    letter-spacing: -0.2px;
+}
+
+.uta-toast__message[b-x5qr9n8pad] {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #64748b;
+    line-height: 1.4;
+}
+
+.uta-toast__close[b-x5qr9n8pad] {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 1.2rem;
+    line-height: 1;
+    transition: color 0.2s, transform 0.2s;
+    margin-top: -4px;
+    margin-right: -4px;
+}
+
+.uta-toast__close:hover[b-x5qr9n8pad] {
+    color: #1a1a1a;
+    transform: rotate(90deg);
+}
+
+.uta-toast__progress[b-x5qr9n8pad] {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.uta-toast__progress[b-x5qr9n8pad]::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    transform-origin: left;
+    animation: toastProgress-b-x5qr9n8pad 3s linear forwards;
+}
+
+.uta-toast--success .uta-toast__progress[b-x5qr9n8pad]::after {
+    background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.uta-toast--error .uta-toast__progress[b-x5qr9n8pad]::after {
+    background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+@keyframes toastProgress-b-x5qr9n8pad {
+    from {
+        transform: scaleX(1);
+    }
+
+    to {
+        transform: scaleX(0);
+    }
 }

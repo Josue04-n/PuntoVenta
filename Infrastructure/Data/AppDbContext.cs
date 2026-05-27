@@ -119,6 +119,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             entity.ToTable(t => t.HasCheckConstraint("CK_Sale_Total_Consistency", "Total = SubTotal + VatAmount"));
 
             entity.HasKey(s => s.Id);
+            entity.Property(s => s.Status).HasConversion<int>().IsRequired();
             entity.HasIndex(s => s.InvoiceNumber); // Índice para búsqueda de facturas
             entity.HasIndex(s => s.IssueDate);     // Índice para reportes y ordenamiento
 

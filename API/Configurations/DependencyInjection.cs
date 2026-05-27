@@ -58,6 +58,8 @@ public static class DependencyInjection
         services.AddScoped<INotificationService, NotificationService>();
 
         services.AddScoped<PerformSaleHandler>();
+        services.AddScoped<ConfirmSaleHandler>();
+        services.AddScoped<CancelSaleHandler>();
         services.AddScoped<SearchSalesHandler>();
         services.AddScoped<ProductHandlers>();
         services.AddScoped<CustomerHandlers>();
