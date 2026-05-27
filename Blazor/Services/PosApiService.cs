@@ -12,9 +12,6 @@ public class PosApiService
     {
         _http = http;
     }
-    // IMPLEMENTAR LOS MÉTODOS PARA CONSUMIR LA API
-
-    // 3. CREAR VENTA
 
     public async Task<HttpResponseMessage> CreateSaleAsync(Application.DTOs.CreateSaleRequest request)
     {
@@ -31,12 +28,15 @@ public class PosApiService
         return await _http.PutAsync($"api/Sales/{saleId}/cancel", null);
     }
 
-    // 4. BUSCAR VENTAS
-    public async Task<List<Blazor.Models.SaleResponseDto>> SearchSalesAsync(string term, string searchBy = "number")
+    public async Task<List<Blazor.Models.SaleResponseDto>> SearchSalesAsync(string term, string searchBy = "number", DateTime? startDate = null, DateTime? endDate = null)
     {
         try
         {
-            var response = await _http.GetFromJsonAsync<List<Blazor.Models.SaleResponseDto>>($"api/Sales/search?term={term}&searchBy={searchBy}");
+            var url = $"api/Sales/search?term={Uri.EscapeDataString(term)}&searchBy={searchBy}";
+            if (startDate.HasValue) url += $"&startDate={startDate.Value:yyyy-MM-dd}";
+            if (endDate.HasValue) url += $"&endDate={endDate.Value:yyyy-MM-dd}";
+
+            var response = await _http.GetFromJsonAsync<List<Blazor.Models.SaleResponseDto>>(url);
             return response ?? new List<Blazor.Models.SaleResponseDto>();
         }
         catch
@@ -60,7 +60,7 @@ public class PosApiService
         catch { return null; }
     }
 
-    public async Task<PagedResponse<Blazor.Models.SaleResponseDto>?> GetPagedSalesAsync(int pageNumber, int pageSize, string? term, string? searchBy)
+    public async Task<PagedResponse<Blazor.Models.SaleResponseDto>?> GetPagedSalesAsync(int pageNumber, int pageSize, string? term, string? searchBy, DateTime? startDate = null, DateTime? endDate = null)
     {
         try
         {
@@ -72,6 +72,14 @@ public class PosApiService
             if (!string.IsNullOrWhiteSpace(searchBy))
             {
                 url += $"&searchBy={Uri.EscapeDataString(searchBy)}";
+            }
+            if (startDate.HasValue)
+            {
+                url += $"&startDate={startDate.Value:yyyy-MM-dd}";
+            }
+            if (endDate.HasValue)
+            {
+                url += $"&endDate={endDate.Value:yyyy-MM-dd}";
             }
 
             return await _http.GetFromJsonAsync<PagedResponse<Blazor.Models.SaleResponseDto>>(url);

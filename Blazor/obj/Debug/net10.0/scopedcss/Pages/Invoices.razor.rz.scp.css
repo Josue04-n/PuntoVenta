@@ -167,6 +167,53 @@
     height: 100%;
 }
 
+.uta-filters-container[b-x5qr9n8pad] {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.uta-date-filter[b-x5qr9n8pad] {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    height: 42px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.uta-date-filter__label[b-x5qr9n8pad] {
+    background: #f8f9fa;
+    padding: 0 0.8rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    border-right: 1px solid #ced4da;
+}
+
+.uta-date-filter__input[b-x5qr9n8pad] {
+    border: none;
+    padding: 0 0.8rem;
+    font-size: 0.85rem;
+    color: #495057;
+    height: 100%;
+    outline: none;
+    background: transparent;
+}
+.uta-date-filter__input:focus[b-x5qr9n8pad] {
+    box-shadow: none;
+}
+
 .uta-table-wrap[b-x5qr9n8pad] {
     overflow-x: auto;
 }

@@ -30,11 +30,15 @@ public class SalesController : ControllerBase
     }
 
     [HttpGet("search")]
-    public async Task<ActionResult<IEnumerable<SaleResponseDto>>> SearchSales([FromQuery] string term, [FromQuery] string searchBy = "number")
+    public async Task<ActionResult<IEnumerable<SaleResponseDto>>> SearchSales(
+        [FromQuery] string term, 
+        [FromQuery] string searchBy = "number",
+        [FromQuery] DateTime? startDate = null,
+        [FromQuery] DateTime? endDate = null)
     {
         string? sellerNameFilter = User.IsInRole("Administrador") ? null : User.Identity?.Name;
 
-        var sales = await _searchSalesHandler.ExecuteAsync(term, searchBy, sellerNameFilter);
+        var sales = await _searchSalesHandler.ExecuteAsync(term, searchBy, sellerNameFilter, startDate, endDate);
 
         var responseItems = sales.Select(s => MapToDto(s));
 
@@ -114,11 +118,13 @@ public class SalesController : ControllerBase
         [FromQuery] int pageNumber = 1, 
         [FromQuery] int pageSize = 10, 
         [FromQuery] string? term = null, 
-        [FromQuery] string? searchBy = null)
+        [FromQuery] string? searchBy = null,
+        [FromQuery] DateTime? startDate = null,
+        [FromQuery] DateTime? endDate = null)
     {
         string? sellerNameFilter = User.IsInRole("Administrador") ? null : User.Identity?.Name;
 
-        var (sales, totalCount) = await _searchSalesHandler.ExecutePagedAsync(pageNumber, pageSize, term, searchBy, sellerNameFilter);
+        var (sales, totalCount) = await _searchSalesHandler.ExecutePagedAsync(pageNumber, pageSize, term, searchBy, sellerNameFilter, startDate, endDate);
 
         var responseItems = sales.Select(s => MapToDto(s));
 

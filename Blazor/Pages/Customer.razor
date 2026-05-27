@@ -8,24 +8,7 @@
 @inject IJSRuntime JS
 @attribute [Authorize(Roles = "Administrador")]
 
-@if (!string.IsNullOrEmpty(_alertMessage))
-{
-    <div class="uta-toast-wrapper">
-        <div class="uta-toast @(_isError ? "uta-toast--error" : "uta-toast--success")">
-            <div class="uta-toast__icon">
-                <i class="bi @(_isError ? "bi-exclamation-triangle-fill" : "bi-check2-circle")"></i>
-            </div>
-            <div class="uta-toast__body">
-                <div class="uta-toast__title">@(_isError ? "Atención" : "¡Éxito!")</div>
-                <div class="uta-toast__message">@_alertMessage</div>
-            </div>
-            <button class="uta-toast__close" @onclick="() => _alertMessage = string.Empty">
-                <i class="bi bi-x"></i>
-            </button>
-            <div class="uta-toast__progress"></div>
-        </div>
-    </div>
-}
+<UtaToast @ref="_toast" />
 
 <div class="uta-page">
     <div class="uta-page-header">
@@ -323,19 +306,13 @@
 
 @code {
     private string SearchTerm = string.Empty;
-    private string _alertMessage = "";
-    private bool _isError = false;
+    private UtaToast _toast = default!;
     private Dictionary<string, string> _errors = new();
     private string _statusFilter = "active"; // "active", "inactive", "all"
 
     private async Task ShowToast(string message, bool isError = false)
     {
-        _alertMessage = message;
-        _isError = isError;
-        StateHasChanged();
-        await Task.Delay(3000);
-        _alertMessage = string.Empty;
-        StateHasChanged();
+        if (_toast != null) await _toast.ShowAsync(message, isError);
     }
 
     private async Task ChangeStatusFilter(string filter)
@@ -515,13 +492,20 @@
 
     private async Task LoadCustomersAsync()
     {
-        var result = await CustomerApiService.SearchCustomersAsync(SearchTerm, SearchCriterion, CurrentPage, PageSize, _statusFilter);
-        if (result != null)
+        try
         {
-            PagedCustomers = result.Items.ToList();
-            TotalItems = result.TotalCount;
-            TotalPages = result.TotalPages;
-            if (TotalPages == 0) TotalPages = 1;
+            var result = await CustomerApiService.SearchCustomersAsync(SearchTerm, SearchCriterion, CurrentPage, PageSize, _statusFilter);
+            if (result != null)
+            {
+                PagedCustomers = result.Items.ToList();
+                TotalItems = result.TotalCount;
+                TotalPages = result.TotalPages;
+                if (TotalPages == 0) TotalPages = 1;
+            }
+        }
+        catch (Exception)
+        {
+            await ShowToast("Error de conexión: No se pudo comunicar con el servidor.", true);
         }
         StateHasChanged();
     }
@@ -613,26 +597,33 @@
         }
 
         HttpResponseMessage response;
-        if (IsEditMode)
+        try
         {
-            var updateReq = new UpdateCustomerRequest
+            if (IsEditMode)
             {
-                Id = CurrentEditingId,
-                IDCard = EditingCustomer.IDCard,
-                Name = EditingCustomer.Name,
-                LastName = EditingCustomer.LastName,
-                Phone = EditingCustomer.Phone,
-                Address = EditingCustomer.Address,
-                Email = EditingCustomer.Email
-            };
-            response = await CustomerApiService.UpdateCustomerAsync(CurrentEditingId, updateReq);
-        }
-        else
-        {
-            response = await CustomerApiService.CreateCustomerAsync(EditingCustomer);
-        }
+                var updateReq = new UpdateCustomerRequest
+                {
+                    Id = CurrentEditingId,
+                    IDCard = EditingCustomer.IDCard,
+                    Name = EditingCustomer.Name,
+                    LastName = EditingCustomer.LastName,
+                    Phone = EditingCustomer.Phone,
+                    Address = EditingCustomer.Address,
+                    Email = EditingCustomer.Email
+                };
+                response = await CustomerApiService.UpdateCustomerAsync(CurrentEditingId, updateReq);
+            }
+            else
+            {
+                response = await CustomerApiService.CreateCustomerAsync(EditingCustomer);
+            }
 
-        await HandleSaveResponse(response);
+            await HandleSaveResponse(response);
+        }
+        catch (Exception)
+        {
+            await ShowToast("Error de conexión: No se pudo comunicar con el servidor.", true);
+        }
     }
 
     private async Task HandleSaveResponse(HttpResponseMessage response)
@@ -712,18 +703,25 @@
         var jsonConfirm = System.Text.Json.JsonSerializer.Serialize(confirm);
         if (jsonConfirm.Contains("\"isConfirmed\":true"))
         {
-            var updateReq = new UpdateCustomerRequest
+            try
             {
-                Id = customer.Id,
-                IDCard = customer.IDCard,
-                Name = customer.Name,
-                LastName = customer.LastName,
-                Phone = customer.Phone,
-                Address = customer.Address,
-                Email = customer.Email
-            };
-            var response = await CustomerApiService.ReactivateCustomerAsync(customer.Id, updateReq);
-            await HandleSaveResponse(response);
+                var updateReq = new UpdateCustomerRequest
+                {
+                    Id = customer.Id,
+                    IDCard = customer.IDCard,
+                    Name = customer.Name,
+                    LastName = customer.LastName,
+                    Phone = customer.Phone,
+                    Address = customer.Address,
+                    Email = customer.Email
+                };
+                var response = await CustomerApiService.ReactivateCustomerAsync(customer.Id, updateReq);
+                await HandleSaveResponse(response);
+            }
+            catch (Exception)
+            {
+                await ShowToast("Error de conexión: No se pudo comunicar con el servidor.", true);
+            }
         }
     }
 
@@ -744,15 +742,22 @@
         var json = System.Text.Json.JsonSerializer.Serialize(result);
         if (json.Contains("\"isConfirmed\":true"))
         {
-            var response = await CustomerApiService.DeleteCustomerAsync(id);
-            if (response.IsSuccessStatusCode)
+            try
             {
-                await LoadCustomersAsync();
-                await ShowToast("El cliente fue inactivado correctamente.");
+                var response = await CustomerApiService.DeleteCustomerAsync(id);
+                if (response.IsSuccessStatusCode)
+                {
+                    await LoadCustomersAsync();
+                    await ShowToast("El cliente fue inactivado correctamente.");
+                }
+                else
+                {
+                    await JS.InvokeVoidAsync("Swal.fire", "Error", "No se pudo inactivar el cliente.", "error");
+                }
             }
-            else
+            catch (Exception)
             {
-                await JS.InvokeVoidAsync("Swal.fire", "Error", "No se pudo inactivar el cliente.", "error");
+                await ShowToast("Error de conexión: No se pudo comunicar con el servidor.", true);
             }
         }
     }

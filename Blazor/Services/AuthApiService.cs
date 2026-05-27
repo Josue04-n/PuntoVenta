@@ -36,9 +36,9 @@ public class AuthApiService
                 return new AuthResponseDto { IsSuccess = false, Message = "Credenciales inválidas o error en el servidor." };
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            return new AuthResponseDto { IsSuccess = false, Message = "Error de conexión: " + ex.Message };
+            return new AuthResponseDto { IsSuccess = false, Message = "Error de conexión: No se pudo comunicar con el servidor." };
         }
     }
 
@@ -66,9 +66,9 @@ public class AuthApiService
                 return new AuthResponseDto { IsSuccess = false, Message = "Fallo en la autenticación de Microsoft." };
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            return new AuthResponseDto { IsSuccess = false, Message = "Error de conexión: " + ex.Message };
+            return new AuthResponseDto { IsSuccess = false, Message = "Error de conexión: No se pudo comunicar con el servidor." };
         }
     }
 }

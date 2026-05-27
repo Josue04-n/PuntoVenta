@@ -51,7 +51,7 @@ public class SaleRepository : ISaleRepository
         await _context.Sales.AddAsync(sale);
     }
 
-    public async Task<IEnumerable<Sale>> SearchAsync(string term, string searchBy, string? sellerName = null)
+    public async Task<IEnumerable<Sale>> SearchAsync(string term, string searchBy, string? sellerName = null, DateTime? startDate = null, DateTime? endDate = null)
     {
         term = term.Trim().ToLower();
         searchBy = searchBy.Trim().ToLower();   
@@ -62,11 +62,7 @@ public class SaleRepository : ISaleRepository
                 .ThenInclude(d => d.Product)
             .AsNoTracking();
 
-        // Aplicar filtro de vendedor si se proporciona
-        if (!string.IsNullOrEmpty(sellerName))
-        {
-            query = query.Where(s => s.CreatedBy == sellerName);
-        }
+        query = ApplyFilters(query, sellerName, startDate, endDate);
 
         if (searchBy == "id" && int.TryParse(term, out int searchId))
         {
@@ -107,7 +103,9 @@ public class SaleRepository : ISaleRepository
         int pageSize, 
         string? term = null, 
         string? searchBy = null, 
-        string? sellerName = null)
+        string? sellerName = null,
+        DateTime? startDate = null,
+        DateTime? endDate = null)
     {
         IQueryable<Sale> query = _context.Sales
             .Include(s => s.Customer)
@@ -115,11 +113,7 @@ public class SaleRepository : ISaleRepository
                 .ThenInclude(d => d.Product)
             .AsNoTracking();
 
-        // Aplicar filtro de vendedor si se proporciona
-        if (!string.IsNullOrEmpty(sellerName))
-        {
-            query = query.Where(s => s.CreatedBy == sellerName);
-        }
+        query = ApplyFilters(query, sellerName, startDate, endDate);
 
         if (!string.IsNullOrWhiteSpace(term))
         {
@@ -151,6 +145,30 @@ public class SaleRepository : ISaleRepository
         return (items, totalCount);
     }
 
+    private IQueryable<Sale> ApplyFilters(IQueryable<Sale> query, string? sellerName, DateTime? startDate, DateTime? endDate)
+    {
+        // Filtro de vendedor
+        if (!string.IsNullOrEmpty(sellerName))
+        {
+            query = query.Where(s => s.CreatedBy == sellerName);
+        }
+
+        // Filtro de Fecha Inicio (00:00:00)
+        if (startDate.HasValue)
+        {
+            query = query.Where(s => s.IssueDate >= startDate.Value.Date);
+        }
+
+        // Filtro de Fecha Fin (23:59:59)
+        if (endDate.HasValue)
+        {
+            var endOfDay = endDate.Value.Date.AddDays(1).AddTicks(-1);
+            query = query.Where(s => s.IssueDate <= endOfDay);
+        }
+
+        return query;
+    }
+
     public async Task<Sale?> GetByIdWithDetailsAsync(int id)
     {
         return await _context.Sales
@@ -174,4 +192,3 @@ public class SaleRepository : ISaleRepository
         return sale.Id;
     }
 }
- 
