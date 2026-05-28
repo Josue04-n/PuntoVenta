@@ -17,7 +17,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<Sale> Sales => Set<Sale>();
     public DbSet<SaleDetail> SaleDetails => Set<SaleDetail>();
     public DbSet<InventoryMovement> InventoryMovements => Set<InventoryMovement>();
-
+    
     public AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options) 
     {
         _httpContextAccessor = httpContextAccessor;
@@ -25,7 +25,6 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        // Capturar el nombre del usuario real logueado desde el contexto HTTP
         var currentUser = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "System";
 
         foreach (var entry in ChangeTracker.Entries<IAuditable>())
@@ -53,7 +52,6 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
                     }
                     break;
             }
-
         }
 
         return base.SaveChangesAsync(cancellationToken);
@@ -63,14 +61,17 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     {
         base.OnModelCreating(modelBuilder);
 
-        // --- FILTROS GLOBALES PARA ENTIDADES AUDITABLES ---
+        bool isSqlServer = Database.IsSqlServer();
+        bool isOracle = Database.ProviderName == "Oracle.EntityFrameworkCore";
+
+        // --- FILTROS GLOBALES ---
         modelBuilder.Entity<Product>().HasQueryFilter(p => p.IsActive);
         modelBuilder.Entity<Customer>().HasQueryFilter(c => c.IsActive);
         modelBuilder.Entity<Sale>().HasQueryFilter(s => s.IsActive);
         modelBuilder.Entity<ApplicationUser>().HasQueryFilter(u => u.IsActive);
         modelBuilder.Entity<InventoryMovement>().HasQueryFilter(im => im.IsActive);
 
-        // --- CONFIGURACIÓN DE MOVIMIENTOS DE INVENTARIO ---
+        // --- MOVIMIENTOS DE INVENTARIO ---
         modelBuilder.Entity<InventoryMovement>(entity =>
         {
             entity.HasKey(im => im.Id);
@@ -83,13 +84,18 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
                   .OnDelete(DeleteBehavior.Restrict);
         });
 
-        // --- CONFIGURACIÓN DE PRODUCTOS ---
+        // --- PRODUCTOS ---
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.ToTable(tb => tb.HasTrigger("TR_PreventNegativeStockAndPrice"));
+            // Solo SQL Server requiere el metadato de HasTrigger para no ignorar triggers en el comando de guardado
+            if (isSqlServer)
+            {
+                entity.ToTable(tb => tb.HasTrigger("TR_PreventNegativeStockAndPrice"));
+            }
+            
             entity.HasKey(p => p.Id);
             entity.Property(p => p.Name).HasMaxLength(150).IsRequired();
-            entity.HasIndex(p => p.Name); // Índice para búsquedas por nombre
+            entity.HasIndex(p => p.Name);
 
             entity.OwnsOne(p => p.UnitPrice, price =>
             {
@@ -97,16 +103,16 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             });
         });
 
-        // --- CONFIGURACIÓN DE CLIENTES ---
+        // --- CLIENTES ---
         modelBuilder.Entity<Customer>(entity =>
         {
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.IDCard).IsUnique(); 
-            entity.HasIndex(e => e.LastName); // Índice para ordenamiento y búsqueda
+            entity.HasIndex(e => e.LastName); 
             entity.Property(e => e.IDCard).HasMaxLength(13).IsRequired(); 
         });
 
-        // --- CONFIGURACIÓN DE VENTAS ---
+        // --- VENTAS Y SECUENCIAS ---
         modelBuilder.HasSequence<int>("InvoiceSequence").StartsAt(1).IncrementsBy(1);
 
         modelBuilder.Entity<Sale>(entity =>
@@ -116,12 +122,14 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             entity.Property(v => v.VatAmount).HasPrecision(18, 2);
             entity.Property(v => v.Total).HasPrecision(18, 2);
 
+            // Las restricciones de verificación se mapean igual en ambos motores, 
+            // pero SQL Server es más indulgente con la sintaxis T-SQL.
             entity.ToTable(t => t.HasCheckConstraint("CK_Sale_Total_Consistency", "Total = SubTotal + VatAmount"));
 
             entity.HasKey(s => s.Id);
             entity.Property(s => s.Status).HasConversion<int>().IsRequired();
-            entity.HasIndex(s => s.InvoiceNumber); // Índice para búsqueda de facturas
-            entity.HasIndex(s => s.IssueDate);     // Índice para reportes y ordenamiento
+            entity.HasIndex(s => s.InvoiceNumber);
+            entity.HasIndex(s => s.IssueDate);
 
             entity.HasOne(s => s.Customer)
                   .WithMany()
@@ -135,13 +143,13 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
                   .OnDelete(DeleteBehavior.Cascade);
         });
 
-        // --- CONFIGURACIÓN DE USUARIOS ---
+        // --- USUARIOS ---
         modelBuilder.Entity<ApplicationUser>(entity =>
         {
-            entity.HasIndex(u => u.LastName); // Índice para paginación de usuarios
+            entity.HasIndex(u => u.LastName);
         });
 
-        // --- CONFIGURACIÓN DE DETALLES ---
+        // --- DETALLES ---
         modelBuilder.Entity<SaleDetail>(entity =>
         {
             entity.HasKey(vd => vd.Id);

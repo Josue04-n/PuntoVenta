@@ -7,6 +7,8 @@ using Domain.Entities;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
+using Infrastructure.Services.Oracle;
+using Infrastructure.Services.SqlServer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
@@ -21,8 +23,20 @@ public static class DependencyInjection
         // --- BUSINESS SETTINGS (Options Pattern) ---
         services.Configure<BusinessSettings>(configuration.GetSection(BusinessSettings.SectionName));
 
-        services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+        // --- DYNAMIC DATABASE CONFIGURATION ---
+        var dbProvider = configuration["DbProvider"] ?? "SqlServer";
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+        if (dbProvider.Equals("SqlServer", StringComparison.OrdinalIgnoreCase))
+        {
+            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
+            services.AddScoped<IDbProviderService, SqlServerProviderService>();
+        }
+        else if (dbProvider.Equals("Oracle", StringComparison.OrdinalIgnoreCase))
+        {
+            services.AddDbContext<AppDbContext>(options => options.UseOracle(connectionString));
+            services.AddScoped<IDbProviderService, OracleProviderService>();
+        }
 
         // --- IDENTITY CONFIGURATION ---
         services.AddIdentity<ApplicationUser, ApplicationRole>(options => 

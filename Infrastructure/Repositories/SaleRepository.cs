@@ -1,4 +1,5 @@
 using Application.Interfaces.Repositories;
+using Application.Interfaces.Services;
 using Domain.Entities;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -9,41 +10,17 @@ namespace Infrastructure.Repositories;
 public class SaleRepository : ISaleRepository
 {
     private readonly AppDbContext _context;
+    private readonly IDbProviderService _dbProvider;
 
-    public SaleRepository(AppDbContext context)
+    public SaleRepository(AppDbContext context, IDbProviderService dbProvider)
     {
         _context = context;
+        _dbProvider = dbProvider;
     }
     public async Task<string> GenerateInvoiceNumberAsync()
     {
-        var connection = _context.Database.GetDbConnection();
-        bool wasClosed = connection.State == System.Data.ConnectionState.Closed;
-        
-        if (wasClosed)
-        {
-            await connection.OpenAsync();
-        }
-
-        try
-        {
-            using var command = connection.CreateCommand();
-            if (_context.Database.CurrentTransaction != null)
-            {
-                command.Transaction = _context.Database.CurrentTransaction.GetDbTransaction();
-            }
-            command.CommandText = "SELECT NEXT VALUE FOR InvoiceSequence";
-
-            var result = await command.ExecuteScalarAsync();
-            int sequential = Convert.ToInt32(result);
-            return $"FAC-{sequential:D7}";
-        }
-        finally
-        {
-            if (wasClosed)
-            {
-                await connection.CloseAsync();
-            }
-        }
+        int sequential = await _dbProvider.GetNextInvoiceSequenceAsync();
+        return $"FAC-{sequential:D7}";
     }
 
     public async Task AddAsync(Sale sale)
