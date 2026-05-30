@@ -130,7 +130,7 @@
                     @if (!_saleCompleted)
                     {
                         <button class="uta-btn uta-btn--sm uta-btn--white d-print-none" @onclick="OpenCustomerModal">
-                            <i class="bi bi-person-plus"></i> &nbsp;Asignar Cliente
+                            <i class="bi bi-person-plus"></i> &nbsp;Agregar Cliente
                         </button>
                     }
                 </div>
@@ -1344,22 +1344,9 @@ private async Task AddProduct(ProductUI prod)
         _isProcessingSale = true;
         StateHasChanged();
 
-        // Si estamos editando un borrador, primero lo anulamos
-        if (_loadedDraftId > 0)
-        {
-            try
-            {
-                await ApiService.CancelSaleAsync(_loadedDraftId);
-                _loadedDraftId = 0;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error canceling old draft: {ex.Message}");
-            }
-        }
-
         var saleRequest = new Application.DTOs.CreateSaleRequest
         {
+            DraftId = _loadedDraftId > 0 ? _loadedDraftId : null,
             CustomerId = _selectedCustomerEntity!.Id > 0 ? _selectedCustomerEntity.Id : 1, // ID válido necesario
             Details = _cart.Select(item => new CreateRequestDetail
             {

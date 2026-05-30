@@ -2,6 +2,7 @@
 
 public record CreateSaleRequest
 {
+    public int? DraftId { get; set; }
     public int CustomerId { get; set; }
     public List<CreateRequestDetail> Details { get; set; } = new();
 }

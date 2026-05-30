@@ -1,4 +1,5 @@
 using API.Configurations;
+using API.Middlewares;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -87,6 +88,8 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 
 // 3. Configurar el pipeline de solicitudes HTTP
+app.UseMiddleware<ExceptionMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

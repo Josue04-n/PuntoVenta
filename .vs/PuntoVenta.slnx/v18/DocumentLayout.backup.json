@@ -3,12 +3,52 @@
   "WorkspaceRootPath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\blazor\\pages\\invoices.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|solutionrelative:blazor\\pages\\invoices.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\blazor\\pages\\sales.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|solutionrelative:blazor\\pages\\sales.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\application\\usecases\\customerhandlers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|solutionrelative:application\\usecases\\customerhandlers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\api\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|solutionrelative:api\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\api\\controllers\\errorlogscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|solutionrelative:api\\controllers\\errorlogscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\api\\controllers\\inventorycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|solutionrelative:api\\controllers\\inventorycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E528BBC3-1C26-8C35-F682-23718816ADCD}|Domain\\Domain.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\domain\\entities\\errorlog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E528BBC3-1C26-8C35-F682-23718816ADCD}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\errorlog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\application\\dtos\\createsalerequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|solutionrelative:application\\dtos\\createsalerequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|solutionrelative:api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5872AEB3-BAA3-FE31-B0EB-0FB6DBEDCF83}|Infrastructure\\Infrastructure.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\infrastructure\\services\\sqlserver\\sqlserverproviderservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5872AEB3-BAA3-FE31-B0EB-0FB6DBEDCF83}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\services\\sqlserver\\sqlserverproviderservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5872AEB3-BAA3-FE31-B0EB-0FB6DBEDCF83}|Infrastructure\\Infrastructure.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\infrastructure\\services\\oracle\\oracleproviderservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5872AEB3-BAA3-FE31-B0EB-0FB6DBEDCF83}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\services\\oracle\\oracleproviderservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5872AEB3-BAA3-FE31-B0EB-0FB6DBEDCF83}|Infrastructure\\Infrastructure.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\infrastructure\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5872AEB3-BAA3-FE31-B0EB-0FB6DBEDCF83}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\blazor\\pages\\invoices.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|solutionrelative:blazor\\pages\\invoices.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E528BBC3-1C26-8C35-F682-23718816ADCD}|Domain\\Domain.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\domain\\enums\\salestatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -83,10 +123,6 @@
       "RelativeMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|solutionrelative:application\\usecases\\producthandlers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\api\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|solutionrelative:api\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\application\\usecases\\performsalehandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|solutionrelative:application\\usecases\\performsalehandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -107,20 +143,8 @@
       "RelativeMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|solutionrelative:application\\services\\statisticscalculator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|solutionrelative:api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\application\\dtos\\businesssettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|solutionrelative:application\\dtos\\businesssettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\application\\usecases\\customerhandlers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|solutionrelative:application\\usecases\\customerhandlers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5872AEB3-BAA3-FE31-B0EB-0FB6DBEDCF83}|Infrastructure\\Infrastructure.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\infrastructure\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5872AEB3-BAA3-FE31-B0EB-0FB6DBEDCF83}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\application\\interfaces\\repositories\\iproductrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -149,6 +173,10 @@
     {
       "AbsoluteMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\blazor\\models\\posmodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|solutionrelative:blazor\\models\\posmodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E528BBC3-1C26-8C35-F682-23718816ADCD}|Domain\\Domain.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\domain\\entities\\sale.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E528BBC3-1C26-8C35-F682-23718816ADCD}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\sale.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -170,55 +198,43 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "SaleStatus.cs",
-              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Domain\\Enums\\SaleStatus.cs",
-              "RelativeDocumentMoniker": "Domain\\Enums\\SaleStatus.cs",
-              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Domain\\Enums\\SaleStatus.cs",
-              "RelativeToolTip": "Domain\\Enums\\SaleStatus.cs",
-              "ViewState": "AgIAAAQAAAAAAAAAAAAmwAgAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 5,
+              "Title": "ErrorLog.cs",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Domain\\Entities\\ErrorLog.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\ErrorLog.cs",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Domain\\Entities\\ErrorLog.cs",
+              "RelativeToolTip": "Domain\\Entities\\ErrorLog.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAAywBwAAAAmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-27T03:04:06.861Z"
+              "WhenOpened": "2026-05-30T21:33:57.786Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "MovementType.cs",
-              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Domain\\Enums\\MovementType.cs",
-              "RelativeDocumentMoniker": "Domain\\Enums\\MovementType.cs",
-              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Domain\\Enums\\MovementType.cs",
-              "RelativeToolTip": "Domain\\Enums\\MovementType.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 43,
+              "Title": "Sale.cs",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Domain\\Entities\\Sale.cs",
+              "RelativeDocumentMoniker": "Domain\\Entities\\Sale.cs",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Domain\\Entities\\Sale.cs",
+              "RelativeToolTip": "Domain\\Entities\\Sale.cs",
+              "ViewState": "AgIAAEMAAAAAAAAAAIBQwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-27T02:41:18.056Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "index.html",
-              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\wwwroot\\index.html",
-              "RelativeDocumentMoniker": "Blazor\\wwwroot\\index.html",
-              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\wwwroot\\index.html",
-              "RelativeToolTip": "Blazor\\wwwroot\\index.html",
-              "ViewState": "AgIAAA4AAAAAAAAAAAAwwBkAAABoAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
-              "WhenOpened": "2026-05-23T03:28:52.281Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "Authentication.razor",
-              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Authentication.razor",
-              "RelativeDocumentMoniker": "Blazor\\Pages\\Authentication.razor",
-              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Authentication.razor",
-              "RelativeToolTip": "Blazor\\Pages\\Authentication.razor",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAAABcAAABdAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-23T03:31:57.818Z"
+              "WhenOpened": "2026-05-30T15:00:34.931Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 6,
+              "Title": "CreateSaleRequest.cs",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\DTOs\\CreateSaleRequest.cs",
+              "RelativeDocumentMoniker": "Application\\DTOs\\CreateSaleRequest.cs",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\DTOs\\CreateSaleRequest.cs",
+              "RelativeToolTip": "Application\\DTOs\\CreateSaleRequest.cs",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAswBAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-30T15:00:31.58Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
               "Title": "appsettings.json",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\wwwroot\\appsettings.json",
               "RelativeDocumentMoniker": "Blazor\\wwwroot\\appsettings.json",
@@ -230,7 +246,82 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ProductsController.cs",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\Controllers\\ProductsController.cs",
+              "RelativeDocumentMoniker": "API\\Controllers\\ProductsController.cs",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\Controllers\\ProductsController.cs",
+              "RelativeToolTip": "API\\Controllers\\ProductsController.cs",
+              "ViewState": "AgIAAEQAAAAAAAAAAAAiwEgAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-26T00:46:17.565Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CustomerHandlers.cs",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\UseCases\\CustomerHandlers.cs",
+              "RelativeDocumentMoniker": "Application\\UseCases\\CustomerHandlers.cs",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\UseCases\\CustomerHandlers.cs",
+              "RelativeToolTip": "Application\\UseCases\\CustomerHandlers.cs",
+              "ViewState": "AgIAAFkAAAAAAAAAAAAuwGYAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-23T21:39:47.781Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Sales.razor",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Sales.razor",
+              "RelativeDocumentMoniker": "Blazor\\Pages\\Sales.razor",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Sales.razor",
+              "RelativeToolTip": "Blazor\\Pages\\Sales.razor",
+              "ViewState": "AgIAAHgAAAAAAAAAAAAwwIgAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-05-23T23:35:40.385Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 4,
+              "Title": "InventoryController.cs",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\Controllers\\InventoryController.cs",
+              "RelativeDocumentMoniker": "API\\Controllers\\InventoryController.cs",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\Controllers\\InventoryController.cs",
+              "RelativeToolTip": "API\\Controllers\\InventoryController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-30T21:57:53.204Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ErrorLogsController.cs",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\Controllers\\ErrorLogsController.cs",
+              "RelativeDocumentMoniker": "API\\Controllers\\ErrorLogsController.cs",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\Controllers\\ErrorLogsController.cs",
+              "RelativeToolTip": "API\\Controllers\\ErrorLogsController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-30T21:57:54.626Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "SqlServerProviderService.cs",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Infrastructure\\Services\\SqlServer\\SqlServerProviderService.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Services\\SqlServer\\SqlServerProviderService.cs",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Infrastructure\\Services\\SqlServer\\SqlServerProviderService.cs",
+              "RelativeToolTip": "Infrastructure\\Services\\SqlServer\\SqlServerProviderService.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAQwB8AAABRAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-27T23:43:20.648Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
               "Title": "UserService.cs",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Infrastructure\\Services\\UserService.cs",
               "RelativeDocumentMoniker": "Infrastructure\\Services\\UserService.cs",
@@ -242,32 +333,103 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 11,
               "Title": "Invoices.razor",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Invoices.razor",
               "RelativeDocumentMoniker": "Blazor\\Pages\\Invoices.razor",
               "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Invoices.razor",
               "RelativeToolTip": "Blazor\\Pages\\Invoices.razor",
-              "ViewState": "AgIAAEIAAAAAAAAAAAAlwFQAAAA9AAAAAAAAAA==",
+              "ViewState": "AgIAAEIAAAAAAAAAAAAlwFsAAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-23T23:36:41.633Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-23T23:36:41.633Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Sales.razor",
-              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Sales.razor",
-              "RelativeDocumentMoniker": "Blazor\\Pages\\Sales.razor",
-              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Sales.razor",
-              "RelativeToolTip": "Blazor\\Pages\\Sales.razor",
-              "ViewState": "AgIAAAsDAAAAAAAAAAAwwBwDAABWAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-23T23:35:40.385Z"
+              "DocumentIndex": 7,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\appsettings.json",
+              "RelativeDocumentMoniker": "API\\appsettings.json",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\appsettings.json",
+              "RelativeToolTip": "API\\appsettings.json",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAAB4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-22T00:48:46.25Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 9,
+              "Title": "OracleProviderService.cs",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Infrastructure\\Services\\Oracle\\OracleProviderService.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Services\\Oracle\\OracleProviderService.cs",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Infrastructure\\Services\\Oracle\\OracleProviderService.cs",
+              "RelativeToolTip": "Infrastructure\\Services\\Oracle\\OracleProviderService.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAgwB8AAABSAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-27T23:43:31.992Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "Authentication.razor",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Authentication.razor",
+              "RelativeDocumentMoniker": "Blazor\\Pages\\Authentication.razor",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Authentication.razor",
+              "RelativeToolTip": "Blazor\\Pages\\Authentication.razor",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAABcAAABdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-05-23T03:31:57.818Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "index.html",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\wwwroot\\index.html",
+              "RelativeDocumentMoniker": "Blazor\\wwwroot\\index.html",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\wwwroot\\index.html",
+              "RelativeToolTip": "Blazor\\wwwroot\\index.html",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAwwBkAAABoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-05-23T03:28:52.281Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "AppDbContext.cs",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Infrastructure\\Data\\AppDbContext.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Data\\AppDbContext.cs",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Infrastructure\\Data\\AppDbContext.cs",
+              "RelativeToolTip": "Infrastructure\\Data\\AppDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAABTAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-23T21:28:05.019Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "MovementType.cs",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Domain\\Enums\\MovementType.cs",
+              "RelativeDocumentMoniker": "Domain\\Enums\\MovementType.cs",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Domain\\Enums\\MovementType.cs",
+              "RelativeToolTip": "Domain\\Enums\\MovementType.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-27T02:41:18.056Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "SaleStatus.cs",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Domain\\Enums\\SaleStatus.cs",
+              "RelativeDocumentMoniker": "Domain\\Enums\\SaleStatus.cs",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Domain\\Enums\\SaleStatus.cs",
+              "RelativeToolTip": "Domain\\Enums\\SaleStatus.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAmwAgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-27T03:04:06.861Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
               "Title": "Customer.razor",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Customer.razor",
               "RelativeDocumentMoniker": "Blazor\\Pages\\Customer.razor",
@@ -279,7 +441,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 15,
               "Title": "ApplicationUser.cs",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Domain\\Entities\\ApplicationUser.cs",
               "RelativeDocumentMoniker": "Domain\\Entities\\ApplicationUser.cs",
@@ -291,7 +453,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 22,
               "Title": "MainLayout.razor",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Layout\\MainLayout.razor",
               "RelativeDocumentMoniker": "Blazor\\Layout\\MainLayout.razor",
@@ -303,7 +465,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 21,
               "Title": "LoginLayout.razor",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Layout\\LoginLayout.razor",
               "RelativeDocumentMoniker": "Blazor\\Layout\\LoginLayout.razor",
@@ -315,7 +477,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 20,
               "Title": "NavMenu.razor",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Layout\\NavMenu.razor",
               "RelativeDocumentMoniker": "Blazor\\Layout\\NavMenu.razor",
@@ -327,7 +489,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 25,
               "Title": "NotFound.razor",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\NotFound.razor",
               "RelativeDocumentMoniker": "Blazor\\Pages\\NotFound.razor",
@@ -339,7 +501,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 26,
               "Title": "MyProfile.razor",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\MyProfile.razor",
               "RelativeDocumentMoniker": "Blazor\\Pages\\MyProfile.razor",
@@ -351,7 +513,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 27,
               "Title": "Login.razor",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Login.razor",
               "RelativeDocumentMoniker": "Blazor\\Pages\\Login.razor",
@@ -363,7 +525,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 28,
               "Title": "Home.razor",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Home.razor",
               "RelativeDocumentMoniker": "Blazor\\Pages\\Home.razor",
@@ -375,19 +537,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 24,
               "Title": "Product.razor",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Product.razor",
               "RelativeDocumentMoniker": "Blazor\\Pages\\Product.razor",
               "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Product.razor",
               "RelativeToolTip": "Blazor\\Pages\\Product.razor",
-              "ViewState": "AgIAALsCAAAAAAAAAAAmwM0CAAAqAAAAAAAAAA==",
+              "ViewState": "AgIAAI0BAAAAAAAAAIBJwM0CAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-05-26T00:43:57.959Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 23,
               "Title": "Users.razor",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Users.razor",
               "RelativeDocumentMoniker": "Blazor\\Pages\\Users.razor",
@@ -399,19 +561,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
-              "Title": "ProductsController.cs",
-              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\Controllers\\ProductsController.cs",
-              "RelativeDocumentMoniker": "API\\Controllers\\ProductsController.cs",
-              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\Controllers\\ProductsController.cs",
-              "RelativeToolTip": "API\\Controllers\\ProductsController.cs",
-              "ViewState": "AgIAAGkAAAAAAAAAAAAswH0AAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-26T00:46:17.565Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 29,
               "Title": "ProductHandlers.cs",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\UseCases\\ProductHandlers.cs",
               "RelativeDocumentMoniker": "Application\\UseCases\\ProductHandlers.cs",
@@ -423,19 +573,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 30,
               "Title": "PerformSaleHandler.cs",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\UseCases\\PerformSaleHandler.cs",
               "RelativeDocumentMoniker": "Application\\UseCases\\PerformSaleHandler.cs",
               "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\UseCases\\PerformSaleHandler.cs",
               "RelativeToolTip": "Application\\UseCases\\PerformSaleHandler.cs",
-              "ViewState": "AgIAAE4AAAAAAAAAAAAYwFYAAAAxAAAAAAAAAA==",
+              "ViewState": "AgIAAEUAAAAAAAAAAIBJwFIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-05-23T20:54:59.639Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 31,
               "Title": "Authentication.razor.css",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Authentication.razor.css",
               "RelativeDocumentMoniker": "Blazor\\Pages\\Authentication.razor.css",
@@ -447,19 +597,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 34,
               "Title": "StatisticsCalculator.cs",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\Services\\StatisticsCalculator.cs",
               "RelativeDocumentMoniker": "Application\\Services\\StatisticsCalculator.cs",
               "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\Services\\StatisticsCalculator.cs",
               "RelativeToolTip": "Application\\Services\\StatisticsCalculator.cs",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAQwBAAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAABMAAAAAAAAAAIBJwBAAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-05-23T23:09:49.55Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 32,
               "Title": "AuthService.cs",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Infrastructure\\Services\\AuthService.cs",
               "RelativeDocumentMoniker": "Infrastructure\\Services\\AuthService.cs",
@@ -471,7 +621,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 35,
               "Title": "BusinessSettings.cs",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\DTOs\\BusinessSettings.cs",
               "RelativeDocumentMoniker": "Application\\DTOs\\BusinessSettings.cs",
@@ -483,19 +633,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\appsettings.json",
-              "RelativeDocumentMoniker": "API\\appsettings.json",
-              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\appsettings.json",
-              "RelativeToolTip": "API\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAbAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-05-22T00:48:46.25Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 33,
               "Title": "IAuthService.cs",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\Interfaces\\Services\\IAuthService.cs",
               "RelativeDocumentMoniker": "Application\\Interfaces\\Services\\IAuthService.cs",
@@ -507,7 +645,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 42,
               "Title": "PosModels.cs",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Models\\PosModels.cs",
               "RelativeDocumentMoniker": "Blazor\\Models\\PosModels.cs",
@@ -519,31 +657,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
-              "Title": "CustomerHandlers.cs",
-              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\UseCases\\CustomerHandlers.cs",
-              "RelativeDocumentMoniker": "Application\\UseCases\\CustomerHandlers.cs",
-              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\UseCases\\CustomerHandlers.cs",
-              "RelativeToolTip": "Application\\UseCases\\CustomerHandlers.cs",
-              "ViewState": "AgIAADgAAAAAAAAAAAAgwAwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-23T21:39:47.781Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 29,
-              "Title": "AppDbContext.cs",
-              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Infrastructure\\Data\\AppDbContext.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\Data\\AppDbContext.cs",
-              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Infrastructure\\Data\\AppDbContext.cs",
-              "RelativeToolTip": "Infrastructure\\Data\\AppDbContext.cs",
-              "ViewState": "AgIAAHwAAAAAAAAAAAAmwJMAAAA3AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-23T21:28:05.019Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 36,
               "Title": "IProductRepository.cs",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\Interfaces\\Repositories\\IProductRepository.cs",
               "RelativeDocumentMoniker": "Application\\Interfaces\\Repositories\\IProductRepository.cs",
@@ -555,7 +669,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 37,
               "Title": "ISaleRepository.cs",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\Interfaces\\Repositories\\ISaleRepository.cs",
               "RelativeDocumentMoniker": "Application\\Interfaces\\Repositories\\ISaleRepository.cs",
@@ -567,7 +681,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 39,
               "Title": "CustomAuthStateProvider.cs",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Security\\CustomAuthStateProvider.cs",
               "RelativeDocumentMoniker": "Blazor\\Security\\CustomAuthStateProvider.cs",
@@ -579,7 +693,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 40,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\appsettings.Development.json",
               "RelativeDocumentMoniker": "API\\appsettings.Development.json",
@@ -591,7 +705,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 38,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Program.cs",
               "RelativeDocumentMoniker": "Blazor\\Program.cs",
@@ -603,7 +717,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 41,
               "Title": "App.razor",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\App.razor",
               "RelativeDocumentMoniker": "Blazor\\App.razor",

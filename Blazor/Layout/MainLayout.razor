@@ -75,7 +75,7 @@
                                                     <i class="bi @n.Icon"></i>
                                                 </div>
                                                 <div class="uta-notification-item__content">
-                                                    <div class="uta-notification-item__title">@(n.Type == "Warning" ? "Alerta de Stock" : n.Type == "Danger" ? "Stock Agotado" : "Aviso de Venta")</div>
+                                                    <div class="uta-notification-item__title">@GetNotificationTitle(n)</div>
                                                     <div class="uta-notification-item__text">@n.Message</div>
                                                     <div class="uta-notification-item__time">@FormatRelativeTime(n.CreatedAt)</div>
                                                 </div>
@@ -211,6 +211,13 @@
         if (string.IsNullOrEmpty(url)) return;
         _showNotifications = false;
         NavigationManager.NavigateTo(url);
+    }
+
+    private string GetNotificationTitle(NotificationDto n)
+    {
+        if (n.Type == "Warning") return "Alerta de Stock";
+        if (n.Type == "Danger") return n.Message.StartsWith("Venta Anulada") ? "Venta Anulada" : "Stock Agotado";
+        return "Aviso de Venta";
     }
 
     private string FormatRelativeTime(DateTime date)

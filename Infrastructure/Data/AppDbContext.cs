@@ -17,6 +17,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<Sale> Sales => Set<Sale>();
     public DbSet<SaleDetail> SaleDetails => Set<SaleDetail>();
     public DbSet<InventoryMovement> InventoryMovements => Set<InventoryMovement>();
+    public DbSet<ErrorLog> ErrorLogs => Set<ErrorLog>();
     
     public AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options) 
     {
@@ -70,6 +71,15 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         modelBuilder.Entity<Sale>().HasQueryFilter(s => s.IsActive);
         modelBuilder.Entity<ApplicationUser>().HasQueryFilter(u => u.IsActive);
         modelBuilder.Entity<InventoryMovement>().HasQueryFilter(im => im.IsActive);
+
+        // --- ERROR LOGS ---
+        modelBuilder.Entity<ErrorLog>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Message).IsRequired();
+            entity.Property(e => e.StackTrace).HasColumnType("nvarchar(max)");
+            entity.HasIndex(e => e.CreatedAt);
+        });
 
         // --- MOVIMIENTOS DE INVENTARIO ---
         modelBuilder.Entity<InventoryMovement>(entity =>

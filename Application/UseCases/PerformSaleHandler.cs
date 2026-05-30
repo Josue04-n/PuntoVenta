@@ -52,19 +52,29 @@ public class PerformSaleHandler
 
         if (deletedProducts.Any()) throw new ProductDeletedException(deletedProducts);
 
-        // 2. Guardar el Borrador (Draft)
-        // NOTA: No iniciamos transacción aquí porque solo estamos insertando una entidad.
-        // El stock NO se descuenta en este paso.
-        
-        string invoiceNumber = await _saleRepository.GenerateInvoiceNumberAsync();
-        var sale = new Sale(invoiceNumber, request.CustomerId);
+        // 2. Guardar el Borrador (Draft) o Actualizar existente
+        Sale sale;
+        if (request.DraftId.HasValue && request.DraftId.Value > 0)
+        {
+            sale = await _saleRepository.GetByIdWithDetailsAsync(request.DraftId.Value);
+            if (sale == null || sale.Status != Domain.Enums.SaleStatus.Draft)
+                throw new InvalidOperationException("El borrador no existe o ya no está en estado Borrador.");
+
+            sale.UpdateCustomer(request.CustomerId);
+            sale.ClearDetails();
+        }
+        else
+        {
+            string invoiceNumber = await _saleRepository.GenerateInvoiceNumberAsync();
+            sale = new Sale(invoiceNumber, request.CustomerId);
+            await _saleRepository.AddAsync(sale);
+        }
 
         foreach (var (product, amount) in validatedProducts)
         {
             sale.AddDetail(product, amount);
         }
 
-        await _saleRepository.AddAsync(sale);
         await _unitOfWork.SaveChangesAsync();
 
         return sale;

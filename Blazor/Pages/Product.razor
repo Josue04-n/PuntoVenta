@@ -384,7 +384,7 @@
                                     <td colspan="7" class="uta-table__empty">No hay movimientos registrados</td>
                                 </tr>
                             }
-                            @foreach (var m in KardexMovements)
+                            @foreach (var m in PagedKardexMovements)
                             {
                                 <tr>
                                     <td style="font-size: 0.8rem; color: #666;">@m.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
@@ -396,16 +396,59 @@
                                     </td>
                                     <td style="text-align:center; color: #888;">@m.PreviousStock</td>
                                     <td style="text-align:center; font-weight: 600;">@m.NewStock</td>
-                                    <td style="font-size: 0.8rem;">@m.Reference</td>
-                                    <td style="font-size: 0.8rem; font-weight: 600;">@m.CreatedBy</td>
+                                    <td style="font-size: 0.8rem; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="@m.Reference">@m.Reference</td>
+                                    <td style="font-size: 0.8rem; font-weight: 600; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="@m.CreatedBy">@FormatUsername(m.CreatedBy)</td>
                                 </tr>
                             }
                         </tbody>
                     </table>
                 </div>
+
+                @if (KardexTotalItems > 0)
+                {
+                    <div class="uta-pagination-footer rounded-bottom mt-3">
+                        <div class="uta-pagination-info">
+                            <span class="small text-muted">
+                                Se muestran <strong class="uta-text-highlight">@KardexFrom</strong> a <strong class="uta-text-highlight">@KardexTo</strong> de <strong class="uta-text-highlight">@KardexTotalItems</strong> movimientos
+                            </span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="small text-muted">por página</span>
+                            <div class="uta-select-wrapper">
+                                <select class="form-select form-select-sm shadow-none" @bind="KardexPageSize" @bind:after="() => ChangeKardexPage(1)">
+                                    @foreach (var size in new[] { 5, 10, 25 })
+                                    {
+                                        <option value="@size">@size</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="d-flex overflow-hidden">
+                            @foreach (var p in VisiblePagesKardex)
+                            {
+                                if (p == -1)
+                                {
+                                    <span class="uta-pagination-btn uta-pagination-btn--ellipsis">...</span>
+                                }
+                                else
+                                {
+                                    var pNum = p;
+                                    <button class="uta-pagination-btn @(pNum == KardexCurrentPage ? "uta-pagination-btn--active" : "")"
+                                            @onclick="() => ChangeKardexPage(pNum)">@pNum</button>
+                                }
+                            }
+                            <button class="uta-pagination-btn @(!HasNextKardexPage ? "disabled" : "")"
+                                    @onclick="() => ChangeKardexPage(KardexCurrentPage + 1)"
+                                    disabled="@(!HasNextKardexPage)">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                }
             </div>
             <div class="uta-modal__footer">
-                <div class="uta-page-info">Total movimientos: @KardexMovements.Count</div>
                 <button class="uta-btn uta-btn--primary" @onclick="CloseKardexModal">Cerrar Historial</button>
             </div>
         </div>
@@ -536,6 +579,25 @@
     // KÁRDEX
     private bool ShowKardexModal = false;
     private List<InventoryMovementResponseDto> KardexMovements = new();
+
+    // KÁRDEX PAGINATION
+    private int KardexCurrentPage = 1;
+    private int KardexPageSize = 5;
+    private int KardexTotalItems => KardexMovements.Count;
+    private int KardexTotalPages => (int)Math.Ceiling(KardexTotalItems / (double)KardexPageSize);
+    private int KardexFrom => KardexTotalItems == 0 ? 0 : ((KardexCurrentPage - 1) * KardexPageSize) + 1;
+    private int KardexTo => Math.Min(KardexCurrentPage * KardexPageSize, KardexTotalItems);
+    private bool HasNextKardexPage => KardexCurrentPage < KardexTotalPages;
+    private List<int> VisiblePagesKardex => PaginationHelper.GenerateVisiblePages(KardexCurrentPage, KardexTotalPages > 0 ? KardexTotalPages : 1);
+    private List<InventoryMovementResponseDto> PagedKardexMovements => KardexMovements.Skip((KardexCurrentPage - 1) * KardexPageSize).Take(KardexPageSize).ToList();
+
+    private void ChangeKardexPage(int page)
+    {
+        if (page >= 1 && page <= KardexTotalPages)
+        {
+            KardexCurrentPage = page;
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -794,6 +856,7 @@
     {
         SelectedProductName = p.Name;
         KardexMovements = await PosApiService.GetProductMovementsAsync(p.Id);
+        KardexCurrentPage = 1;
         ShowKardexModal = true;
     }
 
@@ -809,6 +872,13 @@
         Domain.Enums.MovementType.Return => "uta-badge--blue",
         _ => "uta-badge--light"
     };
+
+    private string FormatUsername(string? username)
+    {
+        if (string.IsNullOrWhiteSpace(username)) return "SISTEMA";
+        var parts = username.Split('@');
+        return parts[0].ToUpper();
+    }
 
     private async Task PromptReactivate(ProductResponseDto product)
     {

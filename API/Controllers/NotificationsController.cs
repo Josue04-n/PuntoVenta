@@ -25,8 +25,9 @@ public class NotificationsController : ControllerBase
         int? userId = string.IsNullOrEmpty(userIdStr) ? null : int.Parse(userIdStr);
         
         var role = User.FindFirstValue(ClaimTypes.Role) ?? "Vendedor";
+        var userName = User.Identity?.Name;
 
-        var notifications = await _notificationService.GetNotificationsAsync(userId, role);
+        var notifications = await _notificationService.GetNotificationsAsync(userId, role, userName);
         return Ok(notifications);
     }
 }

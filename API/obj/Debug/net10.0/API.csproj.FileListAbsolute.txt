@@ -181,3 +181,11 @@ D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.pdb
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.genruntimeconfig.cache
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\ref\API.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Oracle.EntityFrameworkCore.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Oracle.ManagedDataAccess.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\System.Diagnostics.PerformanceCounter.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\System.DirectoryServices.Protocols.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\runtimes\win\lib\net8.0\System.Diagnostics.PerformanceCounter.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\runtimes\linux\lib\net8.0\System.DirectoryServices.Protocols.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\runtimes\osx\lib\net8.0\System.DirectoryServices.Protocols.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\runtimes\win\lib\net8.0\System.DirectoryServices.Protocols.dll

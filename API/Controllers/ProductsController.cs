@@ -50,7 +50,7 @@ public class ProductsController : ControllerBase
     [FromQuery] string searchBy = "name",
     [FromQuery] string status = "active")
     {
-        // Seguridad: Solo admin puede ver registros inactivos o todos
+        if (status != "active" && !User.IsInRole("Administrador"))
         if (status != "active" && !User.IsInRole("Administrador"))
         {
             status = "active";

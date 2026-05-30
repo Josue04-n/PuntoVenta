@@ -52,6 +52,21 @@ public class Sale : AuditableEntity
         UpdateTotals();
     }
 
+    public void ClearDetails()
+    {
+        if (Status != SaleStatus.Draft)
+            throw new InvalidOperationException("Solo se pueden modificar productos de una venta en Borrador.");
+        _details.Clear();
+        UpdateTotals();
+    }
+
+    public void UpdateCustomer(int customerId)
+    {
+        if (Status != SaleStatus.Draft)
+            throw new InvalidOperationException("Solo se pueden modificar el cliente de una venta en Borrador.");
+        CustomerId = customerId;
+    }
+
     public void UpdateTotals()
     {
         SubTotal = _details.Sum(d => d.SubTotal.Worth);

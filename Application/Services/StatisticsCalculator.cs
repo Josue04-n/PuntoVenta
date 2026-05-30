@@ -15,21 +15,22 @@ public class StatisticsCalculator
 
         if (isAdmin)
         {
-            stats.SystemMonthlyRevenue = monthlySales.Sum(s => s.Total);
-            
-            var todaySales = monthlySales.Where(s => s.IssueDate.Date == today).ToList();
+            var confirmedSales = monthlySales.Where(s => s.Status == Domain.Enums.SaleStatus.Confirmed).ToList();
+            stats.SystemMonthlyRevenue = confirmedSales.Sum(s => s.Total);
+
+            var todaySales = confirmedSales.Where(s => s.IssueDate.Date == today).ToList();
             stats.SystemDailyRevenue = todaySales.Sum(s => s.Total);
             stats.SystemDailySalesCount = todaySales.Count;
         }
         else
         {
             var myMonthlySales = monthlySales
-                .Where(s => s.CreatedBy != null && s.CreatedBy.Equals(userName, StringComparison.OrdinalIgnoreCase))
+                .Where(s => s.CreatedBy != null && s.CreatedBy.Equals(userName, StringComparison.OrdinalIgnoreCase) && s.Status == Domain.Enums.SaleStatus.Confirmed)
                 .ToList();
 
             stats.MyMonthlySalesCount = myMonthlySales.Count;
             stats.MyMonthlySalesAmount = myMonthlySales.Sum(s => s.Total);
-            
+
             var myTodaySales = myMonthlySales.Where(s => s.IssueDate.Date == today).ToList();
 
             stats.MyDailySalesAmount = myTodaySales.Sum(s => s.Total);

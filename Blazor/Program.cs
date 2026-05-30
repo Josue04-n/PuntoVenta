@@ -43,5 +43,6 @@ builder.Services.AddScoped<UserApiService>();
 builder.Services.AddScoped<PosApiService>();
 builder.Services.AddScoped<CustomerApiService>();
 builder.Services.AddScoped<NotificationApiService>();
+builder.Services.AddScoped<ErrorLogApiService>();
 
 await builder.Build().RunAsync();
