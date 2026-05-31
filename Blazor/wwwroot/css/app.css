@@ -104,3 +104,58 @@
     right: 0.75rem;
     top: 0.5rem;
 }
+
+/* --- ACCESIBILIDAD Y HOTKEYS (WORD STYLE) --- */
+.uta-key-container {
+    position: relative;
+}
+
+.uta-keytip {
+    position: absolute;
+    top: -8px;
+    left: 4px;
+    background: #262626;
+    color: white;
+    font-family: 'Segoe UI', 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 3px;
+    border: 1px solid #444;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+    z-index: 10000;
+    text-transform: uppercase;
+    pointer-events: none;
+    display: none;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+body.uta-show-keys .uta-keytip {
+    display: inline-block !important;
+}
+
+body.uta-show-keys.uta-modal-open .uta-keytip {
+    display: none !important;
+}
+
+body.uta-show-keys.uta-modal-open .uta-modal .uta-keytip {
+    display: inline-block !important;
+}
+
+/* Ajustes para que no se corten en menús */
+.nav-link.uta-nav-link {
+    position: relative;
+}
+
+/* Sincronización de hover con navegación por teclado */
+.uta-table--sync-hover tbody tr:hover td {
+    background-color: transparent !important;
+}
+
+/* Fila resaltada para navegación con teclado en tablas */
+.uta-table-row--focused td {
+    background-color: #fdf5f7 !important; /* Mismo color exacto que el hover normal de la tabla */
+    transition: background-color 0.1s ease;
+}
+

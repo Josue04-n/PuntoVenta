@@ -44,5 +44,6 @@ builder.Services.AddScoped<PosApiService>();
 builder.Services.AddScoped<CustomerApiService>();
 builder.Services.AddScoped<NotificationApiService>();
 builder.Services.AddScoped<ErrorLogApiService>();
+builder.Services.AddScoped<ShortcutService>();
 
 await builder.Build().RunAsync();

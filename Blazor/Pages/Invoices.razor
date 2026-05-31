@@ -65,31 +65,33 @@
         <div class="uta-card__body">
             
             <!-- PANEL DE FILTROS POR FECHA Y TEXTO -->
-            <div class="uta-filters-container mb-4">
-                <div class="uta-search-bar flex-grow-1">
+            <div class="uta-filters-container mb-4 d-flex align-items-center gap-3" style="flex-wrap: nowrap; background: transparent; padding: 0; border: none;">
+                <div class="uta-search-bar" style="flex: 1; min-width: 300px;">
                     <select class="uta-search-bar__select" @bind="_searchCriterion" @bind:after="OnSearchCriteriaChanged">
                         <option value="number">N° Factura</option>
                         <option value="customer">Cliente</option>
                     </select>
-                    <input class="uta-search-bar__input" type="text" value="@_searchTerm" @oninput="OnInputSearch" placeholder="Buscar..." />
-                    <div class="uta-search-bar__icon-container px-3 d-flex align-items-center bg-light" style="border-left: 1px solid #ced4da;">
-                        <i class="bi bi-search text-muted"></i>
+                    <input class="uta-search-bar__input" type="text" value="@_searchTerm" @oninput="OnInputSearch" onkeypress="@GetInvoiceKeyPressHandler()" placeholder="Buscar..." />
+                    <button class="uta-btn uta-btn--primary uta-search-bar__btn" @onclick="TriggerSearch">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+                
+                <div class="d-flex align-items-center gap-3">
+                    <div class="uta-date-filter">
+                        <span class="uta-date-filter__label"><i class="bi bi-calendar3 me-2"></i> Desde</span>
+                        <input type="date" class="uta-date-filter__input" @bind="_startDate" @bind:after="TriggerSearch" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
                     </div>
-                </div>
-                
-                <div class="uta-date-filter">
-                    <span class="uta-date-filter__label"><i class="bi bi-calendar3 me-2"></i> Desde</span>
-                    <input type="date" class="uta-date-filter__input" @bind="_startDate" @bind:after="TriggerSearch" />
-                </div>
-                
-                <div class="uta-date-filter">
-                    <span class="uta-date-filter__label"><i class="bi bi-calendar3 me-2"></i> Hasta</span>
-                    <input type="date" class="uta-date-filter__input" @bind="_endDate" @bind:after="TriggerSearch" />
-                </div>
+                    
+                    <div class="uta-date-filter">
+                        <span class="uta-date-filter__label"><i class="bi bi-calendar3 me-2"></i> Hasta</span>
+                        <input type="date" class="uta-date-filter__input" @bind="_endDate" @bind:after="TriggerSearch" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                    </div>
 
-                <button class="uta-btn uta-btn--outline" @onclick="ClearFilters" style="height: 42px; padding-left: 1.5rem; padding-right: 1.5rem;">
-                    <i class="bi bi-eraser"></i> Limpiar
-                </button>
+                    <button class="uta-btn uta-btn--outline" @onclick="ClearFilters" style="height: 42px; white-space: nowrap;">
+                        <i class="bi bi-eraser"></i> Limpiar
+                    </button>
+                </div>
             </div>
 
             <div class="uta-table-wrap uta-table-wrap--bordered">
@@ -437,11 +439,30 @@
     private string SanitizeInput(string input)
     {
         if (input.Length > 100) input = input.Substring(0, 100);
+        
+        input = input.ToUpper();
+        input = input.Replace(" ", "");
+
         if (_searchCriterion == "customer")
         {
-            input = new string(input.Where(c => char.IsLetter(c) || char.IsWhiteSpace(c)).ToArray());
+            input = new string(input.Where(c => char.IsLetter(c)).ToArray());
         }
-        return System.Text.RegularExpressions.Regex.Replace(input.Trim(), @"\s+", " ");
+        
+        return input;
+    }
+
+    private string GetInvoiceKeyPressHandler()
+    {
+        if (_searchCriterion == "customer")
+        {
+            return "return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode == 209 || event.charCode == 241 || event.charCode == 193 || event.charCode == 201 || event.charCode == 205 || event.charCode == 211 || event.charCode == 218 || event.charCode == 225 || event.charCode == 233 || event.charCode == 237 || event.charCode == 243 || event.charCode == 250";
+        }
+        else if (_searchCriterion == "number")
+        {
+            // Allow numbers, letters and dashes for invoice number (e.g. FAC-0001)
+            return "return (event.charCode >= 48 && event.charCode <= 57) || (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode == 45";
+        }
+        return "";
     }
 
     private async Task OnSearchCriteriaChanged()

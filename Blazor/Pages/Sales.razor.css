@@ -975,11 +975,11 @@
 }
 
 .uta-modal--xl {
-    max-width: 950px;
+    max-width: 1150px;
 }
 
 .uta-modal--lg {
-    max-width: 750px;
+    max-width: 850px;
 }
 
 .uta-modal__header {
@@ -1272,4 +1272,74 @@
 .uta-stock-separator i {
     font-size: 0.9rem;
     color: #94a3b8;
+}
+
+/* --- FORM STYLES --- */
+.uta-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+}
+
+@media (max-width: 768px) {
+    .uta-form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.uta-form-group {
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.uta-form-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #495057;
+    margin-bottom: 0.4rem;
+}
+
+::deep .uta-form-control {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    color: #212529;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+::deep .uta-form-control::placeholder {
+    color: #adb5bd;
+}
+
+::deep .uta-form-control:focus {
+    color: #212529;
+    background-color: #fff;
+    border-color: #6B1A33;
+    outline: 0;
+    box-shadow: 0 0 0 3px rgba(107, 26, 51, 0.15);
+}
+
+::deep .uta-input-icon-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+::deep .uta-input-icon {
+    position: absolute;
+    left: 1rem;
+    color: #6c757d;
+    font-size: 1rem;
+    pointer-events: none;
+}
+
+::deep .uta-form-control--with-icon {
+    padding-left: 2.5rem;
 }

@@ -226,14 +226,11 @@
                             <label class="uta-form-label">Cédula</label>
                             <div class="uta-input-wrapper">
                                 <i class="bi bi-card-heading uta-input-icon"></i>
-                                <input class="uta-form-control @(HasError("IDCard") ? "is-invalid" : "")" 
+                                <input class="uta-form-control bg-light" 
                                        type="text" 
                                        value="@_profileRequest.IDCard" 
-                                       @oninput="OnIDCardInput"
-                                       onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-                                       maxlength="10" />
+                                       readonly />
                             </div>
-                            @if (HasError("IDCard")) { <div class="text-danger mt-1 small">@GetError("IDCard")</div> }
                         </div>
                         <div class="uta-form-group">
                             <label class="uta-form-label">Teléfono Celular</label>

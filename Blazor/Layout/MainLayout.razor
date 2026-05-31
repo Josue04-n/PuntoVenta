@@ -11,6 +11,7 @@
 @inject NotificationApiService NotificationApiService
 @inject CustomAuthStateProvider AuthStateProvider
 @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@inject ShortcutService ShortcutService
 
 <div class="uta-layout">
     <aside class="uta-sidebar">
@@ -161,7 +162,16 @@
             _objRef = DotNetObjectReference.Create(this);
             var timeout = Configuration.GetValue<int>("BusinessSettings:IdleTimeoutInMinutes", 10);
             await JS.InvokeVoidAsync("setupInactivityTimer", _objRef, timeout);
+            
+            // Inicializar sistema de atajos (Access Keys)
+            await JS.InvokeVoidAsync("utaShortcuts.init", _objRef);
         }
+    }
+
+    [JSInvokable]
+    public void HandleGlobalKey(string key)
+    {
+        ShortcutService.NotifyShortcut(key);
     }
 
     [JSInvokable]
