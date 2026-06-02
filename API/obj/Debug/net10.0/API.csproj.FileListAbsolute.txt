@@ -19,6 +19,8 @@ D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Azure.Security.KeyVault.Certificates.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Azure.Security.KeyVault.Secrets.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\FluentValidation.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\FluentValidation.AspNetCore.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\FluentValidation.DependencyInjectionExtensions.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Humanizer.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.OpenIdConnect.dll
@@ -189,6 +191,4 @@ D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.pdb
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.genruntimeconfig.cache
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\ref\API.dll
-D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\FluentValidation.AspNetCore.dll
-D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\FluentValidation.DependencyInjectionExtensions.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.MvcApplicationPartsAssemblyInfo.cs

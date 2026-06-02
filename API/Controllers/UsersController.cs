@@ -1,6 +1,5 @@
-using Application.DTOs;
-using Application.DTOs.Common;
-using Application.Interfaces.Services;
+using Application.Common;
+using Application.Features.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;

@@ -1,6 +1,8 @@
 @page "/ventas"
-@using Application.DTOs
-@using Application.DTOs.Common
+@using Application.Features.Sales
+@using Application.Features.Products
+@using Application.Features.Customers
+@using Application.Common
 @using Blazor.Helpers
 @using Blazor.Models
 @using Blazor.Services
@@ -1595,7 +1597,7 @@ private async Task AddProduct(ProductUI prod)
         _isProcessingSale = true;
         StateHasChanged();
 
-        var saleRequest = new Application.DTOs.CreateSaleRequest
+        var saleRequest = new Application.Features.Sales.CreateSaleRequest
         {
             DraftId = _loadedDraftId > 0 ? _loadedDraftId : null,
             CustomerId = _selectedCustomerEntity!.Id > 0 ? _selectedCustomerEntity.Id : 1, // ID válido necesario

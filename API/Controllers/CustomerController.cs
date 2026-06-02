@@ -1,8 +1,7 @@
-using Application.DTOs;
-using Application.DTOs.Common;
+using Application.Common;
 using Application.Exceptions;
 using Application.Interfaces.Repositories;
-using Application.UseCases;
+using Application.Features.Customers;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,12 +14,12 @@ namespace API.Controllers;
 public class CustomerController : ControllerBase
 {
     private readonly ICustomerRepository _customerRepository;
-    private readonly CustomerHandlers _customerHandlers;
+    private readonly ICustomerService _customerService;
 
-    public CustomerController(ICustomerRepository customerRepository, CustomerHandlers customerHandlers)
+    public CustomerController(ICustomerRepository customerRepository, ICustomerService customerService)
     {
         _customerRepository = customerRepository;
-        _customerHandlers = customerHandlers;
+        _customerService = customerService;
     }
 
     [HttpGet("search")]
@@ -80,7 +79,7 @@ public class CustomerController : ControllerBase
     {
         try
         {
-            var customer = await _customerHandlers.CreateCustomerAsync(request);
+            var customer = await _customerService.CreateCustomerAsync(request);
             return CreatedAtAction(nameof(GetById), new { id = customer.Id }, new CustomerResponseDto
             {
                 Id = customer.Id,
@@ -115,7 +114,7 @@ public class CustomerController : ControllerBase
 
         try
         {
-            await _customerHandlers.UpdateCustomerAsync(request);
+            await _customerService.UpdateCustomerAsync(request);
             return NoContent();
         }
         catch (InactiveCustomerExistsException ex)
@@ -144,7 +143,7 @@ public class CustomerController : ControllerBase
 
         try
         {
-            await _customerHandlers.ReactivateCustomerAsync(id, request);
+            await _customerService.ReactivateCustomerAsync(id, request);
             return NoContent();
         }
         catch (KeyNotFoundException ex)
@@ -165,7 +164,7 @@ public class CustomerController : ControllerBase
     [Authorize(Roles = "Administrador")] // Solo el administrador inactiva clientes
     public async Task<IActionResult> Delete(int id)
     {
-        await _customerHandlers.DeleteCustomerAsync(id);
+        await _customerService.DeleteCustomerAsync(id);
         return NoContent();
     }
 }

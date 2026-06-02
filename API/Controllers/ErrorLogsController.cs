@@ -1,5 +1,5 @@
-using Application.DTOs;
-using Application.DTOs.Common;
+using Application.Features.ErrorLogs;
+using Application.Common;
 using Application.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

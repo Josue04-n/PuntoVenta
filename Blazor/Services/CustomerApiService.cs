@@ -1,5 +1,5 @@
-using Application.DTOs;
-using Application.DTOs.Common;
+using Application.Features.Customers;
+using Application.Common;
 using Blazor.Models;
 using System.Net.Http.Json;
 

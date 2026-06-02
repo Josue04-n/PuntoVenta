@@ -1,5 +1,7 @@
-using Application.DTOs;
-using Application.DTOs.Common;
+using Application.Common;
+using Application.Features.Products;
+using Application.Features.Sales;
+using Application.Features.Inventory;
 using Blazor.Models;
 using System.Net.Http.Json;
 
@@ -13,7 +15,7 @@ public class PosApiService
         _http = http;
     }
 
-    public async Task<HttpResponseMessage> CreateSaleAsync(Application.DTOs.CreateSaleRequest request)
+    public async Task<HttpResponseMessage> CreateSaleAsync(Application.Features.Sales.CreateSaleRequest request)
     {
         return await _http.PostAsJsonAsync("api/Sales", request);
     }

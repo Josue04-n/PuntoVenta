@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Application.Interfaces.Repositories;
-using Application.DTOs.Common;
-using Application.DTOs;
+using Application.Common;
+using Application.Features.Settings;
 using Domain.Entities;
 using Infrastructure.Data;
 using Microsoft.Extensions.Options;

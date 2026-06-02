@@ -1,6 +1,5 @@
-using Application.DTOs;
+using Application.Features.Inventory;
 using Application.Interfaces.Repositories;
-using Application.UseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,12 +10,12 @@ namespace API.Controllers;
 [Authorize(Roles = "Administrador")]
 public class InventoryController : ControllerBase
 {
-    private readonly InventoryHandlers _inventoryHandlers;
+    private readonly IInventoryService _inventoryService;
     private readonly IInventoryRepository _inventoryRepository;
 
-    public InventoryController(InventoryHandlers inventoryHandlers, IInventoryRepository inventoryRepository)
+    public InventoryController(IInventoryService inventoryService, IInventoryRepository inventoryRepository)
     {
-        _inventoryHandlers = inventoryHandlers;
+        _inventoryService = inventoryService;
         _inventoryRepository = inventoryRepository;
     }
 
@@ -25,7 +24,7 @@ public class InventoryController : ControllerBase
     {
         try
         {
-            await _inventoryHandlers.RestockAsync(request);
+            await _inventoryService.RestockAsync(request);
             return Ok(new { message = "Reabastecimiento completado exitosamente." });
         }
         catch (KeyNotFoundException ex)

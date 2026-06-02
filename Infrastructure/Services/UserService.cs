@@ -1,7 +1,6 @@
-using Application.DTOs;
-using Application.Interfaces.Services;
+using Application.Features.Users;
 using Application.Interfaces.Repositories;
-using Application.Services;
+using Application.Interfaces;
 using Domain.Entities;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;

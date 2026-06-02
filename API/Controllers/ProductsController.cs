@@ -1,7 +1,6 @@
-using Application.DTOs;
-using Application.DTOs.Common;
+using Application.Common;
+using Application.Features.Products;
 using Application.Interfaces.Repositories;
-using Application.UseCases;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,12 +13,12 @@ namespace API.Controllers;
 public class ProductsController : ControllerBase
 {
     private readonly IProductRepository _productsRepository;
-    private readonly ProductHandlers _productHandlers;
+    private readonly IProductService _productService;
 
-    public ProductsController(IProductRepository productsRepository, ProductHandlers productHandlers)
+    public ProductsController(IProductRepository productsRepository, IProductService productService)
     {
         _productsRepository = productsRepository;
-        _productHandlers = productHandlers;
+        _productService = productService;
     }
 
     [HttpGet("search")]
@@ -99,7 +98,7 @@ public class ProductsController : ControllerBase
     {
         try
         {
-            var product = await _productHandlers.CreateProductAsync(request);
+            var product = await _productService.CreateProductAsync(request);
             return CreatedAtAction(nameof(GetById), new { id = product.Id }, new ProductResponseDto
             {
                 Id = product.Id,
@@ -133,7 +132,7 @@ public class ProductsController : ControllerBase
 
         try
         {
-            await _productHandlers.UpdateProductAsync(request);
+            await _productService.UpdateProductAsync(request);
             return NoContent();
         }
         catch (KeyNotFoundException ex)
@@ -150,7 +149,7 @@ public class ProductsController : ControllerBase
     [Authorize(Roles = "Administrador")]
     public async Task<IActionResult> Reactivate(int id)
     {
-        await _productHandlers.ReactivateProductAsync(id);
+        await _productService.ReactivateProductAsync(id);
         return NoContent();
     }
 
@@ -158,7 +157,7 @@ public class ProductsController : ControllerBase
     [Authorize(Roles = "Administrador")] 
     public async Task<IActionResult> Delete(int id)
     {
-        await _productHandlers.DeleteProductAsync(id);
+        await _productService.DeleteProductAsync(id);
         return NoContent();
     }
 }

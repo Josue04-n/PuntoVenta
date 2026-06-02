@@ -1,4 +1,4 @@
-using Application.DTOs.Common;
+using Application.Common;
 using Domain.Entities;
 
 namespace Application.Interfaces.Repositories;

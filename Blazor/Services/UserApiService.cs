@@ -1,5 +1,5 @@
-using Application.DTOs;
-using Application.DTOs.Common;
+using Application.Features.Users;
+using Application.Common;
 using System.Net.Http.Json;
 
 namespace Blazor.Services;

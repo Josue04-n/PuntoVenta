@@ -1,4 +1,4 @@
-using Application.DTOs.Common;
+using Application.Common;
 using Application.Interfaces.Repositories;
 using Domain.Entities;
 using Infrastructure.Data;

@@ -1,9 +1,12 @@
-using Application.DTOs;
 using Application.Interfaces;
 using Application.Interfaces.Repositories;
-using Application.Interfaces.Services;
-using Application.UseCases;
-using Application.Validators;
+using Application.Features.Customers;
+using Application.Features.Products;
+using Application.Features.Sales;
+using Application.Features.Inventory;
+using Application.Features.Users;
+using Application.Features.Notifications;
+using Application.Features.Settings;
 using Domain.Entities;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -87,13 +90,11 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<INotificationService, NotificationService>();
 
-        services.AddScoped<PerformSaleHandler>();
-        services.AddScoped<ConfirmSaleHandler>();
-        services.AddScoped<CancelSaleHandler>();
-        services.AddScoped<SearchSalesHandler>();
-        services.AddScoped<ProductHandlers>();
-        services.AddScoped<CustomerHandlers>();
-        services.AddScoped<InventoryHandlers>();
+        services.AddScoped<ICustomerService, CustomerService>();
+        services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<IInventoryService, InventoryService>();
+        services.AddScoped<ISaleQueryService, SaleQueryService>();
+        services.AddScoped<ISaleCommandService, SaleCommandService>();
 
         services.AddHttpContextAccessor();
 

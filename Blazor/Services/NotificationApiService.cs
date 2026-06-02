@@ -1,4 +1,4 @@
-using Application.DTOs;
+using Application.Features.Notifications;
 using System.Net.Http.Json;
 
 namespace Blazor.Services;

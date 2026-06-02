@@ -1,6 +1,5 @@
-using Application.DTOs;
-using Application.DTOs.Common;
-using Application.UseCases;
+using Application.Common;
+using Application.Features.Sales;
 using Domain.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,21 +11,15 @@ namespace API.Controllers;
 [Authorize]
 public class SalesController : ControllerBase
 {
-    private readonly PerformSaleHandler _performSaleHandler;
-    private readonly SearchSalesHandler _searchSalesHandler;
-    private readonly ConfirmSaleHandler _confirmSaleHandler;
-    private readonly CancelSaleHandler _cancelSaleHandler;
+    private readonly ISaleCommandService _saleCommandService;
+    private readonly ISaleQueryService _saleQueryService;
 
     public SalesController(
-        PerformSaleHandler performSaleHandler, 
-        SearchSalesHandler searchSalesHandler,
-        ConfirmSaleHandler confirmSaleHandler,
-        CancelSaleHandler cancelSaleHandler)
+        ISaleCommandService saleCommandService, 
+        ISaleQueryService saleQueryService)
     {
-        _performSaleHandler = performSaleHandler;
-        _searchSalesHandler = searchSalesHandler;
-        _confirmSaleHandler = confirmSaleHandler;
-        _cancelSaleHandler = cancelSaleHandler;
+        _saleCommandService = saleCommandService;
+        _saleQueryService = saleQueryService;
     }
 
     [HttpGet("search")]
@@ -38,7 +31,7 @@ public class SalesController : ControllerBase
     {
         string? sellerNameFilter = User.IsInRole("Administrador") ? null : User.Identity?.Name;
 
-        var sales = await _searchSalesHandler.ExecuteAsync(term, searchBy, sellerNameFilter, startDate, endDate);
+        var sales = await _saleQueryService.ExecuteAsync(term, searchBy, sellerNameFilter, startDate, endDate);
 
         var responseItems = sales.Select(s => MapToDto(s));
 
@@ -54,7 +47,7 @@ public class SalesController : ControllerBase
 
         try
         {
-            var result = await _performSaleHandler.ExecuteAsync(request);
+            var result = await _saleCommandService.CreateSaleAsync(request);
             var response = MapToDto(result);
 
             return CreatedAtAction(nameof(RegisterSale), new { id = response.Id }, response);
@@ -78,7 +71,7 @@ public class SalesController : ControllerBase
     {
         try
         {
-            await _confirmSaleHandler.ExecuteAsync(id);
+            await _saleCommandService.ConfirmSaleAsync(id);
             return Ok(new { message = "Venta confirmada y stock actualizado." });
         }
         catch (BulkStockException ex)
@@ -100,7 +93,7 @@ public class SalesController : ControllerBase
     {
         try
         {
-            await _cancelSaleHandler.ExecuteAsync(id);
+            await _saleCommandService.CancelSaleAsync(id);
             return Ok(new { message = "Venta anulada correctamente." });
         }
         catch (InvalidOperationException ex)
@@ -124,7 +117,7 @@ public class SalesController : ControllerBase
     {
         string? sellerNameFilter = User.IsInRole("Administrador") ? null : User.Identity?.Name;
 
-        var (sales, totalCount) = await _searchSalesHandler.ExecutePagedAsync(pageNumber, pageSize, term, searchBy, sellerNameFilter, startDate, endDate);
+        var (sales, totalCount) = await _saleQueryService.ExecutePagedAsync(pageNumber, pageSize, term, searchBy, sellerNameFilter, startDate, endDate);
 
         var responseItems = sales.Select(s => MapToDto(s));
 

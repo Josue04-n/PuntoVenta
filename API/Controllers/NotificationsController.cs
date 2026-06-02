@@ -1,5 +1,4 @@
-using Application.DTOs;
-using Application.Interfaces.Services;
+using Application.Features.Notifications;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;

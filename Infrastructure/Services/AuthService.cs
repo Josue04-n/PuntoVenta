@@ -1,5 +1,4 @@
-using Application.DTOs;
-using Application.Interfaces.Services;
+using Application.Features.Users;
 using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
