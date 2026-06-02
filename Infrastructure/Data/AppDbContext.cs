@@ -40,18 +40,6 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
                     entry.Entity.UpdatedAt = DateTime.UtcNow;
                     entry.Entity.UpdatedBy = currentUser;
                     break;
-                case EntityState.Deleted:
-                    entry.State = EntityState.Modified;
-                    entry.Entity.Deactivate(currentUser);
-                    
-                    foreach (var reference in entry.References.Where(r => r.TargetEntry != null && r.TargetEntry.Metadata.IsOwned()))
-                    {
-                        if (reference.TargetEntry != null)
-                        {
-                            reference.TargetEntry.State = EntityState.Modified;
-                        }
-                    }
-                    break;
             }
         }
 
@@ -104,13 +92,17 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             }
             
             entity.HasKey(p => p.Id);
-            entity.Property(p => p.Name).HasMaxLength(150).IsRequired();
+            entity.Property(p => p.Name).HasMaxLength(ValidationConstants.ProductNameMax).IsRequired();
             entity.HasIndex(p => p.Name);
 
             entity.OwnsOne(p => p.UnitPrice, price =>
             {
                 price.Property(p => p.Worth).HasColumnName("UnitPrice").HasPrecision(18, 2).IsRequired();
             });
+
+            // Auditoría
+            entity.Property(p => p.CreatedBy).HasMaxLength(ValidationConstants.AuditUserMax);
+            entity.Property(p => p.UpdatedBy).HasMaxLength(ValidationConstants.AuditUserMax);
         });
 
         // --- CLIENTES ---
@@ -119,7 +111,21 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.IDCard).IsUnique(); 
             entity.HasIndex(e => e.LastName); 
-            entity.Property(e => e.IDCard).HasMaxLength(13).IsRequired(); 
+            
+            entity.Property(e => e.IDCard)
+                .HasMaxLength(ValidationConstants.IDCardLength)
+                .IsFixedLength() // Mapea a CHAR(10)
+                .IsRequired();
+
+            entity.Property(e => e.Name).HasMaxLength(ValidationConstants.NameMax).IsRequired();
+            entity.Property(e => e.LastName).HasMaxLength(ValidationConstants.LastNameMax).IsRequired();
+            entity.Property(e => e.Phone).HasMaxLength(ValidationConstants.PhoneLength).IsFixedLength();
+            entity.Property(e => e.Email).HasMaxLength(ValidationConstants.EmailMax);
+            entity.Property(e => e.Address).HasMaxLength(ValidationConstants.AddressMax);
+
+            // Auditoría
+            entity.Property(e => e.CreatedBy).HasMaxLength(ValidationConstants.AuditUserMax);
+            entity.Property(p => p.UpdatedBy).HasMaxLength(ValidationConstants.AuditUserMax);
         });
 
         // --- VENTAS Y SECUENCIAS ---
@@ -157,6 +163,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
         modelBuilder.Entity<ApplicationUser>(entity =>
         {
             entity.HasIndex(u => u.LastName);
+            entity.Property(u => u.UserName).HasMaxLength(ValidationConstants.UserNameMax);
+            entity.Property(u => u.FirstName).HasMaxLength(ValidationConstants.NameMax);
+            entity.Property(u => u.LastName).HasMaxLength(ValidationConstants.LastNameMax);
         });
 
         // --- DETALLES ---

@@ -150,7 +150,7 @@ public class ProductsController : ControllerBase
     [Authorize(Roles = "Administrador")]
     public async Task<IActionResult> Reactivate(int id)
     {
-        await _productsRepository.ReactivateAsync(id);
+        await _productHandlers.ReactivateProductAsync(id);
         return NoContent();
     }
 

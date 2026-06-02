@@ -22,4 +22,5 @@ public interface ICustomerRepository
     Task AddAsync(Customer customer);
     Task UpdateAsync(Customer customer);
     Task DeleteAsync(int id);
+    Task<bool> HasRelatedRecordsAsync(int id);
 }

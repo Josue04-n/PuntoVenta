@@ -1,6 +1,7 @@
 @page "/productos"
 @using Application.DTOs
 @using Application.DTOs.Common
+@using Domain.Common
 @using Blazor.Helpers
 @using Blazor.Services
 @using System.Timers
@@ -244,7 +245,7 @@
                                    type="text" 
                                    value="@EditingProduct.Name" 
                                    @oninput="OnNameInput"
-                                   placeholder="NOMBRE DESCRIPTIVO DEL PRODUCTO" />
+                                   placeholder="NOMBRE DESCRIPTIVO DEL PRODUCTO" maxlength="@ValidationConstants.ProductNameMax" />
                         </div>
                         @if (HasError("Name"))
                         {

@@ -104,7 +104,19 @@ public class CustomerHandlers
 
     public async Task DeleteCustomerAsync(int id)
     {
-        await _customerRepository.DeleteAsync(id);
+        var customer = await _customerRepository.GetByIdAsync(id)
+            ?? throw new KeyNotFoundException("Cliente no encontrado.");
+
+        if (await _customerRepository.HasRelatedRecordsAsync(id))
+        {
+            customer.Deactivate();
+            await _customerRepository.UpdateAsync(customer);
+        }
+        else
+        {
+            await _customerRepository.DeleteAsync(id);
+        }
+
         await _unitOfWork.SaveChangesAsync();
     }
 }

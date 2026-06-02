@@ -1378,7 +1378,7 @@
 }
 
 .uta-form-control--with-icon {
-    padding-left: 2.5rem;
+    padding-left: 2.5rem !important;
 }
 
 /* Modales (heredado o replicado de Sales para que no se pierda al ser scoped) */

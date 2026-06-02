@@ -65,6 +65,7 @@ public class ProductHandlers
         try
         {
             await _productRepository.AddAsync(product);
+            await _unitOfWork.SaveChangesAsync();
 
             // Registrar el stock inicial como el primer movimiento
             if (request.Stock > 0)
@@ -78,9 +79,9 @@ public class ProductHandlers
                     "Carga inicial de inventario"
                 );
                 await _inventoryRepository.AddMovementAsync(movement);
+                await _unitOfWork.SaveChangesAsync();
             }
             
-            await _unitOfWork.SaveChangesAsync();
             await _unitOfWork.CommitTransactionAsync();
             return product;
         }
@@ -113,7 +114,25 @@ public class ProductHandlers
 
     public async Task DeleteProductAsync(int id)
     {
-        await _productRepository.DeleteAsync(id);
+        var product = await _productRepository.GetByIdAsync(id)
+            ?? throw new KeyNotFoundException("Producto no encontrado.");
+
+        if (await _productRepository.HasRelatedRecordsAsync(id))
+        {
+            product.Deactivate();
+            await _productRepository.UpdateAsync(product);
+        }
+        else
+        {
+            await _productRepository.DeleteAsync(id);
+        }
+
+        await _unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task ReactivateProductAsync(int id)
+    {
+        await _productRepository.ReactivateAsync(id);
         await _unitOfWork.SaveChangesAsync();
     }
 }

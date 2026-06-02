@@ -2385,7 +2385,7 @@ input[type="password"][b-biovkvifaf]::-ms-clear {
 }
 
 .uta-form-control--with-icon[b-j8rmqfr3w5] {
-    padding-left: 2.5rem;
+    padding-left: 2.5rem !important;
 }
 
 /* Modales (heredado o replicado de Sales para que no se pierda al ser scoped) */
@@ -9562,16 +9562,16 @@ input[type="password"][b-n3b4hveadi]::-ms-clear {
     padding: 1.5rem;
     max-height: 70vh;
     overflow-y: auto;
-    background-color: #ffffff;
+    background-color: #f8f9fa;
 }
 
 .uta-modal__footer[b-7qhfd1n5uy] {
     display: flex;
     justify-content: flex-end;
     gap: 0.75rem;
-    padding: 1rem 1.5rem 1.5rem;
-    border-top: none;
+    padding: 1rem 1.5rem;
     background-color: #ffffff;
+    border-top: 1px solid #e9ecef;
 }
 
 /* --- FORMULARIOS --- */

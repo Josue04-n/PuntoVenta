@@ -11,9 +11,9 @@ public interface IProductRepository
     Task UpdateRangeAsync(IEnumerable<Product> products);
     Task<IEnumerable<Product>> SearchAsync(string term, string searchBy);
     Task<PagedResponse<Product>> GetPagedAsync(int pageNumber, int pageSize, string? term = null, string searchBy = "name", string status = "active");
-    
     Task AddAsync(Product product);
     Task UpdateAsync(Product product);
     Task DeleteAsync(int id);
+    Task<bool> HasRelatedRecordsAsync(int id);
     Task ReactivateAsync(int id);
 }

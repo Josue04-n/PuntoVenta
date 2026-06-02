@@ -3,7 +3,10 @@ using Application.Interfaces;
 using Application.Interfaces.Repositories;
 using Application.Interfaces.Services;
 using Application.UseCases;
+using Application.Validators;
 using Domain.Entities;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
@@ -20,6 +23,10 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddProjectDependencies(this IServiceCollection services, IConfiguration configuration)
     {
+        // --- FLUENT VALIDATION AUTO-VALIDATION ---
+        services.AddFluentValidationAutoValidation();
+        services.AddFluentValidationClientsideAdapters();
+
         // --- BUSINESS SETTINGS (Options Pattern) ---
         services.Configure<BusinessSettings>(configuration.GetSection(BusinessSettings.SectionName));
 
@@ -67,6 +74,14 @@ public static class DependencyInjection
         services.AddScoped<IInventoryRepository, InventoryRepository>();
         services.AddScoped<IErrorLogRepository, ErrorLogRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        // --- VALIDATORS (FLUENT VALIDATION) ---
+        services.AddScoped<IValidator<CreateCustomerRequest>, CreateCustomerValidator>();
+        services.AddScoped<IValidator<UpdateCustomerRequest>, UpdateCustomerValidator>();
+        services.AddScoped<IValidator<CreateProductRequest>, CreateProductValidator>();
+        services.AddScoped<IValidator<UpdateProductRequest>, UpdateProductValidator>();
+        services.AddScoped<IValidator<RegisterUserRequest>, RegisterValidator>();
+        services.AddScoped<IValidator<UpdateUserRequest>, UpdateUserValidator>();
 
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAuthService, AuthService>();

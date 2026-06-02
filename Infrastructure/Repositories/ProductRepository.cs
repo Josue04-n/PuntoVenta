@@ -123,9 +123,20 @@ public class ProductRepository : IProductRepository
         var product = await _context.Products.FindAsync(id);
         if (product != null)
         {
-            // Soft delete
+            var movements = await _context.InventoryMovements.Where(im => im.ProductId == id).ToListAsync();
+            if (movements.Any())
+            {
+                _context.InventoryMovements.RemoveRange(movements);
+            }
+            
+            // Hard delete
             _context.Products.Remove(product);
         }
+    }
+
+    public async Task<bool> HasRelatedRecordsAsync(int id)
+    {
+        return await _context.SaleDetails.AnyAsync(sd => sd.ProductId == id);
     }
 
     public async Task ReactivateAsync(int id)

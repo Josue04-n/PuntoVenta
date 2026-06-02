@@ -1,3 +1,11 @@
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.csproj.AssemblyReference.cache
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\rpswa.dswa.cache.json
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.GeneratedMSBuildEditorConfig.editorconfig
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.AssemblyInfoInputs.cache
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.AssemblyInfo.cs
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.csproj.CoreCompileInputs.cache
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.MvcApplicationPartsAssemblyInfo.cache
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.sourcelink.json
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\appsettings.Development.json
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\appsettings.json
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\API.staticwebassets.endpoints.json
@@ -10,6 +18,7 @@ D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Azure.Identity.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Azure.Security.KeyVault.Certificates.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Azure.Security.KeyVault.Secrets.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\FluentValidation.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Humanizer.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.OpenIdConnect.dll
@@ -165,15 +174,6 @@ D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Infrastructure.pdb
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Application.pdb
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Domain.pdb
-D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.csproj.AssemblyReference.cache
-D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\rpswa.dswa.cache.json
-D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.GeneratedMSBuildEditorConfig.editorconfig
-D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.AssemblyInfoInputs.cache
-D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.AssemblyInfo.cs
-D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.csproj.CoreCompileInputs.cache
-D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.MvcApplicationPartsAssemblyInfo.cs
-D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.MvcApplicationPartsAssemblyInfo.cache
-D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.sourcelink.json
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\rjimswa.dswa.cache.json
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\rjsmrazor.dswa.cache.json
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\rjsmcshtml.dswa.cache.json
@@ -189,3 +189,6 @@ D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.pdb
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.genruntimeconfig.cache
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\ref\API.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\FluentValidation.AspNetCore.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\FluentValidation.DependencyInjectionExtensions.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.MvcApplicationPartsAssemblyInfo.cs

@@ -137,4 +137,9 @@ public class CustomerRepository : ICustomerRepository
             _context.Customers.Remove(customer);
         }
     }
+
+    public async Task<bool> HasRelatedRecordsAsync(int id)
+    {
+        return await _context.Sales.AnyAsync(s => s.CustomerId == id);
+    }
 }
