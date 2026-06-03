@@ -931,6 +931,46 @@
     </div>
 }
 
+@if (_showStockErrorModal)
+{
+    <div class="uta-overlay" @onclick="CloseStockErrorModal">
+        <div class="uta-modal uta-modal--md" style="max-width: 600px; width: 100%; margin: 0 auto;" @onclick:stopPropagation="true">
+            <div class="uta-modal__header" style="background-color: #6B1A33;">
+                <div>
+                    <h3 class="uta-modal__title"><i class="bi bi-exclamation-circle"></i> &nbsp;Atención: Stock Insuficiente</h3>
+                </div>
+                <button class="uta-modal__close" @onclick="CloseStockErrorModal"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <div class="uta-modal__body text-center" style="padding: 2rem;">
+                <div style="font-size: 3rem; color: #dc2626; margin-bottom: 1rem;">
+                    <i class="bi bi-box-seam-fill"></i>
+                </div>
+                <h4 style="font-weight: 700; color: #1a1a1a; margin-bottom: 0.5rem;">Productos sin stock</h4>
+                <p style="color: #6c757d; margin-bottom: 1.5rem; font-size: 0.95rem;">
+                    Para continuar, se eliminarán de la factura los siguientes productos:
+                </p>
+                
+                <div style="background: #fdf5f7; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; text-align: left; border: 1px solid #f3e1e6; max-height: 200px; overflow-y: auto;">
+                    @foreach (var error in _outOfStockProducts)
+                    {
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px dashed #e9ecef;">
+                            <span style="font-weight: 600; color: #6B1A33;">@error.ProductName</span>
+                            <span style="font-size: 0.85rem; color: #dc2626;">Disponible: @error.AvailableStock</span>
+                        </div>
+                    }
+                </div>
+
+                <div class="d-flex justify-content-center gap-3">
+                    <button class="uta-btn uta-btn--outline" style="min-width: 120px;" @onclick="CloseStockErrorModal">Cancelar</button>
+                    <button class="uta-btn uta-btn--primary" style="min-width: 180px;" @onclick="RemoveOutOfStockAndContinue">
+                        <i class="bi bi-trash3"></i> Eliminar y Continuar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
 
     private SalesRegistryModel _salesModel = new SalesRegistryModel();
@@ -1705,13 +1745,61 @@ private async Task AddProduct(ProductUI prod)
         }
         else
         {
-            var error = await response.Content.ReadAsStringAsync();
-            await JS.InvokeVoidAsync("Swal.fire", "Error de Stock", "No se pudo confirmar: " + error, "warning");
+            var errorJson = await response.Content.ReadAsStringAsync();
+            try {
+                using var doc = JsonDocument.Parse(errorJson);
+                var root = doc.RootElement;
+                if (root.TryGetProperty("type", out var typeProp) && typeProp.GetString() == "BulkStock")
+                {
+                    var errorsProp = root.GetProperty("errors");
+                    _outOfStockProducts = JsonSerializer.Deserialize<List<StockValidationErrorModel>>(errorsProp.GetRawText(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
+                    _showStockErrorModal = true;
+                }
+                else 
+                {
+                    await JS.InvokeVoidAsync("Swal.fire", "Error de Stock", "No se pudo confirmar: " + errorJson, "warning");
+                }
+            } catch {
+                await JS.InvokeVoidAsync("Swal.fire", "Error de Stock", "No se pudo confirmar: " + errorJson, "warning");
+            }
         }
 
         _isProcessingSale = false;
         StateHasChanged();
         return success;
+    }
+
+    private bool _showStockErrorModal = false;
+    private List<StockValidationErrorModel> _outOfStockProducts = new();
+
+    private void CloseStockErrorModal()
+    {
+        _showStockErrorModal = false;
+    }
+
+    private async Task RemoveOutOfStockAndContinue()
+    {
+        _showStockErrorModal = false;
+        
+        foreach (var error in _outOfStockProducts)
+        {
+            var item = _cart.FirstOrDefault(c => c.ProductId == error.ProductId);
+            if (item != null)
+            {
+                _cart.Remove(item);
+            }
+        }
+        
+        RecalculateInvoiceTotals();
+        
+        if (_cart.Any())
+        {
+            await ShowNotification("Productos sin stock eliminados. Puede agregar nuevos productos o intentar confirmar.");
+        }
+        else
+        {
+            await ShowNotification("La factura quedó vacía tras eliminar los productos sin stock.", true);
+        }
     }
 
     private void ViewInvoice()
