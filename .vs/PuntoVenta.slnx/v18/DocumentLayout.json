@@ -3,64 +3,48 @@
   "WorkspaceRootPath": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\api\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|solutionrelative:api\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\application\\interfaces\\idbproviderservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|solutionrelative:application\\interfaces\\idbproviderservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\application\\interfaces\\iunitofwork.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|solutionrelative:application\\interfaces\\iunitofwork.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\application\\features\\settings\\businesssettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|solutionrelative:application\\features\\settings\\businesssettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\application\\features\\users\\statisticscalculator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|solutionrelative:application\\features\\users\\statisticscalculator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\application\\features\\products\\iproductservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|solutionrelative:application\\features\\products\\iproductservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\application\\dtos\\createsalerequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|solutionrelative:application\\dtos\\createsalerequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E528BBC3-1C26-8C35-F682-23718816ADCD}|Domain\\Domain.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\domain\\valueobjects\\price.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E528BBC3-1C26-8C35-F682-23718816ADCD}|Domain\\Domain.csproj|solutionrelative:domain\\valueobjects\\price.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\application\\application.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|solutionrelative:application\\application.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E528BBC3-1C26-8C35-F682-23718816ADCD}|Domain\\Domain.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\domain\\common\\validationconstants.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E528BBC3-1C26-8C35-F682-23718816ADCD}|Domain\\Domain.csproj|solutionrelative:domain\\common\\validationconstants.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\api\\configurations\\dependencyinjection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|solutionrelative:api\\configurations\\dependencyinjection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\api\\api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|solutionrelative:api\\api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\blazor\\pages\\sales.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|solutionrelative:blazor\\pages\\sales.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\blazor\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|solutionrelative:blazor\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\blazor\\app.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|solutionrelative:blazor\\app.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\blazor\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|solutionrelative:blazor\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\api\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|solutionrelative:api\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\application\\features\\products\\productservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|solutionrelative:application\\features\\products\\productservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5872AEB3-BAA3-FE31-B0EB-0FB6DBEDCF83}|Infrastructure\\Infrastructure.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\infrastructure\\repositories\\productrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5872AEB3-BAA3-FE31-B0EB-0FB6DBEDCF83}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\repositories\\productrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\blazor\\services\\posapiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|solutionrelative:blazor\\services\\posapiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\blazor\\pages\\product.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|solutionrelative:blazor\\pages\\product.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|solutionrelative:api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\api\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|solutionrelative:api\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\blazor\\blazor.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{9D6F2367-CA0F-7288-F636-1EB2FF1E14E4}|Blazor\\Blazor.csproj|solutionrelative:blazor\\blazor.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|d:\\programacion\\quinto\\patrones software\\respo\\puntoventa\\api\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBFA08EA-AECE-205F-7B85-326FD0B81BAD}|API\\API.csproj|solutionrelative:api\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -83,190 +67,135 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "AuthController.cs",
-              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\Controllers\\AuthController.cs",
-              "RelativeDocumentMoniker": "API\\Controllers\\AuthController.cs",
-              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\Controllers\\AuthController.cs",
-              "RelativeToolTip": "API\\Controllers\\AuthController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-02T02:06:06.799Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "IDbProviderService.cs",
-              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\Interfaces\\IDbProviderService.cs",
-              "RelativeDocumentMoniker": "Application\\Interfaces\\IDbProviderService.cs",
-              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\Interfaces\\IDbProviderService.cs",
-              "RelativeToolTip": "Application\\Interfaces\\IDbProviderService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-02T01:56:41.862Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "IUnitOfWork.cs",
-              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\Interfaces\\IUnitOfWork.cs",
-              "RelativeDocumentMoniker": "Application\\Interfaces\\IUnitOfWork.cs",
-              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\Interfaces\\IUnitOfWork.cs",
-              "RelativeToolTip": "Application\\Interfaces\\IUnitOfWork.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-02T01:56:33.726Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "BusinessSettings.cs",
-              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\Features\\Settings\\BusinessSettings.cs",
-              "RelativeDocumentMoniker": "Application\\Features\\Settings\\BusinessSettings.cs",
-              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\Features\\Settings\\BusinessSettings.cs",
-              "RelativeToolTip": "Application\\Features\\Settings\\BusinessSettings.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-02T01:53:48.11Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "StatisticsCalculator.cs",
-              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\Features\\Users\\StatisticsCalculator.cs",
-              "RelativeDocumentMoniker": "Application\\Features\\Users\\StatisticsCalculator.cs",
-              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\Features\\Users\\StatisticsCalculator.cs",
-              "RelativeToolTip": "Application\\Features\\Users\\StatisticsCalculator.cs",
-              "ViewState": "AgIAABYAAAAAAAAAAAAiwBcAAAAMAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-02T01:44:42.747Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "IProductService.cs",
-              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\Features\\Products\\IProductService.cs",
-              "RelativeDocumentMoniker": "Application\\Features\\Products\\IProductService.cs",
-              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\Features\\Products\\IProductService.cs",
-              "RelativeToolTip": "Application\\Features\\Products\\IProductService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-02T01:44:10.979Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "CreateSaleRequest.cs",
-              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\DTOs\\CreateSaleRequest.cs",
-              "RelativeDocumentMoniker": "Application\\DTOs\\CreateSaleRequest.cs",
-              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\DTOs\\CreateSaleRequest.cs",
-              "RelativeToolTip": "Application\\DTOs\\CreateSaleRequest.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAoAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-02T01:20:05.259Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "Price.cs",
-              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Domain\\ValueObjects\\Price.cs",
-              "RelativeDocumentMoniker": "Domain\\ValueObjects\\Price.cs",
-              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Domain\\ValueObjects\\Price.cs",
-              "RelativeToolTip": "Domain\\ValueObjects\\Price.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-01T23:10:16.459Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "ValidationConstants.cs",
-              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Domain\\Common\\ValidationConstants.cs",
-              "RelativeDocumentMoniker": "Domain\\Common\\ValidationConstants.cs",
-              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Domain\\Common\\ValidationConstants.cs",
-              "RelativeToolTip": "Domain\\Common\\ValidationConstants.cs",
-              "ViewState": "AgIAAAUAAAAAAAAAAAAAwA8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-31T06:05:29.493Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "DependencyInjection.cs",
-              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\Configurations\\DependencyInjection.cs",
-              "RelativeDocumentMoniker": "API\\Configurations\\DependencyInjection.cs",
-              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\Configurations\\DependencyInjection.cs",
-              "RelativeToolTip": "API\\Configurations\\DependencyInjection.cs",
-              "ViewState": "AgIAABgAAAAAAAAAAAAQwCAAAAAxAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-31T05:55:38.028Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "Application.csproj",
-              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\Application.csproj",
-              "RelativeDocumentMoniker": "Application\\Application.csproj",
-              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\Application.csproj",
-              "RelativeToolTip": "Application\\Application.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAmwBYAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-05-31T05:45:57.239Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "API.csproj",
-              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\API.csproj",
-              "RelativeDocumentMoniker": "API\\API.csproj",
-              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\API.csproj",
-              "RelativeToolTip": "API\\API.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-05-31T06:40:35.267Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "Sales.razor",
-              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Sales.razor",
-              "RelativeDocumentMoniker": "Blazor\\Pages\\Sales.razor",
-              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Sales.razor",
-              "RelativeToolTip": "Blazor\\Pages\\Sales.razor",
-              "ViewState": "AgIAAO8BAAAAAAAAAAAowAACAAApAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-30T23:03:48.627Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Program.cs",
               "RelativeDocumentMoniker": "Blazor\\Program.cs",
               "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Program.cs",
               "RelativeToolTip": "Blazor\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAWAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-21T23:50:21.047Z"
+              "WhenOpened": "2026-06-03T20:19:30.838Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "App.razor",
-              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\App.razor",
-              "RelativeDocumentMoniker": "Blazor\\App.razor",
-              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\App.razor",
-              "RelativeToolTip": "Blazor\\App.razor",
-              "ViewState": "AgIAAAAAAAAAAAAAAIBZwAkAAAAYAAAAAAAAAA==",
+              "DocumentIndex": 10,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "API\\Controllers\\AuthController.cs",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "API\\Controllers\\AuthController.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAAABIAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-02T02:06:06.799Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ProductRepository.cs",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Infrastructure\\Repositories\\ProductRepository.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Repositories\\ProductRepository.cs",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Infrastructure\\Repositories\\ProductRepository.cs",
+              "RelativeToolTip": "Infrastructure\\Repositories\\ProductRepository.cs",
+              "ViewState": "AgIAAGkAAAAAAAAAAAAAAHEAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-02T03:28:32.07Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ProductService.cs",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\Features\\Products\\ProductService.cs",
+              "RelativeDocumentMoniker": "Application\\Features\\Products\\ProductService.cs",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Application\\Features\\Products\\ProductService.cs",
+              "RelativeToolTip": "Application\\Features\\Products\\ProductService.cs",
+              "ViewState": "AgIAAFMAAAAAAAAAAAAQwFoAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-02T03:28:03.023Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Product.razor",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Product.razor",
+              "RelativeDocumentMoniker": "Blazor\\Pages\\Product.razor",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Pages\\Product.razor",
+              "RelativeToolTip": "Blazor\\Pages\\Product.razor",
+              "ViewState": "AgIAAM0CAAAAAAAAAAAjwNYCAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-21T23:50:15.348Z"
+              "WhenOpened": "2026-06-02T03:21:34.852Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "Blazor\\Properties\\launchSettings.json",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Properties\\launchSettings.json",
+              "RelativeToolTip": "Blazor\\Properties\\launchSettings.json",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAwwBEAAAB1AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-06-02T04:16:26.594Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "PosApiService.cs",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Services\\PosApiService.cs",
+              "RelativeDocumentMoniker": "Blazor\\Services\\PosApiService.cs",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Services\\PosApiService.cs",
+              "RelativeToolTip": "Blazor\\Services\\PosApiService.cs",
+              "ViewState": "AgIAAF8AAAAAAAAAAAA1wGYAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-02T03:26:31.171Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ProductsController.cs",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\Controllers\\ProductsController.cs",
+              "RelativeDocumentMoniker": "API\\Controllers\\ProductsController.cs",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\Controllers\\ProductsController.cs",
+              "RelativeToolTip": "API\\Controllers\\ProductsController.cs",
+              "ViewState": "AgIAAJEAAAAAAAAAAAAuwJUAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-02T03:27:29.091Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Blazor.csproj",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
+              "RelativeDocumentMoniker": "Blazor\\Blazor.csproj",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\Blazor\\Blazor.csproj",
+              "RelativeToolTip": "Blazor\\Blazor.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-06-02T04:13:27.802Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "API\\Properties\\launchSettings.json",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\Properties\\launchSettings.json",
+              "RelativeToolTip": "API\\Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-06-02T04:16:10.072Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\Program.cs",
+              "RelativeDocumentMoniker": "API\\Program.cs",
+              "ToolTip": "D:\\Programacion\\QUINTO\\PATRONES SOFTWARE\\respo\\PuntoVenta\\API\\Program.cs",
+              "RelativeToolTip": "API\\Program.cs",
+              "ViewState": "AgIAAIgAAAAAAAAAAAAiwJQAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-02T04:14:48.658Z"
             }
           ]
         }

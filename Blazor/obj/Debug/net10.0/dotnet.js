@@ -5,7 +5,7 @@ var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,
   "mainAssemblyName": "Blazor",
   "applicationEnvironment": "Development",
   "resources": {
-    "hash": "sha256-+loJi4t57ApNDn27a+loVVBtyY9RYkSZkG+Y6WxWztw=",
+    "hash": "sha256-ht1kyElHP9MuqO4X/WzBoES+eHqgBxXUNq+b50dUu2Y=",
     "jsModuleNative": [
       {
         "name": "dotnet.native.ykrnppwhq2.js"
@@ -1434,40 +1434,40 @@ var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,
       },
       {
         "virtualPath": "Application.wasm",
-        "name": "Application.stske1wpx7.wasm",
-        "integrity": "sha256-8IBjnDMrFopUDB1ip/uFy/DyBm2zW86dxVRuDhypKa4=",
+        "name": "Application.kotmpulyx8.wasm",
+        "integrity": "sha256-xAAisF18xa4retGn76VU1WXqlkw/efysMK+Xzz4e3k0=",
         "cache": "force-cache"
       },
       {
         "virtualPath": "Domain.wasm",
-        "name": "Domain.hbz7hyqojo.wasm",
-        "integrity": "sha256-czjcQi5Zm3vs0ZVoY23J9+VE5pqoMldXKPLv9Gs7DkM=",
+        "name": "Domain.j51y34acq6.wasm",
+        "integrity": "sha256-qbL8Pqbag7P9JSasY+jKTV46Kjp8vCpvaBX+boCQPXE=",
         "cache": "force-cache"
       },
       {
         "virtualPath": "Blazor.wasm",
-        "name": "Blazor.pot4jzrpra.wasm",
-        "integrity": "sha256-Sb5MmQlqUPVWe9FZGJjUN6lRI0FKfVr3/1qswye0Hhk=",
+        "name": "Blazor.dn5nkko223.wasm",
+        "integrity": "sha256-px/2i7GZeivFMZldBz1yPPQKTNEdyV7ozC9x0pjT+gY=",
         "cache": "force-cache"
       }
     ],
     "pdb": [
       {
         "virtualPath": "Application.pdb",
-        "name": "Application.3e8l0aku0m.pdb",
-        "integrity": "sha256-u0XaO4KUUJwzqqb4xFhn2R24J6i1y5+iduinZvAC6Ko=",
+        "name": "Application.fzx6zfymzq.pdb",
+        "integrity": "sha256-dc9lBomjTQiyMJBgXMD0/5YV6haPuWSbLsC+dHfUHPo=",
         "cache": "force-cache"
       },
       {
         "virtualPath": "Domain.pdb",
-        "name": "Domain.p38cge9fob.pdb",
-        "integrity": "sha256-+/PGboWP8RqtKoTHEumGZMl4eGQWgwz4MiVHuxTdoPs=",
+        "name": "Domain.qijyvvodxp.pdb",
+        "integrity": "sha256-UrKUUhB7av4/Ix2RaBx5oiPBjVaFMZK1C3cU9Hngsuc=",
         "cache": "force-cache"
       },
       {
         "virtualPath": "Blazor.pdb",
-        "name": "Blazor.fw1hgd6hbp.pdb",
-        "integrity": "sha256-3yfcfhjoBqEx5Juk9N/UqhkbcWCp0/s8hYi/H97gLEw=",
+        "name": "Blazor.01jprzhow4.pdb",
+        "integrity": "sha256-bFxvQTPYF8DulcryJk4+SIfhoLsck7XbcNgFezQr+Aw=",
         "cache": "force-cache"
       }
     ],

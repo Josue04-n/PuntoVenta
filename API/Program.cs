@@ -87,6 +87,12 @@ builder.Services.AddSwaggerGen(c =>
 // 2. Construir la aplicación
 var app = builder.Build();
 
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+var urls = builder.Configuration["ASPNETCORE_URLS"];
+logger.LogInformation("La API se está iniciando en: {Urls}", urls);
+
+app.UseCors("PermitirBlazor");
+
 // 3. Configurar el pipeline de solicitudes HTTP
 app.UseMiddleware<ExceptionMiddleware>();
 
@@ -97,9 +103,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("PermitirBlazor");
 
-app.UseAuthentication(); // IMPORTANTE: Antes de Authorization
+app.UseAuthentication(); 
 app.UseAuthorization();
 
 app.MapControllers();
@@ -145,8 +150,8 @@ using (var scope = app.Services.CreateScope())
     }
     catch (Exception ex)
     {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Ocurrió un error al sembrar los datos iniciales.");
+        var seedLogger = services.GetRequiredService<ILogger<Program>>();
+        seedLogger.LogError(ex, "Ocurrió un error al sembrar los datos iniciales.");
     }
 }
 

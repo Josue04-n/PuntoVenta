@@ -5,7 +5,6 @@ window.utaShortcuts = {
         this.dotNetHelper = dotNetHelper;
         
         window.addEventListener('keydown', (e) => {
-            // Manejar tecla ALT
             if (e.key === 'Alt') {
                 e.preventDefault();
                 this.tipsActive = !this.tipsActive;
@@ -23,21 +22,16 @@ window.utaShortcuts = {
                 return;
             }
 
-            // Si los tips están activos y se presiona una tecla
             if (this.tipsActive) {
                 const key = e.key.toUpperCase();
                 
-                // Si hay un modal abierto (.uta-modal), buscar SOLO dentro del modal
-                // Si no, buscar en todo el documento.
                 const activeModal = document.querySelector('.uta-modal');
                 let targetElement = null;
 
                 if (activeModal) {
                     targetElement = activeModal.querySelector(`[data-accesskey="${key}"]`);
                 } else {
-                    // Buscar todos los elementos que coincidan
                     const elements = Array.from(document.querySelectorAll(`[data-accesskey="${key}"]`));
-                    // Filtrar solo los que sean visibles
                     targetElement = elements.find(t => !!(t.offsetWidth || t.offsetHeight || t.getClientRects().length));
                 }
 

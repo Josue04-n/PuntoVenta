@@ -30,12 +30,12 @@ builder.Services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredServ
 builder.Services.AddTransient<JwtInterceptor>();
 
 // --- CONFIGURACIÓN DE HTTPCLIENT ---
-// CAMBIO CLAVE: Ajustado a localhost:5055 según requerimiento
+// Configurado para conectar con la API en modo HTTPS (Puerto 7199)
 builder.Services.AddScoped(sp => 
 {
     var interceptor = sp.GetRequiredService<JwtInterceptor>();
     interceptor.InnerHandler = new HttpClientHandler();
-    return new HttpClient(interceptor) { BaseAddress = new Uri("http://localhost:5055/") };
+    return new HttpClient(interceptor) { BaseAddress = new Uri("https://localhost:7199/") };
 });
 
 builder.Services.AddScoped<AuthApiService>();

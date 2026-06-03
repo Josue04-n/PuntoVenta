@@ -75,7 +75,7 @@ public class ProductService : IProductService
                     0,
                     request.Stock,
                     "Carga inicial de inventario"
-                );
+               );
                 await _inventoryRepository.AddMovementAsync(movement);
                 await _unitOfWork.SaveChangesAsync();
             }
