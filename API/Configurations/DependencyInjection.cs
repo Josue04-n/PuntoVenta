@@ -39,12 +39,14 @@ public static class DependencyInjection
 
         if (dbProvider.Equals("SqlServer", StringComparison.OrdinalIgnoreCase))
         {
-            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
+            // --- DBCONTEXT POOLING (SENIOR OPTIMIZATION) ---
+            // Reutiliza instancias de DbContext para evitar sobrecarga de memoria
+            services.AddDbContextPool<AppDbContext>(options => options.UseSqlServer(connectionString), poolSize: 128);
             services.AddScoped<IDbProviderService, SqlServerProviderService>();
         }
         else if (dbProvider.Equals("Oracle", StringComparison.OrdinalIgnoreCase))
         {
-            services.AddDbContext<AppDbContext>(options => options.UseOracle(connectionString));
+            services.AddDbContextPool<AppDbContext>(options => options.UseOracle(connectionString), poolSize: 128);
             services.AddScoped<IDbProviderService, OracleProviderService>();
         }
 

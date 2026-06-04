@@ -155,23 +155,35 @@
         await RefreshNotifications();
     }
 
+    private bool _isDisposed = false;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _objRef = DotNetObjectReference.Create(this);
-            var timeout = Configuration.GetValue<int>("BusinessSettings:IdleTimeoutInMinutes", 10);
-            await JS.InvokeVoidAsync("setupInactivityTimer", _objRef, timeout);
-            
-            // Inicializar sistema de atajos (Access Keys)
-            await JS.InvokeVoidAsync("utaShortcuts.init", _objRef);
+            try 
+            {
+                _objRef = DotNetObjectReference.Create(this);
+                var timeout = Configuration.GetValue<int>("BusinessSettings:IdleTimeoutInMinutes", 10);
+                
+                // Solo inicializar si no se ha destruido el componente (por redirección rápida)
+                if (!_isDisposed && _objRef != null)
+                {
+                    await JS.InvokeVoidAsync("setupInactivityTimer", _objRef, timeout);
+                    await JS.InvokeVoidAsync("utaShortcuts.init", _objRef);
+                }
+            }
+            catch (Exception) 
+            {
+                // Silenciar errores si el componente se desmonta durante la carga
+            }
         }
     }
 
     [JSInvokable]
     public void HandleGlobalKey(string key)
     {
-        ShortcutService.NotifyShortcut(key);
+        if (!_isDisposed) ShortcutService.NotifyShortcut(key);
     }
 
     [JSInvokable]

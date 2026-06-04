@@ -25,7 +25,7 @@ public class BulkStockException : Exception
         if (errors.Count == 1)
         {
             var error = errors.First();
-            return $"El producto '{error.ProductName}' no tiene stock suficiente. " +
+            return $"El producto '{error.ProductName}' no tiene stock suficiente. " + 
                    $"(Solicitado: {error.RequestedQuantity}, Disponible: {error.AvailableStock})";
         }
 

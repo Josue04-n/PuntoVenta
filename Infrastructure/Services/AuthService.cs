@@ -8,7 +8,6 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-
 using System.Security.Cryptography;
 
 namespace Infrastructure.Services;
@@ -26,7 +25,6 @@ public class AuthService : IAuthService
 
     public async Task<AuthResponseDto> LoginAsync(LoginRequest request)
     {
-        // ... (existing user search and lockout validation)
         var user = await _userManager.FindByNameAsync(request.UserName);
 
         if (user == null || !user.IsActive)
@@ -87,10 +85,9 @@ public class AuthService : IAuthService
         var roles = await _userManager.GetRolesAsync(user);
         var token = GenerateJwtToken(user, roles);
 
-        // 1. Generar Refresh Token
         var refreshToken = GenerateRefreshToken();
         user.RefreshToken = refreshToken;
-        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7); // Expira en 7 días
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7); 
 
         user.LastLogin = DateTime.UtcNow;
         await _userManager.UpdateAsync(user);
@@ -102,7 +99,7 @@ public class AuthService : IAuthService
             RefreshToken = refreshToken,
             UserName = user.UserName,
             Role = roles.FirstOrDefault(),
-            Expiration = DateTime.UtcNow.AddMinutes(30) // JWT corto (30 min)
+            Expiration = DateTime.UtcNow.AddMinutes(480) 
         };
     }
 
@@ -133,7 +130,7 @@ public class AuthService : IAuthService
             RefreshToken = newRefreshToken,
             UserName = user.UserName,
             Role = roles.FirstOrDefault(),
-            Expiration = DateTime.UtcNow.AddMinutes(30)
+            Expiration = DateTime.UtcNow.AddMinutes(480)
         };
     }
 
@@ -190,7 +187,7 @@ public class AuthService : IAuthService
         var token = new JwtSecurityToken(
             issuer: _configuration["JWT:ValidIssuer"],
             audience: _configuration["JWT:ValidAudience"],
-            expires: DateTime.UtcNow.AddMinutes(15), 
+            expires: DateTime.UtcNow.AddMinutes(480), 
             claims: authClaims,
             signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
         );
@@ -243,7 +240,6 @@ public class AuthService : IAuthService
 
             if (!user.IsActive) return new AuthResponseDto { IsSuccess = false, Message = "Cuenta desactivada." };
 
-            // GENERAR TOKENS TRAS LOGIN EXITOSO
             var roles = await _userManager.GetRolesAsync(user);
             var ourToken = GenerateJwtToken(user, roles);
 
@@ -261,7 +257,7 @@ public class AuthService : IAuthService
                 RefreshToken = refreshToken,
                 UserName = user.UserName,
                 Role = roles.FirstOrDefault(),
-                Expiration = DateTime.UtcNow.AddMinutes(30)
+                Expiration = DateTime.UtcNow.AddMinutes(480)
             };
         }
         catch (Exception ex)
