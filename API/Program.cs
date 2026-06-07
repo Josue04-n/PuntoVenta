@@ -22,6 +22,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 builder.Services.AddProjectDependencies(builder.Configuration);
 builder.Services.AddMicrosoftAuthentication(builder.Configuration);
+builder.Services.AddCustomRateLimiting();
 
 // --- JWT AUTHENTICATION CONFIGURATION ---
 var jwtConfig = builder.Configuration.GetSection("JWT");
@@ -94,6 +95,7 @@ logger.LogInformation("La API se está iniciando en: {Urls}", urls);
 app.UseCors("PermitirBlazor");
 
 // 3. Configurar el pipeline de solicitudes HTTP
+app.UseRateLimiter();
 app.UseMiddleware<ExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())

@@ -5,6 +5,7 @@
 @using Blazor.Helpers
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize(Roles = "Administrador")]
+@implements IDisposable
 @inject ErrorLogApiService ApiService
 @inject NavigationManager NavManager
 @inject IJSRuntime JS
@@ -43,9 +44,8 @@
             <div class="uta-search-bar mb-4" style="max-width: 800px; margin: 0 auto;">
                 <input class="uta-search-bar__input" 
                        type="text" 
-                       @bind="_searchTerm" 
-                       @bind:event="oninput"
-                       @onkeyup="OnSearchKeyUp"
+                       value="@_searchTerm" 
+                       @oninput="OnInputSearch"
                        placeholder="Buscar por mensaje, usuario o tipo de excepción..." />
                 <button class="uta-btn uta-btn--primary uta-search-bar__btn" @onclick="() => FetchLogs(1)">
                     <i class="bi bi-search"></i>
@@ -220,6 +220,7 @@
     private int _currentPage = 1;
     private int _pageSize = 15;
     private ErrorLogResponseDto? _selectedLog;
+    private System.Timers.Timer? _debounceTimer;
 
     private int TotalItems => _pagedResponse?.TotalCount ?? 0;
     private int TotalPages => _pagedResponse?.TotalPages ?? 0;
@@ -231,6 +232,23 @@
 
     protected override async Task OnInitializedAsync()
     {
+        _debounceTimer = new System.Timers.Timer(300);
+        _debounceTimer.Elapsed += async (s, e) => await InvokeAsync(OnDebounceSearch);
+        _debounceTimer.AutoReset = false;
+
+        await FetchLogs(1);
+    }
+
+    private void OnInputSearch(ChangeEventArgs e)
+    {
+        _searchTerm = e.Value?.ToString() ?? string.Empty;
+        _currentPage = 1;
+        _debounceTimer?.Stop();
+        _debounceTimer?.Start();
+    }
+
+    private async Task OnDebounceSearch()
+    {
         await FetchLogs(1);
     }
 
@@ -238,14 +256,7 @@
     {
         _currentPage = pageNumber;
         _pagedResponse = await ApiService.GetPagedLogsAsync(_currentPage, _pageSize, _searchTerm);
-    }
-
-    private async Task OnSearchKeyUp(KeyboardEventArgs e)
-    {
-        if (e.Key == "Enter")
-        {
-            await FetchLogs(1);
-        }
+        StateHasChanged();
     }
 
     private void ShowDetail(ErrorLogResponseDto log)
@@ -304,7 +315,13 @@
         if (int.TryParse(e.Value?.ToString(), out int newSize))
         {
             _pageSize = newSize;
+            _currentPage = 1;
             await FetchLogs(1);
         }
+    }
+
+    public void Dispose()
+    {
+        _debounceTimer?.Dispose();
     }
 }

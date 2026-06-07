@@ -37,7 +37,7 @@
             </div>
         </div>
         <div class="uta-card__body">
-            <div class="uta-search-bar" style="max-width: 800px; margin: 0.5rem auto 2rem auto; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+            <div class="uta-search-bar mb-4" style="max-width: 800px; margin: 0 auto;">
                 <select class="uta-search-bar__select" @bind="SearchCriterion">
                     <option value="all">Todos</option>
                     <option value="table">Tabla / Entidad</option>
@@ -50,12 +50,12 @@
                        value="@SearchTerm" 
                        @oninput="OnInputSearch"
                        placeholder="Buscar en el registro de auditoría..." />
-                <div class="uta-search-bar__icon-container px-3 d-flex align-items-center bg-light">
-                    <i class="bi bi-search text-muted"></i>
-                </div>
+                <button class="uta-btn uta-btn--primary uta-search-bar__btn" @onclick="() => FetchLogs(1)">
+                    <i class="bi bi-search"></i>
+                </button>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
                 <h6 class="m-0" style="font-size: 0.85rem; font-weight: 700; color: #495057; text-transform: uppercase; letter-spacing: 0.5px;">
                     <i class="bi bi-list-ul me-2"></i>Historial de Cambios
                 </h6>
@@ -71,7 +71,7 @@
                             <th style="text-align:center">Acción</th>
                             <th>Tabla / Entidad</th>
                             <th>ID Afectado</th>
-                            <th style="text-align:center">Detalle</th>
+                            <th style="width: 100px; text-align:center;">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -80,7 +80,7 @@
                             <tr>
                                 <td colspan="6" class="uta-table__empty">
                                     <div class="uta-empty-state">
-                                        <div class="uta-empty-state__icon"><i class="bi bi-clipboard-x"></i></div>
+                                        <div class="uta-empty-state__icon"><i class="bi bi-shield-check text-success"></i></div>
                                         <div class="uta-empty-state__text">No se encontraron registros de auditoría</div>
                                     </div>
                                 </td>
@@ -102,9 +102,9 @@
                                     </td>
                                     <td class="uta-table__bold">@log.TableName</td>
                                     <td><span class="uta-code-badge">@FormatPrimaryKey(log.PrimaryKey)</span></td>
-                                    <td style="text-align:center">
-                                        <button class="uta-icon-btn-outline uta-icon-btn-outline--maroon" @onclick="() => ShowDetail(log)" title="Ver Cambios">
-                                            <i class="bi bi-eye"></i>
+                                    <td style="text-align:center;">
+                                        <button class="uta-btn uta-btn--sm uta-btn--outline" @onclick="() => ShowDetail(log)">
+                                            <i class="bi bi-eye"></i> Detalle
                                         </button>
                                     </td>
                                 </tr>
@@ -119,7 +119,7 @@
                 <div class="uta-pagination-footer rounded-bottom mt-3">
                     <div class="uta-pagination-info">
                         <span class="small text-muted">
-                            Se muestran <strong class="uta-text-highlight">@From</strong> a <strong class="uta-text-highlight">@To</strong> de <strong class="uta-text-highlight">@TotalItems</strong> registros
+                            Se muestran <strong class="uta-text-highlight">@From</strong> a <strong class="uta-text-highlight">@To</strong> de <strong class="uta-text-highlight">@TotalItems</strong> resultados
                         </span>
                     </div>
 
@@ -127,7 +127,7 @@
                         <span class="small text-muted">por página</span>
                         <div class="uta-select-wrapper">
                             <select class="form-select form-select-sm shadow-none" @onchange="OnPageSizeChanged">
-                                @foreach (var size in new[] { 5, 10, 15, 25, 50 })
+                                @foreach (var size in new[] { 15, 25, 50, 100 })
                                 {
                                     <option value="@size" selected="@(_pageSize == size)">@size</option>
                                 }
@@ -258,7 +258,7 @@
                 </div>
             </div>
             <div class="uta-modal__footer">
-                <button class="uta-btn uta-btn--primary w-100" @onclick="CloseModal">Cerrar Detalle</button>
+                <button class="uta-btn uta-btn--outline w-100" @onclick="CloseModal">Cerrar Detalle</button>
             </div>
         </div>
     </div>

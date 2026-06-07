@@ -19,6 +19,8 @@ using Infrastructure.Services.SqlServer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
 
 
 namespace API.Configurations;
@@ -102,6 +104,36 @@ public static class DependencyInjection
         services.AddScoped<ISaleCommandService, SaleCommandService>();
 
         services.AddHttpContextAccessor();
+
+        return services;
+    }
+
+    public static IServiceCollection AddCustomRateLimiting(this IServiceCollection services)
+    {
+        services.AddRateLimiter(options =>
+        {
+            // Política global contra DoS: 100 peticiones por minuto por cada IP
+            options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+                RateLimitPartition.GetFixedWindowLimiter(
+                    partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? httpContext.Request.Headers.Host.ToString(),
+                    factory: partition => new FixedWindowRateLimiterOptions
+                    {
+                        AutoReplenishment = true,
+                        PermitLimit = 100, 
+                        QueueLimit = 0,
+                        Window = TimeSpan.FromMinutes(1)
+                    }));
+
+            options.OnRejected = async (context, token) =>
+            {
+                context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+                await context.HttpContext.Response.WriteAsJsonAsync(new
+                {
+                    message = "Seguridad: Demasiadas peticiones detectadas desde su dirección IP. Bloqueo temporal activado (DoS Protection).",
+                    retryAfter = "60 seconds"
+                }, cancellationToken: token);
+            };
+        });
 
         return services;
     }
