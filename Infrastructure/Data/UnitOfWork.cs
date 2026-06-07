@@ -43,6 +43,11 @@ public class UnitOfWork : IUnitOfWork
         }
     }
 
+    public string? GetCurrentUser()
+    {
+        return _context.GetCurrentUser();
+    }
+
     public void Dispose()
     {
         _transaction?.Dispose();

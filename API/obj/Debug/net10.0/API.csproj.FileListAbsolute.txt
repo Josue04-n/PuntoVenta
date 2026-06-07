@@ -10,10 +10,12 @@ D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Azure.Identity.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Azure.Security.KeyVault.Certificates.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Azure.Security.KeyVault.Secrets.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\BouncyCastle.Cryptography.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\FluentValidation.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\FluentValidation.AspNetCore.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\FluentValidation.DependencyInjectionExtensions.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Humanizer.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\MailKit.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.OpenIdConnect.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
@@ -53,6 +55,7 @@ D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.OpenApi.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.SqlServer.Server.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Microsoft.VisualStudio.SolutionPersistence.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\MimeKit.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Mono.TextTemplating.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Newtonsoft.Json.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\bin\Debug\net10.0\Oracle.EntityFrameworkCore.dll
@@ -186,10 +189,10 @@ D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\staticwebassets.development.json
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\staticwebassets.build.endpoints.json
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\swae.build.ex.cache
-D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.csproj.Up2Date
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\refint\API.dll
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.pdb
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\API.genruntimeconfig.cache
 D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\ref\API.dll
+D:\Programacion\QUINTO\PATRONES SOFTWARE\respo\PuntoVenta\API\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt

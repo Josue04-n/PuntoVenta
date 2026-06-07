@@ -54,11 +54,9 @@ public class Customer : AuditableEntity
 
         string trimmed = part.Trim();
 
-        // 1. No symbols or numbers
         if (!System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$"))
             throw new ArgumentException($"{fieldName} solo debe contener letras, sin números ni símbolos.");
 
-        // 2. Minimum 2 letters
         if (trimmed.Length < 2)
             throw new ArgumentException($"{fieldName} debe tener al menos 2 letras.");
     }

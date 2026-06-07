@@ -56,7 +56,7 @@
                         <input type="checkbox" @bind="_rememberMe" />
                         <span class="uta-checkbox-label">Recordarme</span>
                     </label>
-                    <a href="javascript:void(0)" class="uta-forgot-password" @onclick='() => JS.InvokeVoidAsync("Swal.fire", "Recuperar Acceso", "Por favor contacte al administrador del sistema.", "info")'>¿Olvidó su contraseña?</a>
+                    <a href="/forgot-password" class="uta-forgot-password">¿Olvidó su contraseña?</a>
                 </div>
 
                 <button type="submit" class="uta-login-btn" disabled="@_isProcessing">
@@ -173,6 +173,13 @@
             _failedAttempts = 0;
             _lockoutEnd = null;
             await AuthStateProvider.NotifyUserAuthentication(result.Token);
+            
+            // Guardar el Refresh Token para la autorenovación
+            if (!string.IsNullOrEmpty(result.RefreshToken))
+            {
+                await JS.InvokeVoidAsync("localStorage.setItem", "refreshToken", result.RefreshToken);
+            }
+
             Navigation.NavigateTo("/"); 
         }
         else

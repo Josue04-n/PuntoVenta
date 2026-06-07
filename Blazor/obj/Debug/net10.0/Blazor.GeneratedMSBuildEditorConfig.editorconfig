@@ -40,6 +40,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xVdGFUb2FzdC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/Programacion/QUINTO/PATRONES SOFTWARE/respo/PuntoVenta/Blazor/Pages/ForgotPassword.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRm9yZ290UGFzc3dvcmQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Programacion/QUINTO/PATRONES SOFTWARE/respo/PuntoVenta/Blazor/Pages/ResetPassword.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUmVzZXRQYXNzd29yZC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/Programacion/QUINTO/PATRONES SOFTWARE/respo/PuntoVenta/Blazor/_Imports.razor]
 build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
@@ -55,6 +63,10 @@ build_metadata.AdditionalFiles.CssScope = b-7zm4x0sqzy
 [D:/Programacion/QUINTO/PATRONES SOFTWARE/respo/PuntoVenta/Blazor/Layout/NavMenu.razor]
 build_metadata.AdditionalFiles.TargetPath = TGF5b3V0XE5hdk1lbnUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-rn7srv1zoq
+
+[D:/Programacion/QUINTO/PATRONES SOFTWARE/respo/PuntoVenta/Blazor/Pages/AuditLogs.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQXVkaXRMb2dzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = b-6q7j9ayb28
 
 [D:/Programacion/QUINTO/PATRONES SOFTWARE/respo/PuntoVenta/Blazor/Pages/Authentication.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQXV0aGVudGljYXRpb24ucmF6b3I=

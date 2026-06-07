@@ -126,6 +126,13 @@
         if (authResult.IsSuccess && !string.IsNullOrEmpty(authResult.Token))
         {
             await AuthStateProvider.NotifyUserAuthentication(authResult.Token);
+
+            // Guardar el Refresh Token para la autorenovación
+            if (!string.IsNullOrEmpty(authResult.RefreshToken))
+            {
+                await JS.InvokeVoidAsync("localStorage.setItem", "refreshToken", authResult.RefreshToken);
+            }
+
             Navigation.NavigateTo("/");
         }
         else

@@ -55,6 +55,22 @@
         </div>
     </div>
 
+    <!-- Filtro de Estado por Pestañas (HCI) -->
+    <div class="uta-tabs mb-4">
+        <button class="uta-tab-btn @(_statusFilter == "all" ? "uta-tab-btn--active" : "")" @onclick='() => ChangeStatusFilter("all")'>
+            <i class="bi bi-journals me-2"></i> Todas
+        </button>
+        <button class="uta-tab-btn @(_statusFilter == "Confirmed" ? "uta-tab-btn--active" : "")" @onclick='() => ChangeStatusFilter("Confirmed")'>
+            <i class="bi bi-check-circle me-2"></i> Confirmadas
+        </button>
+        <button class="uta-tab-btn @(_statusFilter == "Draft" ? "uta-tab-btn--active" : "")" @onclick='() => ChangeStatusFilter("Draft")'>
+            <i class="bi bi-hourglass-split me-2"></i> Borradores
+        </button>
+        <button class="uta-tab-btn @(_statusFilter == "Cancelled" ? "uta-tab-btn--active" : "")" @onclick='() => ChangeStatusFilter("Cancelled")'>
+            <i class="bi bi-x-circle me-2"></i> Anuladas
+        </button>
+    </div>
+
     <div class="uta-card">
         <div class="uta-card__header">
             <div class="uta-card__header-left">
@@ -269,7 +285,7 @@
                             <strong>EMISIÓN:</strong> <span>NORMAL</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed #ccc;">
-                            <strong>VENDEDOR:</strong> <span style="text-transform: uppercase;">@_selectedInvoice.CreatedBy</span>
+                            <strong>VENDEDOR:</strong> <span style="text-transform: uppercase;">@($"{_selectedInvoice.SellerName} {_selectedInvoice.SellerLastName}")</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed #ccc;">
                             <strong>ESTADO:</strong> 
@@ -353,6 +369,7 @@
     private SaleResponseDto? _selectedInvoice;
     private string _alertMessage = string.Empty;
     private bool _isError = false;
+    private string _statusFilter = "all"; // all, Draft, Confirmed, Cancelled
     
     // FILTROS DE FECHA
     private DateTime? _startDate;
@@ -405,12 +422,19 @@
         }
     }
 
+    private async Task ChangeStatusFilter(string status)
+    {
+        _statusFilter = status;
+        _currentPage = 1;
+        await FetchInvoices(1);
+    }
+
     private async Task FetchInvoices(int pageNumber)
     {
         _currentPage = pageNumber;
         try
         {
-            _pagedSalesResponse = await ApiService.GetPagedSalesAsync(_currentPage, _pageSize, _searchTerm, _searchCriterion, _startDate, _endDate);
+            _pagedSalesResponse = await ApiService.GetPagedSalesAsync(_currentPage, _pageSize, _searchTerm, _searchCriterion, _statusFilter, _startDate, _endDate);
         }
         catch (Exception)
         {

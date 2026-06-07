@@ -111,6 +111,11 @@ public class UserService : IUserService
         return await MapToDtoAsync(user, roles.FirstOrDefault() ?? "Sin Rol");
     }
 
+    public async Task<Domain.Entities.ApplicationUser?> GetUserEntityByUserNameAsync(string userName)
+    {
+        return await _userManager.Users.IgnoreQueryFilters().FirstOrDefaultAsync(u => u.UserName == userName);
+    }
+
     public async Task<ProfileStatsDto> GetProfileStatsAsync(string userName, string role)
     {
         var isAdmin = (role == "Administrador");

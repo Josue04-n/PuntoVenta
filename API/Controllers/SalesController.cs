@@ -108,16 +108,17 @@ public class SalesController : ControllerBase
 
     [HttpGet("paged")]
     public async Task<ActionResult<PagedResponse<SaleResponseDto>>> GetPagedSales(
-        [FromQuery] int pageNumber = 1, 
-        [FromQuery] int pageSize = 10, 
-        [FromQuery] string? term = null, 
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? term = null,
         [FromQuery] string? searchBy = null,
+        [FromQuery] string? status = null,
         [FromQuery] DateTime? startDate = null,
         [FromQuery] DateTime? endDate = null)
     {
         string? sellerNameFilter = User.IsInRole("Administrador") ? null : User.Identity?.Name;
 
-        var (sales, totalCount) = await _saleQueryService.ExecutePagedAsync(pageNumber, pageSize, term, searchBy, sellerNameFilter, startDate, endDate);
+        var (sales, totalCount) = await _saleQueryService.ExecutePagedAsync(pageNumber, pageSize, term, searchBy, sellerNameFilter, startDate, endDate, status);
 
         var responseItems = sales.Select(s => MapToDto(s));
 
@@ -131,12 +132,14 @@ public class SalesController : ControllerBase
             Id = s.Id,
             InvoiceNumber = s.InvoiceNumber,
             IssueDate = s.IssueDate,
-            CustomerName = s.Customer != null ? $"{s.Customer.Name} {s.Customer.LastName}" : "Final Consumer",
-            CustomerIDCard = s.Customer?.IDCard ?? "9999999999",
-            CustomerPhone = s.Customer?.Phone ?? string.Empty,
-            CustomerAddress = s.Customer?.Address ?? string.Empty,
-            CustomerEmail = s.Customer?.Email ?? string.Empty,
+            CustomerName = $"{s.CustomerName} {s.CustomerLastName}",
+            CustomerIDCard = s.CustomerIDCard,
+            CustomerPhone = s.CustomerPhone,
+            CustomerAddress = s.CustomerAddress,
+            CustomerEmail = s.CustomerEmail,
             CreatedBy = s.CreatedBy ?? "SYSTEM",
+            SellerName = s.SellerName,
+            SellerLastName = s.SellerLastName,
             SubTotal = s.SubTotal,
             VatAmount = s.VatAmount,
             VatPercentage = s.VatPercentage,
@@ -145,7 +148,7 @@ public class SalesController : ControllerBase
             Details = s.Details.Select(d => new SaleDetailResponseDto
             {
                 ProductId = d.ProductId,
-                ProductName = d.Product?.Name ?? "Product not specified",
+                ProductName = d.ProductName, // Snapshot del nombre del producto
                 Amount = d.Amount,
                 UnitPrice = d.UnitPrice.Worth,
                 SubTotal = d.SubTotal.Worth

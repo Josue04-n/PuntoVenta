@@ -6,6 +6,7 @@ using Application.Features.Sales;
 using Application.Features.Inventory;
 using Application.Features.Users;
 using Application.Features.Notifications;
+using Application.Features.AuditLogs;
 using Application.Features.Settings;
 using Domain.Entities;
 using FluentValidation;
@@ -89,8 +90,10 @@ public static class DependencyInjection
         services.AddScoped<IValidator<UpdateUserRequest>, UpdateUserValidator>();
 
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<IAuditLogService, AuditLogService>();
 
         services.AddScoped<ICustomerService, CustomerService>();
         services.AddScoped<IProductService, ProductService>();

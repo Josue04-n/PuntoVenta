@@ -37,6 +37,8 @@ public class SaleResponseDto
     public string CustomerAddress { get; set; } = string.Empty;
     public string CustomerEmail { get; set; } = string.Empty;
     public string CreatedBy { get; set; } = string.Empty;
+    public string SellerName { get; set; } = string.Empty;
+    public string SellerLastName { get; set; } = string.Empty;
     public decimal SubTotal { get; set; }
     public decimal VatPercentage { get; set; }
     public decimal VatAmount { get; set; }

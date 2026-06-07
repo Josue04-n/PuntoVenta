@@ -210,7 +210,7 @@
             <div class="uta-modal__body">
                 <div class="uta-form-grid">
                     <div class="uta-form-group">
-                        <label class="uta-form-label">Cédula o RUC</label>
+                        <label class="uta-form-label">Cédula</label>
                         <div class="uta-input-icon-wrapper">
                             <i class="bi bi-person-vcard uta-input-icon"></i>
                             <input class="uta-form-control uta-form-control--with-icon @(HasError("IDCard") ? "is-invalid" : "")" 
@@ -218,7 +218,7 @@
                                    value="@EditingCustomer.IDCard" 
                                    @oninput="OnIDCardInput"
                                    onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-                                   placeholder="EJ. 1700000000" maxlength="@ValidationConstants.IDCardLength" />
+                                   placeholder="10 DÍGITOS" maxlength="@ValidationConstants.IDCardLength" />
                         </div>
                         @if (HasError("IDCard"))
                         {
@@ -241,26 +241,32 @@
                         }
                     </div>
                     <div class="uta-form-group">
-                        <label class="uta-form-label">Nombre (Uno solo)</label>
-                        <input class="uta-form-control @(HasError("Name") ? "is-invalid" : "")" 
-                               type="text" 
-                               value="@EditingCustomer.Name" 
-                               @oninput="OnNameInput" 
-                               onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode == 209 || event.charCode == 241 || event.charCode == 193 || event.charCode == 201 || event.charCode == 205 || event.charCode == 211 || event.charCode == 218 || event.charCode == 225 || event.charCode == 233 || event.charCode == 237 || event.charCode == 243 || event.charCode == 250"
-                               placeholder="EJ. JOSUE" maxlength="@ValidationConstants.NameMax" />
+                        <label class="uta-form-label">Nombre</label>
+                        <div class="uta-input-icon-wrapper">
+                            <i class="bi bi-person uta-input-icon"></i>
+                            <input class="uta-form-control uta-form-control--with-icon @(HasError("Name") ? "is-invalid" : "")" 
+                                   type="text" 
+                                   value="@EditingCustomer.Name" 
+                                   @oninput="OnNameInput" 
+                                   onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode == 209 || event.charCode == 241 || event.charCode == 193 || event.charCode == 201 || event.charCode == 205 || event.charCode == 211 || event.charCode == 218 || event.charCode == 225 || event.charCode == 233 || event.charCode == 237 || event.charCode == 243 || event.charCode == 250"
+                                   placeholder="NOMBRE" maxlength="@ValidationConstants.NameMax" />
+                        </div>
                         @if (HasError("Name"))
                         {
                             <div class="text-danger mt-1" style="font-size: 0.75rem;"><i class="bi bi-exclamation-circle"></i> @GetError("Name")</div>
                         }
                     </div>
                     <div class="uta-form-group">
-                        <label class="uta-form-label">Apellido (Uno solo)</label>
-                        <input class="uta-form-control @(HasError("LastName") ? "is-invalid" : "")" 
-                               type="text" 
-                               value="@EditingCustomer.LastName" 
-                               @oninput="OnLastNameInput" 
-                               onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode == 209 || event.charCode == 241 || event.charCode == 193 || event.charCode == 201 || event.charCode == 205 || event.charCode == 211 || event.charCode == 218 || event.charCode == 225 || event.charCode == 233 || event.charCode == 237 || event.charCode == 243 || event.charCode == 250"
-                               placeholder="EJ. LLUMITASIG" maxlength="@ValidationConstants.LastNameMax" />
+                        <label class="uta-form-label">Apellido</label>
+                        <div class="uta-input-icon-wrapper">
+                            <i class="bi bi-person uta-input-icon"></i>
+                            <input class="uta-form-control uta-form-control--with-icon @(HasError("LastName") ? "is-invalid" : "")" 
+                                   type="text" 
+                                   value="@EditingCustomer.LastName" 
+                                   @oninput="OnLastNameInput" 
+                                   onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode == 209 || event.charCode == 241 || event.charCode == 193 || event.charCode == 201 || event.charCode == 205 || event.charCode == 211 || event.charCode == 218 || event.charCode == 225 || event.charCode == 233 || event.charCode == 237 || event.charCode == 243 || event.charCode == 250"
+                                   placeholder="APELLIDO" maxlength="@ValidationConstants.LastNameMax" />
+                        </div>
                         @if (HasError("LastName"))
                         {
                             <div class="text-danger mt-1" style="font-size: 0.75rem;"><i class="bi bi-exclamation-circle"></i> @GetError("LastName")</div>
@@ -283,7 +289,7 @@
                         }
                     </div>
                     <div class="uta-form-group">
-                        <label class="uta-form-label">Dirección (@(ValidationConstants.AddressMax - (EditingCustomer.Address?.Length ?? 0)))</label>
+                        <label class="uta-form-label">Dirección Domiciliaria (@(ValidationConstants.AddressMax - (EditingCustomer.Address?.Length ?? 0)))</label>
                         <div class="uta-input-icon-wrapper">
                             <i class="bi bi-geo-alt uta-input-icon"></i>
                             <input class="uta-form-control uta-form-control--with-icon" 

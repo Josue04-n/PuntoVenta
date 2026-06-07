@@ -239,7 +239,7 @@
             <div class="uta-modal__body">
                 <div class="uta-form-grid">
                     <div class="uta-form-group" style="grid-column: 1 / -1;">
-                        <label class="uta-form-label">Descripción del Producto</label>
+                        <label class="uta-form-label">Descripción del Producto (@(ValidationConstants.ProductNameMax - (EditingProduct.Name?.Length ?? 0)))</label>
                         <div class="uta-input-icon-wrapper">
                             <i class="bi bi-fonts uta-input-icon"></i>
                             <input class="uta-form-control uta-form-control--with-icon @(HasError("Name") ? "is-invalid" : "")" 

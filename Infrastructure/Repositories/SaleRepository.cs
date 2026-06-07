@@ -28,7 +28,7 @@ public class SaleRepository : ISaleRepository
         await _context.Sales.AddAsync(sale);
     }
 
-    public async Task<IEnumerable<Sale>> SearchAsync(string term, string searchBy, string? sellerName = null, DateTime? startDate = null, DateTime? endDate = null)
+    public async Task<IEnumerable<Sale>> SearchAsync(string term, string searchBy, string? sellerName = null, DateTime? startDate = null, DateTime? endDate = null, string? status = null)
     {
         term = term.Trim().ToLower();
         searchBy = searchBy.Trim().ToLower();   
@@ -39,7 +39,7 @@ public class SaleRepository : ISaleRepository
                 .ThenInclude(d => d.Product)
             .AsNoTracking();
 
-        query = ApplyFilters(query, sellerName, startDate, endDate);
+        query = ApplyFilters(query, sellerName, startDate, endDate, status);
 
         if (searchBy == "id" && int.TryParse(term, out int searchId))
         {
@@ -82,7 +82,8 @@ public class SaleRepository : ISaleRepository
         string? searchBy = null, 
         string? sellerName = null,
         DateTime? startDate = null,
-        DateTime? endDate = null)
+        DateTime? endDate = null,
+        string? status = null)
     {
         IQueryable<Sale> query = _context.Sales
             .Include(s => s.Customer)
@@ -90,7 +91,7 @@ public class SaleRepository : ISaleRepository
                 .ThenInclude(d => d.Product)
             .AsNoTracking();
 
-        query = ApplyFilters(query, sellerName, startDate, endDate);
+        query = ApplyFilters(query, sellerName, startDate, endDate, status);
 
         if (!string.IsNullOrWhiteSpace(term))
         {
@@ -122,12 +123,21 @@ public class SaleRepository : ISaleRepository
         return (items, totalCount);
     }
 
-    private IQueryable<Sale> ApplyFilters(IQueryable<Sale> query, string? sellerName, DateTime? startDate, DateTime? endDate)
+    private IQueryable<Sale> ApplyFilters(IQueryable<Sale> query, string? sellerName, DateTime? startDate, DateTime? endDate, string? status = null)
     {
         // Filtro de vendedor
         if (!string.IsNullOrEmpty(sellerName))
         {
             query = query.Where(s => s.CreatedBy == sellerName);
+        }
+
+        // Filtro de Estado
+        if (!string.IsNullOrEmpty(status) && status != "all")
+        {
+            if (Enum.TryParse<Domain.Enums.SaleStatus>(status, true, out var saleStatus))
+            {
+                query = query.Where(s => s.Status == saleStatus);
+            }
         }
 
         // Filtro de Fecha Inicio (00:00:00)

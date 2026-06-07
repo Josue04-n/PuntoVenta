@@ -62,7 +62,7 @@ public class PosApiService
         catch { return null; }
     }
 
-    public async Task<PagedResponse<Blazor.Models.SaleResponseDto>?> GetPagedSalesAsync(int pageNumber, int pageSize, string? term, string? searchBy, DateTime? startDate = null, DateTime? endDate = null)
+    public async Task<PagedResponse<Blazor.Models.SaleResponseDto>?> GetPagedSalesAsync(int pageNumber, int pageSize, string? term, string? searchBy, string? status = null, DateTime? startDate = null, DateTime? endDate = null)
     {
         try
         {
@@ -74,6 +74,10 @@ public class PosApiService
             if (!string.IsNullOrWhiteSpace(searchBy))
             {
                 url += $"&searchBy={Uri.EscapeDataString(searchBy)}";
+            }
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                url += $"&status={Uri.EscapeDataString(status)}";
             }
             if (startDate.HasValue)
             {

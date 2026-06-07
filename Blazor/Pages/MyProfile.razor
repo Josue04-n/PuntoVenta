@@ -1,10 +1,28 @@
 @page "/mi-perfil"
 @using Application.Features.Users
+@using Domain.Common
 @inject UserApiService UserApiService
 @inject IJSRuntime JS
 @attribute [Authorize]
 
-<UtaToast @ref="_toast" />
+@if (!string.IsNullOrEmpty(_alertMessage))
+{
+    <div class="uta-toast-wrapper">
+        <div class="uta-toast @(_isError ? "uta-toast--error" : "uta-toast--success")">
+            <div class="uta-toast__icon">
+                <i class="bi @(_isError ? "bi-exclamation-triangle-fill" : "bi-check2-circle")"></i>
+            </div>
+            <div class="uta-toast__body">
+                <div class="uta-toast__title">@(_isError ? "Atención" : "¡Éxito!")</div>
+                <div class="uta-toast__message">@_alertMessage</div>
+            </div>
+            <button class="uta-toast__close" @onclick="() => _alertMessage = string.Empty">
+                <i class="bi bi-x"></i>
+            </button>
+            <div class="uta-toast__progress"></div>
+        </div>
+    </div>
+}
 
 <div class="uta-page">
     <div class="uta-page-header">
@@ -199,25 +217,27 @@
                             </div>
                         </div>
                         <div class="uta-form-group">
-                            <label class="uta-form-label">Nombres</label>
+                            <label class="uta-form-label">Nombre</label>
                             <div class="uta-input-wrapper">
                                 <i class="bi bi-person uta-input-icon"></i>
                                 <input class="uta-form-control @(HasError("FirstName") ? "is-invalid" : "")" 
                                        type="text" 
                                        value="@_profileRequest.FirstName" 
                                        @oninput="OnFirstNameInput"
+                                       maxlength="@ValidationConstants.NameMax"
                                        onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode == 209 || event.charCode == 241" />
                             </div>
                             @if (HasError("FirstName")) { <div class="text-danger mt-1 small">@GetError("FirstName")</div> }
                         </div>
                         <div class="uta-form-group">
-                            <label class="uta-form-label">Apellidos</label>
+                            <label class="uta-form-label">Apellido</label>
                             <div class="uta-input-wrapper">
                                 <i class="bi bi-person uta-input-icon"></i>
                                 <input class="uta-form-control @(HasError("LastName") ? "is-invalid" : "")" 
                                        type="text" 
                                        value="@_profileRequest.LastName" 
                                        @oninput="OnLastNameInput"
+                                       maxlength="@ValidationConstants.LastNameMax"
                                        onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode == 209 || event.charCode == 241" />
                             </div>
                             @if (HasError("LastName")) { <div class="text-danger mt-1 small">@GetError("LastName")</div> }
@@ -225,7 +245,7 @@
                         <div class="uta-form-group">
                             <label class="uta-form-label">Cédula</label>
                             <div class="uta-input-wrapper">
-                                <i class="bi bi-card-heading uta-input-icon"></i>
+                                <i class="bi bi-person-vcard uta-input-icon"></i>
                                 <input class="uta-form-control bg-light" 
                                        type="text" 
                                        value="@_profileRequest.IDCard" 
@@ -233,23 +253,23 @@
                             </div>
                         </div>
                         <div class="uta-form-group">
-                            <label class="uta-form-label">Teléfono Celular</label>
+                            <label class="uta-form-label">Teléfono</label>
                             <div class="uta-input-wrapper">
-                                <i class="bi bi-phone uta-input-icon"></i>
+                                <i class="bi bi-telephone uta-input-icon"></i>
                                 <input class="uta-form-control @(HasError("PhoneNumber") ? "is-invalid" : "")" 
                                        type="text" 
                                        value="@_profileRequest.PhoneNumber" 
                                        @oninput="OnPhoneInput"
                                        onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-                                       maxlength="10" />
+                                       placeholder="EJ. 099999999" maxlength="@ValidationConstants.PhoneLength" />
                             </div>
                             @if (HasError("PhoneNumber")) { <div class="text-danger mt-1 small">@GetError("PhoneNumber")</div> }
                         </div>
                         <div class="uta-form-group" style="grid-column: span 2;">
-                            <label class="uta-form-label">Dirección Domiciliaria</label>
+                            <label class="uta-form-label">Dirección Domiciliaria (@(ValidationConstants.AddressMax - (_profileRequest.Address?.Length ?? 0)))</label>
                             <div class="uta-input-wrapper">
                                 <i class="bi bi-geo-alt uta-input-icon"></i>
-                                <input class="uta-form-control" type="text" value="@_profileRequest.Address" @oninput="OnAddressInput" placeholder="DIRECCIÓN COMPLETA" />
+                                <input class="uta-form-control" type="text" value="@_profileRequest.Address" @oninput="OnAddressInput" placeholder="DIRECCIÓN COMPLETA" maxlength="@ValidationConstants.AddressMax" />
                             </div>
                         </div>
                         <div class="uta-form-group">
@@ -259,7 +279,8 @@
                                 <input class="uta-form-control @(HasError("Email") ? "is-invalid" : "")" 
                                        type="text" 
                                        value="@_profileRequest.Email" 
-                                       @oninput="OnEmailInput" />
+                                       @oninput="OnEmailInput"
+                                       maxlength="@ValidationConstants.EmailMax" />
                             </div>
                             @if (HasError("Email")) { <div class="text-danger mt-1 small">@GetError("Email")</div> }
                         </div>
@@ -308,7 +329,7 @@
                         </div>
                         <div class="uta-password-requirements mt-2">
                             <div class="uta-req @(HasLength ? "valid" : "invalid")">
-                                <i class="bi @(HasLength ? "bi-check-circle-fill" : "bi-x-circle-fill")"></i> 8-10 caracteres
+                                <i class="bi @(HasLength ? "bi-check-circle-fill" : "bi-x-circle-fill")"></i> 8-@ValidationConstants.PasswordMax caracteres
                             </div>
                             <div class="uta-req @(HasNoSpaces ? "valid" : "invalid")">
                                 <i class="bi @(HasNoSpaces ? "bi-check-circle-fill" : "bi-x-circle-fill")"></i> Sin espacios
@@ -357,11 +378,17 @@
     private bool _showEditProfileModal = false;
     private bool _showPasswordModal = false;
 
-    private UtaToast _toast = default!;
+    private string _alertMessage = "";
+    private bool _isError = false;
 
     private async Task ShowToast(string message, bool isError = false)
     {
-        if (_toast != null) await _toast.ShowAsync(message, isError);
+        _alertMessage = message;
+        _isError = isError;
+        StateHasChanged();
+        await Task.Delay(3000);
+        _alertMessage = string.Empty;
+        StateHasChanged();
     }
 
     // Password Flags
@@ -452,6 +479,7 @@
     {
         string val = e.Value?.ToString() ?? "";
         val = new string(val.Where(char.IsDigit).ToArray()).ToUpper();
+        if (val.Length > ValidationConstants.PhoneLength) val = val.Substring(0, ValidationConstants.PhoneLength);
         _profileRequest.PhoneNumber = val;
         ValidateField("PhoneNumber", val, "Teléfono");
     }
@@ -459,12 +487,14 @@
     private void OnAddressInput(ChangeEventArgs e)
     {
         string val = e.Value?.ToString() ?? "";
+        if (val.Length > ValidationConstants.AddressMax) val = val.Substring(0, ValidationConstants.AddressMax);
         _profileRequest.Address = val.ToUpper();
     }
 
     private void OnEmailInput(ChangeEventArgs e)
     {
         string val = e.Value?.ToString()?.Trim() ?? "";
+        if (val.Length > ValidationConstants.EmailMax) val = val.Substring(0, ValidationConstants.EmailMax);
         _profileRequest.Email = val;
         ValidateField("Email", val, "Correo");
     }
@@ -472,7 +502,7 @@
     private void OnPasswordInput(ChangeEventArgs e)
     {
         string val = e.Value?.ToString() ?? "";
-        if (val.Length > 10) val = val.Substring(0, 10);
+        if (val.Length > ValidationConstants.PasswordMax) val = val.Substring(0, ValidationConstants.PasswordMax);
         _passRequest.NewPassword = val;
         StateHasChanged();
     }
@@ -486,15 +516,15 @@
             return;
         }
 
-        if (field == "IDCard" && !string.IsNullOrEmpty(val) && val.Length != 10)
+        if (field == "IDCard" && !string.IsNullOrEmpty(val) && val.Length != ValidationConstants.IDCardLength)
         {
-            _errors[field] = "La cédula debe tener 10 dígitos.";
+            _errors[field] = $"La cédula debe tener {ValidationConstants.IDCardLength} dígitos.";
             return;
         }
 
         if (field == "PhoneNumber" && !string.IsNullOrEmpty(val))
         {
-            if (val.Length != 10) _errors[field] = "El teléfono debe tener 10 dígitos.";
+            if (val.Length != ValidationConstants.PhoneLength) _errors[field] = $"El teléfono debe tener {ValidationConstants.PhoneLength} dígitos.";
             else if (!val.StartsWith("09")) _errors[field] = "Debe empezar con 09.";
             return;
         }
@@ -527,7 +557,6 @@
 
     private async Task UpdateProfile()
     {
-        // Forzar validación antes de enviar
         ValidateField("FirstName", _profileRequest.FirstName, "Nombre");
         ValidateField("LastName", _profileRequest.LastName, "Apellido");
         ValidateField("Email", _profileRequest.Email, "Correo");
@@ -535,7 +564,7 @@
 
         if (_errors.Any()) 
         {
-            await JS.InvokeVoidAsync("Swal.fire", "Formulario Inválido", "Por favor corrija los errores.", "warning");
+            await ShowToast("Por favor corrija los errores del formulario.", true);
             return;
         }
 
@@ -551,7 +580,7 @@
             else
             {
                 var error = await response.Content.ReadAsStringAsync();
-                await JS.InvokeVoidAsync("Swal.fire", "Error", "No se pudo actualizar el perfil: " + error, "error");
+                await ShowToast("No se pudo actualizar el perfil: " + error, true);
             }
         }
         catch (Exception)
@@ -564,13 +593,13 @@
     {
         if (!IsPasswordSecure)
         {
-            await JS.InvokeVoidAsync("Swal.fire", "Contraseña Insegura", "La nueva contraseña no cumple los requisitos.", "warning");
+            await ShowToast("La nueva contraseña no cumple los requisitos.", true);
             return;
         }
 
         if (_passRequest.NewPassword != _passRequest.ConfirmPassword)
         {
-            await JS.InvokeVoidAsync("Swal.fire", "Error", "Las contraseñas no coinciden.", "error");
+            await ShowToast("Las contraseñas no coinciden.", true);
             return;
         }
 
@@ -590,8 +619,13 @@
                 try {
                     var doc = System.Text.Json.JsonDocument.Parse(errorJson);
                     msg = doc.RootElement.TryGetProperty("message", out var m) ? m.GetString() ?? msg : msg;
+                    
+                    if (msg.Contains("Incorrect password", StringComparison.OrdinalIgnoreCase))
+                    {
+                        msg = "La contraseña actual es incorrecta.";
+                    }
                 } catch {}
-                await JS.InvokeVoidAsync("Swal.fire", "Error", msg, "error");
+                await ShowToast(msg, true);
             }
         }
         catch (Exception)

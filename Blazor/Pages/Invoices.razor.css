@@ -1,5 +1,20 @@
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
+}
+
+::deep {
+    --wine: #6B1A33;
+    --wine-light: #8b2041;
+    --wine-pale: #f3e1e6;
+    --text-dark: #1f2937;
+    --text-muted: #6b7280;
+    --border: #e5e7eb;
+    --bg-light: #f9fafb;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 .uta-page {
@@ -60,6 +75,38 @@
     margin: 0;
 }
 
+/* --- TABS IHC --- */
+.uta-tabs {
+    display: flex;
+    gap: 1rem;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 0;
+}
+
+.uta-tab-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.uta-tab-btn:hover {
+    color: var(--wine);
+    background-color: var(--wine-pale);
+}
+
+.uta-tab-btn--active {
+    color: var(--wine);
+    border-bottom-color: var(--wine);
+}
+
 .uta-btn {
     display: inline-flex;
     align-items: center;
@@ -80,9 +127,9 @@
     color: #fff;
 }
 
-    .uta-btn--primary:hover {
-        background: #521528;
-    }
+.uta-btn--primary:hover {
+    background: #521528;
+}
 
 .uta-btn--success {
     background: #16a34a;
@@ -95,9 +142,9 @@
     border: 1px solid #6B1A33;
 }
 
-    .uta-btn--outline:hover {
-        background: #fdf5f7;
-    }
+.uta-btn--outline:hover {
+    background: #fdf5f7;
+}
 
 .uta-btn--sm {
     padding: 0.4rem 0.85rem;
@@ -107,7 +154,7 @@
 .uta-card {
     background: #fff;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     border: 1px solid #e9ecef;
     overflow: hidden;
 }
@@ -138,7 +185,7 @@
     border: 1px solid #ced4da;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .uta-search-bar__select {
@@ -186,7 +233,7 @@
     border-radius: 8px;
     height: 42px;
     overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .uta-date-filter__label {
@@ -210,6 +257,7 @@
     outline: none;
     background: transparent;
 }
+
 .uta-date-filter__input:focus {
     box-shadow: none;
 }
@@ -229,25 +277,25 @@
     font-size: 0.85rem;
 }
 
-    .uta-table thead tr {
-        background: #f8f9fa;
-        border-bottom: 2px solid #dee2e6;
-    }
+.uta-table thead tr {
+    background: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+}
 
-    .uta-table th {
-        padding: 0.85rem 1rem;
-        font-size: 0.75rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        color: #495057;
-        text-align: left;
-    }
+.uta-table th {
+    padding: 0.85rem 1rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #495057;
+    text-align: left;
+}
 
-    .uta-table td {
-        padding: 0.85rem 1rem;
-        border-bottom: 1px solid #e9ecef;
-        vertical-align: middle;
-    }
+.uta-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid #e9ecef;
+    vertical-align: middle;
+}
 
 .uta-table__bold {
     font-weight: 600;
@@ -311,13 +359,14 @@
 .uta-icon-btn-outline:hover {
     background: #f8f9fa;
     transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .uta-icon-btn-outline--blue {
     color: #3b82f6;
     border-color: #bfdbfe;
 }
+
 .uta-icon-btn-outline--blue:hover {
     background: #eff6ff;
     border-color: #3b82f6;
@@ -327,6 +376,7 @@
     color: #16a34a;
     border-color: #bbf7d0;
 }
+
 .uta-icon-btn-outline--green:hover {
     background: #f0fdf4;
     border-color: #16a34a;
@@ -336,6 +386,7 @@
     color: #dc2626;
     border-color: #fecaca;
 }
+
 .uta-icon-btn-outline--red:hover {
     background: #fef2f2;
     border-color: #dc2626;
@@ -374,7 +425,7 @@
     position: fixed;
     inset: 0;
     z-index: 1000;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -385,7 +436,7 @@
 .uta-modal {
     background: #fff;
     border-radius: 14px;
-    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     width: 100%;
     max-height: 90vh;
     display: flex;
@@ -414,12 +465,12 @@
 
 .uta-modal__subtitle {
     font-size: 0.8rem;
-    color: rgba(255,255,255,0.8);
+    color: rgba(255, 255, 255, 0.8);
     margin: 0;
 }
 
 .uta-modal__close {
-    background: rgba(255,255,255,.15);
+    background: rgba(255, 255, 255, .15);
     border: none;
     width: 32px;
     height: 32px;
@@ -457,7 +508,9 @@
         gap: 0.5rem;
     }
 
-    .uta-search-bar__select, .uta-search-bar__input, .uta-search-bar__btn {
+    .uta-search-bar__select,
+    .uta-search-bar__input,
+    .uta-search-bar__btn {
         width: 100%;
         border: 1px solid #ced4da;
         border-radius: 8px !important;
@@ -566,8 +619,10 @@
   FINAL DE LOS ESTILOS DE PAGINACIÓN 
 ==================================================== */
 
-@keyframes spin { 
-    100% { transform: rotate(360deg); } 
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 /* ====================================================

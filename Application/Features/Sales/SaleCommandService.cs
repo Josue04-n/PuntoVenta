@@ -1,8 +1,10 @@
 using Application.Interfaces;
 using Application.Interfaces.Repositories;
+using Application.Features.Users;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Exceptions;
+using Microsoft.Extensions.Configuration;
 
 namespace Application.Features.Sales;
 
@@ -12,20 +14,26 @@ public class SaleCommandService : ISaleCommandService
     private readonly IProductRepository _productRepository;
     private readonly ICustomerRepository _customerRepository;
     private readonly IInventoryRepository _inventoryRepository;
+    private readonly IUserService _userService;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IConfiguration _configuration;
 
     public SaleCommandService(
         ISaleRepository saleRepository,
         IProductRepository productRepository,
         ICustomerRepository customerRepository,
         IInventoryRepository inventoryRepository,
-        IUnitOfWork unitOfWork)
+        IUserService userService,
+        IUnitOfWork unitOfWork,
+        IConfiguration configuration)
     {
         _saleRepository = saleRepository;
         _productRepository = productRepository;
         _customerRepository = customerRepository;
         _inventoryRepository = inventoryRepository;
+        _userService = userService;
         _unitOfWork = unitOfWork;
+        _configuration = configuration;
     }
 
     public async Task<Sale> CreateSaleAsync(CreateSaleRequest request)
@@ -36,7 +44,11 @@ public class SaleCommandService : ISaleCommandService
         var customer = await _customerRepository.GetByIdAsync(request.CustomerId)
             ?? throw new KeyNotFoundException("El cliente no existe.");
 
-        var deletedProducts = new List<DeletedProductInfo>(); 
+        var currentUser = _unitOfWork.GetCurrentUser();
+        var seller = await _userService.GetUserEntityByUserNameAsync(currentUser ?? throw new UnauthorizedAccessException("Sesión de usuario no válida."))
+            ?? throw new KeyNotFoundException("No se pudo identificar al vendedor.");
+
+        var deletedProducts = new List<DeletedProductInfo>();
         var validatedProducts = new List<(Product product, int amount)>();
 
         foreach (var item in request.Details)
@@ -54,6 +66,8 @@ public class SaleCommandService : ISaleCommandService
 
         if (deletedProducts.Any()) throw new ProductDeletedException(deletedProducts);
 
+        decimal vatRate = _configuration.GetValue<decimal>("BusinessSettings:VatRate");
+
         Sale sale;
         if (request.DraftId.HasValue && request.DraftId.Value > 0)
         {
@@ -61,13 +75,14 @@ public class SaleCommandService : ISaleCommandService
             if (sale == null || sale.Status != SaleStatus.Draft)
                 throw new InvalidOperationException("El borrador no existe o ya no está en estado Borrador.");
 
-            sale.UpdateCustomer(request.CustomerId);
+            sale.UpdateCustomerSnapshot(customer);
+            sale.UpdateSellerSnapshot(seller);
             sale.ClearDetails();
         }
         else
         {
             string invoiceNumber = await _saleRepository.GenerateInvoiceNumberAsync();
-            sale = new Sale(invoiceNumber, request.CustomerId);
+            sale = new Sale(invoiceNumber, customer, seller, vatRate);
             await _saleRepository.AddAsync(sale);
         }
 

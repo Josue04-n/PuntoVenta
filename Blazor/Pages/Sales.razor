@@ -515,58 +515,110 @@
                 @if (_isCreatingCustomer)
                 {
                     <div class="uta-modal__body">
-                        <EditForm Model="_newCustomer" OnValidSubmit="SaveNewCustomerAsync">
-                            <div class="uta-form-grid">
-                                <div class="uta-form-group">
-                                    <label class="uta-form-label">Cédula o RUC</label>
-                                    <div class="uta-input-icon-wrapper">
-                                        <i class="bi bi-person-vcard uta-input-icon"></i>
-                                        <InputText class="uta-form-control uta-form-control--with-icon" @bind-Value="_newCustomer.IDCard" maxlength="13" placeholder="EJ. 1700000000" />
-                                    </div>
+                        <div class="uta-form-grid">
+                            <div class="uta-form-group">
+                                <label class="uta-form-label">Cédula</label>
+                                <div class="uta-input-icon-wrapper">
+                                    <i class="bi bi-person-vcard uta-input-icon"></i>
+                                    <input class="uta-form-control uta-form-control--with-icon @(HasNewCustomerError("IDCard") ? "is-invalid" : "")" 
+                                           type="text" 
+                                           value="@_newCustomer.IDCard" 
+                                           @oninput="OnNewCustomerIDCardInput"
+                                           onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                           placeholder="10 DÍGITOS" maxlength="@ValidationConstants.IDCardLength" />
                                 </div>
-                                <div class="uta-form-group">
-                                    <label class="uta-form-label">Correo Electrónico</label>
-                                    <div class="uta-input-icon-wrapper">
-                                        <i class="bi bi-envelope uta-input-icon"></i>
-                                        <InputText type="email" class="uta-form-control uta-form-control--with-icon" @bind-Value="_newCustomer.Email" placeholder="correo@ejemplo.com" />
-                                    </div>
+                                @if (HasNewCustomerError("IDCard"))
+                                {
+                                    <div class="text-danger mt-1" style="font-size: 0.75rem;"><i class="bi bi-exclamation-circle"></i> @GetNewCustomerError("IDCard")</div>
+                                }
+                            </div>
+                            <div class="uta-form-group">
+                                <label class="uta-form-label">Correo Electrónico</label>
+                                <div class="uta-input-icon-wrapper">
+                                    <i class="bi bi-envelope uta-input-icon"></i>
+                                    <input class="uta-form-control uta-form-control--with-icon @(HasNewCustomerError("Email") ? "is-invalid" : "")" 
+                                           type="text" 
+                                           value="@_newCustomer.Email" 
+                                           @oninput="OnNewCustomerEmailInput" 
+                                           placeholder="correo@ejemplo.com" maxlength="@ValidationConstants.EmailMax" />
                                 </div>
-                                <div class="uta-form-group">
-                                    <label class="uta-form-label">Nombre (Uno solo)</label>
-                                    <InputText class="uta-form-control" @bind-Value="_newCustomer.Name" placeholder="EJ. JOSUE" />
+                                @if (HasNewCustomerError("Email"))
+                                {
+                                    <div class="text-danger mt-1" style="font-size: 0.75rem;"><i class="bi bi-exclamation-circle"></i> @GetNewCustomerError("Email")</div>
+                                }
+                            </div>
+                            <div class="uta-form-group">
+                                <label class="uta-form-label">Nombre</label>
+                                <div class="uta-input-icon-wrapper">
+                                    <i class="bi bi-person uta-input-icon"></i>
+                                    <input class="uta-form-control uta-form-control--with-icon @(HasNewCustomerError("Name") ? "is-invalid" : "")" 
+                                           type="text" 
+                                           value="@_newCustomer.Name" 
+                                           @oninput="OnNewCustomerNameInput" 
+                                           onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode == 209 || event.charCode == 241 || event.charCode == 193 || event.charCode == 201 || event.charCode == 205 || event.charCode == 211 || event.charCode == 218 || event.charCode == 225 || event.charCode == 233 || event.charCode == 237 || event.charCode == 243 || event.charCode == 250"
+                                           placeholder="NOMBRE" maxlength="@ValidationConstants.NameMax" />
                                 </div>
-                                <div class="uta-form-group">
-                                    <label class="uta-form-label">Apellido (Uno solo)</label>
-                                    <InputText class="uta-form-control" @bind-Value="_newCustomer.LastName" placeholder="EJ. LLUMITASIG" />
+                                @if (HasNewCustomerError("Name"))
+                                {
+                                    <div class="text-danger mt-1" style="font-size: 0.75rem;"><i class="bi bi-exclamation-circle"></i> @GetNewCustomerError("Name")</div>
+                                }
+                            </div>
+                            <div class="uta-form-group">
+                                <label class="uta-form-label">Apellido</label>
+                                <div class="uta-input-icon-wrapper">
+                                    <i class="bi bi-person uta-input-icon"></i>
+                                    <input class="uta-form-control uta-form-control--with-icon @(HasNewCustomerError("LastName") ? "is-invalid" : "")" 
+                                           type="text" 
+                                           value="@_newCustomer.LastName" 
+                                           @oninput="OnNewCustomerLastNameInput" 
+                                           onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode == 209 || event.charCode == 241 || event.charCode == 193 || event.charCode == 201 || event.charCode == 205 || event.charCode == 211 || event.charCode == 218 || event.charCode == 225 || event.charCode == 233 || event.charCode == 237 || event.charCode == 243 || event.charCode == 250"
+                                           placeholder="APELLIDO" maxlength="@ValidationConstants.LastNameMax" />
                                 </div>
-                                <div class="uta-form-group">
-                                    <label class="uta-form-label">Teléfono</label>
-                                    <div class="uta-input-icon-wrapper">
-                                        <i class="bi bi-telephone uta-input-icon"></i>
-                                        <InputText class="uta-form-control uta-form-control--with-icon" @bind-Value="_newCustomer.Phone" maxlength="15" placeholder="EJ. 0999999999" />
-                                    </div>
+                                @if (HasNewCustomerError("LastName"))
+                                {
+                                    <div class="text-danger mt-1" style="font-size: 0.75rem;"><i class="bi bi-exclamation-circle"></i> @GetNewCustomerError("LastName")</div>
+                                }
+                            </div>
+                            <div class="uta-form-group">
+                                <label class="uta-form-label">Teléfono</label>
+                                <div class="uta-input-icon-wrapper">
+                                    <i class="bi bi-telephone uta-input-icon"></i>
+                                    <input class="uta-form-control uta-form-control--with-icon @(HasNewCustomerError("Phone") ? "is-invalid" : "")" 
+                                           type="text" 
+                                           value="@_newCustomer.Phone" 
+                                           @oninput="OnNewCustomerPhoneInput"
+                                           onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                           placeholder="EJ. 0999999999" maxlength="@ValidationConstants.PhoneLength" />
                                 </div>
-                                <div class="uta-form-group">
-                                    <label class="uta-form-label">Dirección</label>
-                                    <div class="uta-input-icon-wrapper">
-                                        <i class="bi bi-geo-alt uta-input-icon"></i>
-                                        <InputText class="uta-form-control uta-form-control--with-icon" @bind-Value="_newCustomer.Address" placeholder="DIRECCIÓN COMPLETA" />
-                                    </div>
+                                @if (HasNewCustomerError("Phone"))
+                                {
+                                    <div class="text-danger mt-1" style="font-size: 0.75rem;"><i class="bi bi-exclamation-circle"></i> @GetNewCustomerError("Phone")</div>
+                                }
+                            </div>
+                            <div class="uta-form-group">
+                                <label class="uta-form-label">Dirección Domiciliaria (@(ValidationConstants.AddressMax - (_newCustomer.Address?.Length ?? 0)))</label>
+                                <div class="uta-input-icon-wrapper">
+                                    <i class="bi bi-geo-alt uta-input-icon"></i>
+                                    <input class="uta-form-control uta-form-control--with-icon" 
+                                           type="text" 
+                                           value="@_newCustomer.Address" 
+                                           @oninput="OnNewCustomerAddressInput" 
+                                           placeholder="DIRECCIÓN COMPLETA" maxlength="@ValidationConstants.AddressMax" />
                                 </div>
                             </div>
-                            <div class="mt-4 d-flex justify-content-end gap-2">
-                                <button type="button" class="uta-btn uta-btn--outline" @onclick="() => _isCreatingCustomer = false">
-                                    Cancelar
-                                </button>
-                                <button type="submit" class="uta-btn uta-btn--primary" disabled="@_isSavingCustomer">
-                                    @if (_isSavingCustomer)
-                                    {
-                                        <span class="spinner-border spinner-border-sm me-2"></span>
-                                    }
-                                    <i class="bi bi-check2"></i> Guardar Cliente
-                                </button>
-                            </div>
-                        </EditForm>
+                        </div>
+                        <div class="mt-4 d-flex justify-content-end gap-2">
+                            <button type="button" class="uta-btn uta-btn--outline" @onclick="() => _isCreatingCustomer = false">
+                                Cancelar
+                            </button>
+                            <button class="uta-btn uta-btn--primary" @onclick="SaveNewCustomerAsync" disabled="@(_isSavingCustomer || _newCustomerErrors.Any())">
+                                @if (_isSavingCustomer)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-2"></span>
+                                }
+                                <i class="bi bi-check2"></i> Guardar Cliente
+                            </button>
+                        </div>
                     </div>
                 }
                 else
@@ -1430,17 +1482,130 @@
     private bool _isCreatingCustomer = false;
     private bool _isSavingCustomer = false;
     private CreateCustomerRequest _newCustomer = new();
+    private Dictionary<string, string> _newCustomerErrors = new();
+
+    private bool HasNewCustomerError(string field) => _newCustomerErrors.ContainsKey(field);
+    private string GetNewCustomerError(string field) => _newCustomerErrors.TryGetValue(field, out var error) ? error : "";
+
+    private void ValidateNewCustomerField(string field, string val, string label)
+    {
+        _newCustomerErrors.Remove(field);
+        
+        if (string.IsNullOrWhiteSpace(val))
+        {
+            _newCustomerErrors[field] = $"{label} es requerido.";
+            return;
+        }
+
+        if (field == "IDCard")
+        {
+            if (val.Length != 10)
+            {
+                _newCustomerErrors[field] = "La cédula debe tener exactamente 10 dígitos.";
+            }
+            return;
+        }
+
+        if (field == "Phone")
+        {
+            if (val.Length != 10)
+            {
+                _newCustomerErrors[field] = "El teléfono debe tener exactamente 10 dígitos.";
+            }
+            else if (!val.StartsWith("09"))
+            {
+                _newCustomerErrors[field] = "El teléfono debe empezar con '09'.";
+            }
+            return;
+        }
+
+        if (field == "Email" && !IsValidEmail(val))
+        {
+            _newCustomerErrors[field] = "Formato de correo no válido.";
+            return;
+        }
+
+        if ((field == "Name" || field == "LastName") && !System.Text.RegularExpressions.Regex.IsMatch(val, @"^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$"))
+        {
+            _newCustomerErrors[field] = $"{label} solo debe contener letras.";
+            return;
+        }
+
+        if ((field == "Name" || field == "LastName") && val.Length < 2)
+        {
+            _newCustomerErrors[field] = $"{label} debe tener al menos 2 letras.";
+            return;
+        }
+    }
+
+    private bool IsValidEmail(string email)
+    {
+        try
+        {
+            var addr = new System.Net.Mail.MailAddress(email);
+            return addr.Address.Equals(email, StringComparison.OrdinalIgnoreCase);
+        }
+        catch { return false; }
+    }
+
+    private void OnNewCustomerNameInput(ChangeEventArgs e)
+    {
+        string val = e.Value?.ToString() ?? "";
+        val = val.Trim().Replace(" ", "").ToUpper(); 
+        _newCustomer.Name = val;
+        ValidateNewCustomerField("Name", val, "Nombre");
+    }
+
+    private void OnNewCustomerIDCardInput(ChangeEventArgs e)
+    {
+        string val = e.Value?.ToString() ?? "";
+        val = new string(val.Where(char.IsDigit).ToArray()).ToUpper();
+        _newCustomer.IDCard = val;
+        ValidateNewCustomerField("IDCard", val, "Cédula");
+    }
+
+    private void OnNewCustomerPhoneInput(ChangeEventArgs e)
+    {
+        string val = e.Value?.ToString() ?? "";
+        val = new string(val.Where(char.IsDigit).ToArray()).ToUpper();
+        _newCustomer.Phone = val;
+        ValidateNewCustomerField("Phone", val, "Teléfono");
+    }
+
+    private void OnNewCustomerLastNameInput(ChangeEventArgs e)
+    {
+        string val = e.Value?.ToString() ?? "";
+        val = val.Trim().Replace(" ", "").ToUpper();
+        _newCustomer.LastName = val;
+        ValidateNewCustomerField("LastName", val, "Apellido");
+    }
+
+    private void OnNewCustomerAddressInput(ChangeEventArgs e)
+    {
+        string val = e.Value?.ToString() ?? "";
+        val = System.Text.RegularExpressions.Regex.Replace(val, @"^\s+", "");
+        val = System.Text.RegularExpressions.Regex.Replace(val, @"\s{2,}", " ");
+        _newCustomer.Address = val.ToUpper();
+    }
+
+    private void OnNewCustomerEmailInput(ChangeEventArgs e)
+    {
+        string val = e.Value?.ToString()?.Trim() ?? "";
+        _newCustomer.Email = val;
+        ValidateNewCustomerField("Email", val, "Correo");
+    }
 
     private async Task SaveNewCustomerAsync()
     {
-        if (string.IsNullOrWhiteSpace(_newCustomer.IDCard) || _newCustomer.IDCard.Length < 10)
+        ValidateNewCustomerField("IDCard", _newCustomer.IDCard, "Cédula");
+        ValidateNewCustomerField("Phone", _newCustomer.Phone, "Teléfono");
+        ValidateNewCustomerField("Name", _newCustomer.Name, "Nombre");
+        ValidateNewCustomerField("LastName", _newCustomer.LastName, "Apellido");
+        ValidateNewCustomerField("Email", _newCustomer.Email, "Correo");
+        
+        if (_newCustomerErrors.Any())
         {
-            await ShowNotification("La cédula/RUC es obligatoria y debe tener al menos 10 caracteres.", true);
-            return;
-        }
-        if (string.IsNullOrWhiteSpace(_newCustomer.Name) || string.IsNullOrWhiteSpace(_newCustomer.LastName))
-        {
-            await ShowNotification("El nombre y apellido son obligatorios.", true);
+            await JS.InvokeVoidAsync("Swal.fire", "Formulario Inválido", "Por favor corrija los errores en el formulario.", "warning");
             return;
         }
 

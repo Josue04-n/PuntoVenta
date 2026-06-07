@@ -277,7 +277,7 @@
                             @if (HasError("Email")) { <div class="text-danger mt-1 small">@GetError("Email")</div> }
                         </div>
                         <div class="uta-form-group">
-                            <label class="uta-form-label">Nombres</label>
+                            <label class="uta-form-label">Nombre</label>
                             <div class="uta-input-wrapper">
                                 <i class="bi bi-person uta-input-icon"></i>
                                 <input class="uta-form-control @(HasError("FirstName") ? "is-invalid" : "")" 
@@ -286,12 +286,12 @@
                                        @oninput="OnFirstNameInput"
                                        onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode == 209 || event.charCode == 241"
                                        maxlength="@ValidationConstants.NameMax"
-                                       placeholder="NOMBRES" required />
+                                       placeholder="NOMBRE" required />
                             </div>
                             @if (HasError("FirstName")) { <div class="text-danger mt-1 small">@GetError("FirstName")</div> }
                         </div>
                         <div class="uta-form-group">
-                            <label class="uta-form-label">Apellidos</label>
+                            <label class="uta-form-label">Apellido</label>
                             <div class="uta-input-wrapper">
                                 <i class="bi bi-person uta-input-icon"></i>
                                 <input class="uta-form-control @(HasError("LastName") ? "is-invalid" : "")" 
@@ -300,14 +300,14 @@
                                        @oninput="OnLastNameInput"
                                        onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode == 209 || event.charCode == 241"
                                        maxlength="@ValidationConstants.LastNameMax"
-                                       placeholder="APELLIDOS" required />
+                                       placeholder="APELLIDO" required />
                             </div>
                             @if (HasError("LastName")) { <div class="text-danger mt-1 small">@GetError("LastName")</div> }
                         </div>
                         <div class="uta-form-group">
                             <label class="uta-form-label">Cédula</label>
                             <div class="uta-input-wrapper">
-                                <i class="bi bi-card-heading uta-input-icon"></i>
+                                <i class="bi bi-person-vcard uta-input-icon"></i>
                                 <input class="uta-form-control @(HasError("IDCard") ? "is-invalid" : "")" 
                                        type="text" 
                                        value="@_editRequest.IDCard" 
@@ -319,16 +319,16 @@
                             @if (HasError("IDCard")) { <div class="text-danger mt-1 small">@GetError("IDCard")</div> }
                         </div>
                         <div class="uta-form-group">
-                            <label class="uta-form-label">Teléfono Celular</label>
+                            <label class="uta-form-label">Teléfono</label>
                             <div class="uta-input-wrapper">
-                                <i class="bi bi-phone uta-input-icon"></i>
+                                <i class="bi bi-telephone uta-input-icon"></i>
                                 <input class="uta-form-control @(HasError("PhoneNumber") ? "is-invalid" : "")" 
                                        type="text" 
                                        value="@_editRequest.PhoneNumber" 
                                        @oninput="OnPhoneInput"
                                        onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                                        maxlength="@ValidationConstants.PhoneLength"
-                                       placeholder="EJ. 0900000000" />
+                                       placeholder="EJ. 0999999999" />
                             </div>
                             @if (HasError("PhoneNumber")) { <div class="text-danger mt-1 small">@GetError("PhoneNumber")</div> }
                         </div>
@@ -412,7 +412,7 @@
                             <div class="uta-form-group">
                                 <label class="uta-form-label">Nueva Contraseña</label>
                                 <div class="uta-input-wrapper">
-                                    <i class="bi bi-key uta-input-icon"></i>
+                                    <i class="bi bi-lock uta-input-icon"></i>
                                     <input class="uta-form-control" type="password" 
                                            @oninput="OnUpdatePasswordInput"
                                            onkeypress="return event.charCode != 32"

@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
 
 namespace Infrastructure.Data;
 
@@ -18,16 +21,18 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     public DbSet<SaleDetail> SaleDetails => Set<SaleDetail>();
     public DbSet<InventoryMovement> InventoryMovements => Set<InventoryMovement>();
     public DbSet<ErrorLog> ErrorLogs => Set<ErrorLog>();
+    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     
     public AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options) 
     {
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         var currentUser = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "System";
 
+        // Lógica de IAuditable (CreatedAt, CreatedBy, etc)
         foreach (var entry in ChangeTracker.Entries<IAuditable>())
         {
             switch (entry.State)
@@ -43,7 +48,98 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             }
         }
 
-        return base.SaveChangesAsync(cancellationToken);
+        // --- INICIO AUDITORÍA GENERAL ---
+        var auditEntries = OnBeforeSaveChanges(currentUser);
+        var result = await base.SaveChangesAsync(cancellationToken);
+        await OnAfterSaveChanges(auditEntries);
+        return result;
+        // --- FIN AUDITORÍA GENERAL ---
+    }
+
+    private List<AuditEntry> OnBeforeSaveChanges(string userId)
+    {
+        ChangeTracker.DetectChanges();
+        var auditEntries = new List<AuditEntry>();
+        foreach (var entry in ChangeTracker.Entries())
+        {
+            if (entry.Entity is AuditLog || entry.State == EntityState.Detached || entry.State == EntityState.Unchanged)
+                continue;
+
+            var auditEntry = new AuditEntry(entry);
+            auditEntry.TableName = entry.Metadata.GetTableName() ?? entry.Entity.GetType().Name;
+            auditEntry.UserId = userId;
+            auditEntries.Add(auditEntry);
+
+            foreach (var property in entry.Properties)
+            {
+                string propertyName = property.Metadata.Name;
+                if (property.Metadata.IsPrimaryKey())
+                {
+                    auditEntry.KeyValues[propertyName] = property.CurrentValue!;
+                    continue;
+                }
+
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        auditEntry.AuditType = "Create";
+                        auditEntry.NewValues[propertyName] = property.CurrentValue!;
+                        break;
+
+                    case EntityState.Deleted:
+                        auditEntry.AuditType = "Delete";
+                        auditEntry.OldValues[propertyName] = property.OriginalValue!;
+                        break;
+
+                    case EntityState.Modified:
+                        if (property.IsModified)
+                        {
+                            auditEntry.ChangedColumns.Add(propertyName);
+                            auditEntry.AuditType = "Update";
+                            auditEntry.OldValues[propertyName] = property.OriginalValue!;
+                            auditEntry.NewValues[propertyName] = property.CurrentValue!;
+                        }
+                        break;
+                }
+            }
+        }
+
+        foreach (var auditEntry in auditEntries.Where(_ => !_.HasTemporaryProperties))
+        {
+            AuditLogs.Add(auditEntry.ToAudit());
+        }
+
+        return auditEntries.Where(_ => _.HasTemporaryProperties).ToList();
+    }
+
+    private Task OnAfterSaveChanges(List<AuditEntry> auditEntries)
+    {
+        if (auditEntries == null || auditEntries.Count == 0)
+            return Task.CompletedTask;
+
+        foreach (var auditEntry in auditEntries)
+        {
+            foreach (var prop in auditEntry.TemporaryProperties)
+            {
+                if (prop.Metadata.IsPrimaryKey())
+                {
+                    auditEntry.KeyValues[prop.Metadata.Name] = prop.CurrentValue!;
+                }
+                else
+                {
+                    auditEntry.NewValues[prop.Metadata.Name] = prop.CurrentValue!;
+                }
+            }
+
+            AuditLogs.Add(auditEntry.ToAudit());
+        }
+
+        return base.SaveChangesAsync();
+    }
+
+    public string? GetCurrentUser()
+    {
+        return _httpContextAccessor.HttpContext?.User?.Identity?.Name;
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -52,6 +148,16 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
 
         bool isSqlServer = Database.IsSqlServer();
         bool isOracle = Database.ProviderName == "Oracle.EntityFrameworkCore";
+
+        // --- AUDIT LOGS ---
+        modelBuilder.Entity<AuditLog>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.UserId).HasMaxLength(ValidationConstants.AuditUserMax);
+            entity.Property(e => e.TableName).HasMaxLength(100);
+            entity.Property(e => e.Type).HasMaxLength(20);
+            entity.HasIndex(e => e.DateTime);
+        });
 
         // --- FILTROS GLOBALES ---
         modelBuilder.Entity<Product>().HasQueryFilter(p => p.IsActive);
@@ -80,6 +186,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
                   .WithMany()
                   .HasForeignKey(im => im.ProductId)
                   .OnDelete(DeleteBehavior.Restrict);
+
+            // Auditoría
+            entity.Property(im => im.CreatedBy).HasMaxLength(ValidationConstants.AuditUserMax);
+            entity.Property(im => im.UpdatedBy).HasMaxLength(ValidationConstants.AuditUserMax);
         });
 
         // --- PRODUCTOS ---
@@ -157,6 +267,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
                   .HasForeignKey("SaleId")
                   .IsRequired()
                   .OnDelete(DeleteBehavior.Cascade);
+
+            // Auditoría
+            entity.Property(s => s.CreatedBy).HasMaxLength(ValidationConstants.AuditUserMax);
+            entity.Property(s => s.UpdatedBy).HasMaxLength(ValidationConstants.AuditUserMax);
         });
 
         // --- USUARIOS ---
@@ -183,5 +297,40 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
                   .HasForeignKey(sd => sd.ProductId)
                   .OnDelete(DeleteBehavior.Restrict);
         });
+    }
+}
+
+// Clase Auxiliar para construir los registros de auditoría
+public class AuditEntry
+{
+    public AuditEntry(Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry entry)
+    {
+        Entry = entry;
+    }
+
+    public Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry Entry { get; }
+    public string UserId { get; set; } = string.Empty;
+    public string TableName { get; set; } = string.Empty;
+    public string AuditType { get; set; } = string.Empty;
+    public Dictionary<string, object> KeyValues { get; } = new();
+    public Dictionary<string, object> OldValues { get; } = new();
+    public Dictionary<string, object> NewValues { get; } = new();
+    public List<Microsoft.EntityFrameworkCore.ChangeTracking.PropertyEntry> TemporaryProperties { get; } = new();
+    public List<string> ChangedColumns { get; } = new();
+
+    public bool HasTemporaryProperties => TemporaryProperties.Any();
+
+    public AuditLog ToAudit()
+    {
+        var audit = new AuditLog();
+        audit.UserId = UserId;
+        audit.Type = AuditType;
+        audit.TableName = TableName;
+        audit.DateTime = DateTime.UtcNow;
+        audit.PrimaryKey = JsonSerializer.Serialize(KeyValues);
+        audit.OldValues = OldValues.Count == 0 ? null : JsonSerializer.Serialize(OldValues);
+        audit.NewValues = NewValues.Count == 0 ? null : JsonSerializer.Serialize(NewValues);
+        audit.AffectedColumns = ChangedColumns.Count == 0 ? null : JsonSerializer.Serialize(ChangedColumns);
+        return audit;
     }
 }

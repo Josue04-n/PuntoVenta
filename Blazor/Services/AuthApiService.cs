@@ -71,4 +71,42 @@ public class AuthApiService
             return new AuthResponseDto { IsSuccess = false, Message = "Error de conexión: No se pudo comunicar con el servidor." };
         }
     }
+
+    public async Task<AuthResponseDto> ForgotPasswordAsync(ForgotPasswordRequest request)
+    {
+        try
+        {
+            var response = await _http.PostAsJsonAsync("api/Auth/forgot-password", request);
+            if (response.IsSuccessStatusCode)
+            {
+                return new AuthResponseDto { IsSuccess = true, Message = "Enlace enviado. Revise su correo." };
+            }
+
+            var error = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
+            return error ?? new AuthResponseDto { IsSuccess = false, Message = "Error al procesar la solicitud." };
+        }
+        catch (Exception)
+        {
+            return new AuthResponseDto { IsSuccess = false, Message = "Error de conexión." };
+        }
+    }
+
+    public async Task<AuthResponseDto> ResetPasswordAsync(ResetPasswordRequest request)
+    {
+        try
+        {
+            var response = await _http.PostAsJsonAsync("api/Auth/reset-password", request);
+            if (response.IsSuccessStatusCode)
+            {
+                return new AuthResponseDto { IsSuccess = true, Message = "Contraseña restablecida correctamente." };
+            }
+
+            var error = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
+            return error ?? new AuthResponseDto { IsSuccess = false, Message = "Error al restablecer la contraseña." };
+        }
+        catch (Exception)
+        {
+            return new AuthResponseDto { IsSuccess = false, Message = "Error de conexión." };
+        }
+    }
 }

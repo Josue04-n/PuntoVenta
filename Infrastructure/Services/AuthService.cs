@@ -1,4 +1,5 @@
 using Application.Features.Users;
+using Application.Interfaces;
 using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -16,11 +17,69 @@ public class AuthService : IAuthService
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IConfiguration _configuration;
+    private readonly IEmailService _emailService; 
 
-    public AuthService(UserManager<ApplicationUser> userManager, IConfiguration configuration)
+    public AuthService(UserManager<ApplicationUser> userManager, IConfiguration configuration, IEmailService emailService)
     {
         _userManager = userManager;
         _configuration = configuration;
+        _emailService = emailService; 
+    }
+
+    public async Task<(bool IsSuccess, string Message)> ForgotPasswordAsync(string email, string origin)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        
+        if (user == null || !user.IsActive)
+            return (true, "Si el correo está registrado, recibirá instrucciones en breve.");
+
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        
+        var encodedToken = System.Web.HttpUtility.UrlEncode(token);
+        var resetUrl = $"{origin}/reset-password?token={encodedToken}&email={email}";
+
+        var body = $@"
+            <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;'>
+                <h2 style='color: #6B1A33; text-align: center;'>Recuperación de Contraseña</h2>
+                <p>Hola <strong>{user.FirstName}</strong>,</p>
+                <p>Has solicitado restablecer tu contraseña en el <strong>Sistema Punto Venta</strong>. Haz clic en el botón de abajo para continuar:</p>
+                <div style='text-align: center; margin: 30px 0;'>
+                    <a href='{resetUrl}' style='background-color: #6B1A33; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Restablecer mi Contraseña</a>
+                </div>
+                <p style='font-size: 0.8rem; color: #777;'>Este enlace expirará en 24 horas. Si no solicitaste este cambio, puedes ignorar este correo.</p>
+                <hr style='border: 0; border-top: 1px solid #eee; margin: 20px 0;'>
+                <p style='text-align: center; font-size: 0.7rem; color: #999;'>© 2026 Sistema UTA POS - Todos los derechos reservados.</p>
+            </div>";
+
+        try
+        {
+            await _emailService.SendEmailAsync(email, "Recuperación de Contraseña - UTA POS", body);
+            return (true, "Si el correo está registrado, recibirá instrucciones en breve.");
+        }
+        catch (Exception ex)
+        {
+            return (false, "Error al enviar el correo: " + ex.Message);
+        }
+    }
+
+    public async Task<(bool IsSuccess, string Message)> ResetPasswordAsync(ResetPasswordRequest request)
+    {
+        var user = await _userManager.FindByEmailAsync(request.Email);
+        if (user == null) return (false, "Solicitud inválida.");
+
+        if (request.NewPassword != request.ConfirmPassword)
+            return (false, "Las contraseñas no coinciden.");
+
+        var result = await _userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
+        
+        if (result.Succeeded)
+        {
+            user.MustChangePassword = false; 
+            await _userManager.UpdateAsync(user);
+            return (true, "Contraseña restablecida con éxito. Ya puedes iniciar sesión.");
+        }
+
+        return (false, "El enlace ha expirado o es inválido. Por favor, solicita uno nuevo.");
     }
 
     public async Task<AuthResponseDto> LoginAsync(LoginRequest request)
